@@ -1,0 +1,747 @@
+<!DOCTYPE html> 
+<html lang="en">
+<script language="Cache" runat="server">
+	set URLPreparacao = "VAR.infra.dashboard.cspsessions.cls"
+</script>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>IRIS Monitor Dashboard</title>
+	<meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+	<link rel="icon" href="resources/img/ISC_IRIS_icon.ico" type="image/x-icon" />
+
+	<!-- Fonts and icons -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/webfont/webfont.min.js"></script>
+	<script type="text/javascript">
+		WebFont.load({
+			google: {
+				"families": ["Lato:300,400,700,900"]
+			},
+			custom: {
+				"families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular",
+					"Font Awesome 5 Brands", "simple-line-icons"
+				],
+				urls: ['resources/plugins/atlantis-lite/assets/css/fonts.min.css']
+			},
+			active: function () {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="resources/plugins/atlantis-lite/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/plugins/atlantis-lite/assets/css/atlantis.min.css">
+
+	<!-- DateRange Picker CSS -->
+	<link rel="stylesheet" type="text/css" href="resources/plugins/daterangepicker/daterangepicker.css" />
+
+	<!-- DevExtreme themes -->
+	<link rel="stylesheet" type="text/css" href="resources/plugins/extreme18.2.3/css/dx.common.css" />
+	<link rel="stylesheet" type="text/css" href="resources/plugins/extreme18.2.3/css/dx.light.css" />
+</head>
+
+<body>
+	<div class="wrapper overlay-sidebar">
+		<div class="main-header">
+			<!-- Logo Header -->
+			<div class="logo-header" data-background-color="white">
+
+				<div class="logo">
+					<img src="resources/img/InterSystemsIRIS.png" alt="navbar brand" height="35" class="navbar-brand">
+				</div>
+				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon">
+						<i class="icon-menu"></i>
+					</span>
+				</button>
+				<button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+				<div class="nav-toggle">
+					<button class="btn btn-toggle sidenav-overlay-toggler">
+						<i class="icon-menu"></i>
+					</button>
+				</div>
+			</div>
+			<!-- End Logo Header -->
+
+			<!-- Navbar Header -->
+			<nav class="navbar navbar-header navbar-expand-lg" data-background-color="white">
+				<div class="container-fluid">
+					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<div class="input-icon">
+							<span class="input-icon-addon">
+								<i class="text-primary far fa-calendar-alt"></i>
+							</span>
+							<input id="daterange" type="text" class="form-control text-primary" style="border: none;background: transparent;" size="24px">
+						</div>
+					</ul>
+				</div>
+			</nav>
+			<!-- End Navbar -->
+		</div>
+
+		<!-- Sidebar -->
+		<div class="sidebar sidebar-style-2">
+			<div class="scroll-wrapper sidebar-wrapper scrollbar scrollbar-inner">
+				<div class="sidebar-content">
+					<ul class="nav nav-primary">
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+								<i class="fas fa-home"></i>
+								<p>System Dashboard</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="dashboard">
+								<ul class="nav nav-collapse">
+									<li class="">
+										<a href="dashboard.csp">
+											<span class="sub-item">System Dashboard</span>
+										</a>
+									</li>
+									<li>
+										<a href="systemprocesses.csp">
+											<span class="sub-item">System Processes</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item active">
+							<a data-toggle="collapse" href="#history" class="collapsed" aria-expanded="false">
+								<i class="fas fa-history"></i>
+								<p>History Monitor</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="history">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="historylicense.csp">
+											<span class="sub-item">License</span>
+										</a>
+									</li>
+									<li>
+										<a href="historydatabase.csp">
+											<span class="sub-item">Database Growth</span>
+										</a>
+									</li>
+									<li class="active">
+										<a href="historycspsessions.csp">
+											<span class="sub-item">CSP Sessions</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- End Sidebar -->
+
+		<!-- Begin Dashboard Content -->
+		<div class="main-panel">
+			<div class="content">
+				<div class="panel-header bg-primary-gradient">
+					<div class="page-inner py-5">
+						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+							<!-- Dashboard Name + Server | Instance -->
+							<div>
+								<h2 class="text-white pb-2 fw-bold">History Monitor | CSP Sessions</h2>
+								<h5 class="text-white pb-2 mb-2">#($piece($SYSTEM,":",1))# | #($piece($SYSTEM,":",2))#</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Begin Widgets -->
+				<div class="page-inner mt--5">
+
+					<!-- License Consumption Every 5 Minutes -->
+					<div class="row mt--2">
+						<div class="col-md-12">
+							<div class="card full-height">
+								<div class="card-header">
+									<div class="card-head-row">
+										<div class="card-title">Every 5 minutes</div>
+										<div class="card-tools">
+											<ul class="nav nav-pills nav-primary nav-pills-no-bd nav-sm" id="pills-tab" role="tablist">
+												<li class="nav-item">
+													<a class="nav-link active" id="fiveMinChart" data-toggle="pill" href="#" role="tab" aria-selected="true">Chart</a>
+												</li>
+												<li class="nav-item">
+													<a class="nav-link" id="fiveMinDataTable" data-toggle="pill" href="#" role="tab" aria-selected="false">Data
+														Table</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div id="Lic5MinBody" class="card-body">
+									<div id="divLic5Min"></div>
+									<div id="divLic5MinDataTable"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- License Consumption Hourly -->
+					<div class="row mt--2">
+						<div class="col-md-12">
+							<div class="card full-height">
+								<div class="card-header">
+									<div class="card-head-row">
+										<div class="card-title">Hourly</div>
+										<div class="card-tools">
+											<ul class="nav nav-pills nav-primary nav-pills-no-bd nav-sm" id="pills-tab" role="tablist">
+												<li class="nav-item">
+													<a class="nav-link active" id="hourChart" data-toggle="pill" href="#" role="tab" aria-selected="true">Chart</a>
+												</li>
+												<li class="nav-item">
+													<a class="nav-link" id="hourDataTable" data-toggle="pill" href="#" role="tab" aria-selected="false">Data Table</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div id="LicHourBody" class="card-body">
+									<div id="divLicHorario"></div>
+									<div id="divLicHorarioDataTable"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- License Consumption Daily -->
+					<div class="row mt--2">
+						<div class="col-md-12">
+							<div class="card full-height">
+								<div class="card-header">
+									<div class="card-head-row">
+										<div class="card-title">Daily</div>
+										<div class="card-tools">
+											<ul class="nav nav-pills nav-primary nav-pills-no-bd nav-sm" id="pills-tab" role="tablist">
+												<li class="nav-item">
+													<a class="nav-link active" id="dayChart" data-toggle="pill" href="#" role="tab" aria-selected="true">Chart</a>
+												</li>
+												<li class="nav-item">
+													<a class="nav-link" id="dayDataTable" data-toggle="pill" href="#" role="tab" aria-selected="false">Data Table</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div id="LicDayBody" class="card-body">
+									<div id="divLicDiario"></div>
+									<div id="divLicDiarioDataTable"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Widgets -->
+			</div>
+
+			<!-- Begin Footer -->
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul class="nav">
+							<li class="nav-item">
+								<a class="nav-link" id="urlPortal" href="#">
+									Management Portal
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright ml-auto">2019 <i class="far fa-copyright"></i> by 
+						<a href="https://github.com/diashenrique/iris-history-monitor" target="_blank">
+							Henrique Dias
+						</a>
+					</div>
+				</div>
+			</footer>
+			<!-- End Footer -->
+		</div>
+		<!-- End Conteudo Dashboard -->
+	</div>
+	<!-- End Wrapper -->
+
+	<!--   Core JS Files   -->
+	<script src="resources/plugins/atlantis-lite/assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/core/popper.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/core/bootstrap.min.js"></script>
+
+	<!-- jQuery UI -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+	<!-- jQuery Scrollbar -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+	<!-- Atlantis JS -->
+	<script src="resources/plugins/atlantis-lite/assets/js/atlantis.min.js"></script>
+
+	<!-- Highcharts -->
+	<script src="resources/plugins/charts/highcharts/code/highcharts.js"></script>
+	<script src="resources/plugins/charts/highcharts/code/modules/no-data-to-display.js"></script>
+
+	<!-- Date Range Picker -->
+	<script type="text/javascript" src="resources/plugins/daterangepicker/moment.min.js"></script>
+	<script type="text/javascript" src="resources/plugins/daterangepicker/daterangepicker.js"></script>
+
+	<!-- JSZip library -->
+	<script type="text/javascript" src="resources/plugins/extreme18.2.3/js/jszip.min.js"></script>
+
+	<!-- A DevExtreme library -->
+	<script type="text/javascript" src="resources/plugins/extreme18.2.3/js/dx.all.js"></script>
+
+	<!-- DevExtreme-Intl module -->
+	<script type="text/javascript" src="resources/plugins/extreme18.2.3/js/devextreme-intl.min.js"></script>
+	<script type="text/javascript" src="resources/plugins/extreme18.2.3/js/localization/dx.messages.pt.js"></script>
+
+	<script type="text/javascript">
+		var urlPreparacao = '#(URLPreparacao)#'
+		var chartLiveLicense, chartHourlyLicense, chartDailyLicense;
+
+		// ************* Charts ************* // 
+
+		// ********** Highcharts Every 5 min License ********** //
+		function getLicenseLiveHistory(dataDe, dataAte) {
+			$.getJSON(urlPreparacao, {
+				method: "getCSPLiveHistory",
+				fiveMinFrom: dataDe,
+				fiveMinTo: dataAte
+			}, function (retornoLicenseLive) {
+				
+				if (retornoLicenseLive.length == 0) {
+					$("#fiveMinDataTable").hide();
+				} else {
+					$("#fiveMinDataTable").show();
+				}
+				
+				chartLiveLicense = new Highcharts.Chart({
+					chart: {
+						renderTo: "divLic5Min",
+						type: "area",
+						zoomType: "x"
+					},
+					title: false,
+					subtitle: false,
+					xAxis: {
+						type: "datetime"
+					},
+					yAxis: {
+						title: {
+							text: "CSP Sessions"
+						}
+					},
+					legend: {
+						enabled: false
+					},
+					credits: {
+						enabled: false
+					},
+					plotOptions: {
+						area: {
+							fillColor: {
+								linearGradient: {
+									x1: 0,
+									y1: 0,
+									x2: 0,
+									y2: 1
+								},
+								stops: [
+									[0, "#099a97"],
+									[1, "#ffffff"]
+								]
+							},
+							color: "#099a97",
+							lineColor: "#099a97",
+							marker: {
+								enabled: false,
+								symbol: "circle",
+								radius: 2,
+								lineWidth: 1,
+								lineColor: "#099a97",
+								fillColor: "#ffffff"
+							},
+							lineWidth: 1,
+							states: {
+								hover: {
+									lineWidth: 1
+								}
+							},
+							threshold: null
+						}
+					},
+					series: [{
+						data: (function () {
+							var data = [];
+							$.each(retornoLicenseLive, function (index, value) {
+								var datahora = Date.parse(value[0]);
+								var valorConsumo = value[1];
+								data.push({
+									x: datahora,
+									y: valorConsumo
+								});
+							})
+							return data;
+						}()),
+						name: 'CSP Sessions every 5 minutes'
+					}],
+					lang: {
+						noData: "No data for the given period"
+					},
+					noData: {
+						style: {
+							fontSize: "20px",
+							color: "#575962"
+						}
+					},
+					exporting: false
+				});
+
+			});
+		}
+
+		// ********** Highcharts Hourly License ********** //
+		function getLicenseHourlyHistory(dataInicio, dataFim) {
+			$.getJSON(urlPreparacao, {
+				method: "getCSPHourlyHistory",
+				hourFrom: dataInicio,
+				hourTo: dataFim
+			}, function (retornoHourlyHistory) {
+				
+				if (retornoHourlyHistory.length == 0) {
+					$("#hourDataTable").hide();
+				} else {
+					$("#hourDataTable").show();
+				}
+				
+				chartHourlyLicense = new Highcharts.Chart({
+					chart: {
+						renderTo: "divLicHorario",
+						type: "area",
+						zoomType: "x"
+					},
+					title: false,
+					subtitle: false,
+					xAxis: {
+						type: "datetime"
+					},
+					yAxis: {
+						title: {
+							text: "CSP Sessions"
+						}
+					},
+					tooltip: {
+						shared: true
+					},
+					credits: {
+						enabled: false
+					},
+					plotOptions: {
+						area: {
+							stacking: "normal",
+							states: {
+								hover: {
+									lineWidth: 0.5,
+									enabled: true
+								}
+							},
+							threshold: null
+						}
+					},
+					series: retornoHourlyHistory,
+					lang: {
+						noData: "No data for the given period"
+					},
+					noData: {
+						style: {
+							fontSize: "20px",
+							color: "#575962"
+						}
+					},
+					exporting: false
+				});
+			});
+		}
+
+		// ********** Highcharts Daily License ********** //
+		function getLicenseDailyHistory(dataInicio, dataFim) {
+			$.getJSON(urlPreparacao, {
+				method: "getCSPDailyHistory",
+				dayFrom: dataInicio,
+				dayTo: dataFim
+			}, function (retornoDailyHistory) {
+				
+				if (retornoDailyHistory.length == 0) {
+					$("#dayDataTable").hide();
+				} else {
+					$("#dayDataTable").show();
+				}
+				
+				chartDailyLicense = new Highcharts.Chart({
+					chart: {
+						renderTo: "divLicDiario",
+						type: "area",
+						zoomType: "x"
+					},
+					title: false,
+					subtitle: false,
+					xAxis: {
+						type: "datetime"
+					},
+					yAxis: {
+						title: {
+							text: "CSP Sessions"
+						}
+					},
+					tooltip: {
+						shared: true
+					},
+					credits: {
+						enabled: false
+					},
+					plotOptions: {
+						area: {
+							stacking: "normal",
+							states: {
+								hover: {
+									lineWidth: 0.5,
+									enabled: true
+								}
+							},
+							threshold: null
+						}
+					},
+					series: retornoDailyHistory,
+					lang: {
+						noData: "No data for the given period"
+					},
+					noData: {
+						style: {
+							fontSize: "20px",
+							color: "#575962"
+						}
+					},
+					exporting: false
+				});
+
+			});
+		}
+
+		// ********** DataGrid DevExtreme Every 5 min ********** //
+		function dataGridEveryFive(dataInicio, dataFim) {
+			$("#divLic5MinDataTable").dxDataGrid({
+				dataSource: new DevExpress.data.DataSource({
+					store: new DevExpress.data.CustomStore({
+						loadMode: "raw",
+						load: function () {
+							return $.getJSON(urlPreparacao, {
+								method: "getCSPSessionEveryFiveMinDataGrid",
+								fiveFrom: dataInicio,
+								fiveTo: dataFim
+							});
+						}
+					})
+				}),
+				showColumnLines: true,
+				showRowLines: true,
+				rowAlternationEnabled: true,
+				showBorders: true,
+				paging: {
+					pageSize: 10
+				},
+				grouping: {
+					autoExpandAll: false,
+				},
+				groupPanel: {
+					visible: true
+				},
+				columns: [{
+						dataField: "date",
+						groupIndex: 0
+					},
+					"time",
+					"cspSessions"
+				],
+				export: {
+					enabled: true,
+					fileName: "CSP Sessions - 5 Minutes"
+				}
+			});
+		}
+
+		// ********** DataGrid DevExtreme Hourly ********** //
+		function dataGridHourly(dataInicio, dataFim) {
+			$("#divLicHorarioDataTable").dxDataGrid({
+				dataSource: new DevExpress.data.DataSource({
+					store: new DevExpress.data.CustomStore({
+						loadMode: "raw",
+						load: function () {
+							return $.getJSON(urlPreparacao, {
+								method: "getCSPHourlyDataGrid",
+								hourFrom: dataInicio,
+								hourTo: dataFim
+							});
+						}
+					})
+				}),
+				showColumnLines: true,
+				showRowLines: true,
+				rowAlternationEnabled: true,
+				showBorders: true,
+				paging: {
+					pageSize: 10
+				},
+				grouping: {
+					autoExpandAll: false,
+				},
+				groupPanel: {
+					visible: true
+				},
+				columns: [{
+						dataField: "date",
+						groupIndex: 0
+					},
+					"time",
+					"avg",
+					"max"
+				],
+				export: {
+					enabled: true,
+					fileName: "CSP Sessions - Hourly"
+				}
+			});
+		}
+
+		// ********** DataGrid DevExtreme Daily ********** //
+		function dataGridDaily(dataInicio, dataFim) {
+			$("#divLicDiarioDataTable").dxDataGrid({
+				dataSource: new DevExpress.data.DataSource({
+					store: new DevExpress.data.CustomStore({
+						loadMode: "raw",
+						load: function () {
+							return $.getJSON(urlPreparacao, {
+								method: "getCSPDailyDataGrid",
+								dayFrom: dataInicio,
+								dayTo: dataFim
+							});
+						}
+					})
+				}),
+				showColumnLines: true,
+				showRowLines: true,
+				rowAlternationEnabled: true,
+				showBorders: true,
+				paging: {
+					pageSize: 10
+				},
+				groupPanel: {
+					visible: false
+				},
+				export: {
+					enabled: true,
+					fileName: "CSP Sessions - Daily"
+				}
+			});
+		}
+
+		$(document).ready(function () {
+
+			var urlOrigin = window.location.origin;
+			var newUrl = urlOrigin + "/csp/sys/UtilHome.csp"
+			$("#urlPortal").attr("href", newUrl);
+
+			var dataInicio, dataFim
+
+			$("#divLic5MinDataTable").hide();
+			$("#divLicHorarioDataTable").hide();
+			$("#divLicDiarioDataTable").hide();
+
+			if (dataInicio == null) {
+				dataInicio = moment().subtract(6, "days").format("DD/MM/YYYY");
+				dataFim = moment().format("DD/MM/YYYY");
+
+				getLicenseLiveHistory(dataInicio, dataFim);
+				getLicenseHourlyHistory(dataInicio, dataFim);
+				getLicenseDailyHistory(dataInicio, dataFim);
+			}
+
+			// ********** Data Range Picker ********** // 
+			$("#daterange").daterangepicker({
+				opens: "left",
+				timePicker24Hour: true,
+				autoApply: false,
+				startDate: moment().subtract(6, 'days'),
+				endDate: moment(),
+				maxDate: moment(),
+				ranges: {
+					"Today": [moment(), moment()],
+					"Yesterday": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+					"Last 7 Days": [moment().subtract(6, 'days'), moment()],
+					"Last 30 Days": [moment().subtract(29, 'days'), moment()],
+					"This Month": [moment().startOf('month'), moment().endOf('month')],
+					"Last Month": [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+				},
+				alwaysShowCalendars: true
+			}, function (start, end, label) {
+				dataInicio = start.format("DD/MM/YYYY");
+				dataFim = end.format("DD/MM/YYYY");
+				getLicenseLiveHistory(dataInicio, dataFim);
+				getLicenseHourlyHistory(dataInicio, dataFim);
+				getLicenseDailyHistory(dataInicio, dataFim);
+
+				dataGridEveryFive(dataInicio, dataFim);
+				dataGridHourly(dataInicio, dataFim);
+				dataGridDaily(dataInicio, dataFim);
+			});
+
+			// ********** Every 5 Minute License ********** // 
+			// Button Chart
+			$("#fiveMinChart").click(function () {
+				$("#divLic5MinDataTable").hide();
+				$("#divLic5Min").show();
+			});
+			// Button Data Table
+			$("#fiveMinDataTable").click(function () {
+				$("#divLic5Min").hide();
+				$("#divLic5MinDataTable").show();
+				dataGridEveryFive(dataInicio, dataFim);
+			});
+
+			// ********** Hourly License ********** // 
+			// Button Chart
+			$("#hourChart").click(function () {
+				$("#divLicHorarioDataTable").hide();
+				$("#divLicHorario").show();
+			});
+
+			// Button Data Table
+			$("#hourDataTable").click(function () {
+				$("#divLicHorario").hide();
+				$("#divLicHorarioDataTable").show();
+				dataGridHourly(dataInicio, dataFim);
+			});
+
+			// ********** Daily License ********** // 
+			// Button Chart
+			$("#dayChart").click(function () {
+				$("#divLicDiarioDataTable").hide();
+				$("#divLicDiario").show();
+			});
+
+			// Data Table 
+			$("#dayDataTable").click(function () {
+				$("#divLicDiario").hide();
+				$("#divLicDiarioDataTable").show();
+				dataGridDaily(dataInicio, dataFim);
+			});
+
+		});
+	</script>
+</body>
+
+</html>

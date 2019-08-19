@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<script language="Cache" runat="server">
+	set URLPreparacao = "VAR.infra.dashboard.dashboard.cls"
+</script>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>IRIS Monitor Dashboard</title>
+	<meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+	<link rel="icon" href="resources/img/ISC_IRIS_icon.ico" type="image/x-icon" />
+
+	<!-- Fonts and icons -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/webfont/webfont.min.js"></script>
+	<script type="text/javascript">
+		WebFont.load({
+			google: {
+				"families": ["Lato:300,400,700,900"]
+			},
+			custom: {
+				"families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular",
+					"Font Awesome 5 Brands", "simple-line-icons"
+				],
+				urls: ['resources/plugins/atlantis-lite/assets/css/fonts.min.css']
+			},
+			active: function () {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="resources/plugins/atlantis-lite/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/plugins/atlantis-lite/assets/css/atlantis.min.css">
+</head>
+
+<body>
+	<div class="wrapper overlay-sidebar">
+		<div class="main-header">
+			<!-- Logo Header -->
+			<div class="logo-header" data-background-color="white">
+
+				<div class="logo">
+					<img src="resources/img/InterSystemsIRIS.png" alt="navbar brand" height="35" class="navbar-brand">
+				</div>
+				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon">
+						<i class="icon-menu"></i>
+					</span>
+				</button>
+				<button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+				<div class="nav-toggle">
+					<button class="btn btn-toggle sidenav-overlay-toggler">
+						<i class="icon-menu"></i>
+					</button>
+				</div>
+			</div>
+			<!-- End Logo Header -->
+
+			<!-- Navbar Header -->
+			<nav class="navbar navbar-header navbar-expand-lg" data-background-color="white">
+				<div class="container-fluid">
+					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<h1 class="text-white fw-bold">Dashboard</h1>
+					</ul>
+				</div>
+			</nav>
+			<!-- End Navbar -->
+		</div>
+
+		<!-- Sidebar -->
+		<div class="sidebar sidebar-style-2">
+			<div class="scroll-wrapper sidebar-wrapper scrollbar scrollbar-inner">
+				<div class="sidebar-content">
+					<ul class="nav nav-primary">
+						<li class="nav-item active">
+							<a data-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+								<i class="fas fa-chart-line"></i>
+								<p>System Dashboard</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="dashboard">
+								<ul class="nav nav-collapse">
+									<li class="active">
+										<a href="dashboard.csp">
+											<span class="sub-item">System Dashboard</span>
+										</a>
+									</li>
+									<li>
+										<a href="systemprocesses.csp">
+											<span class="sub-item">System Processes</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="collapse" href="#history" class="collapsed" aria-expanded="false">
+								<i class="fas fa-history"></i>
+								<p>History Monitor</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="history">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="historylicense.csp">
+											<span class="sub-item">License</span>
+										</a>
+									</li>
+									<li>
+										<a href="historydatabase.csp">
+											<span class="sub-item">Database Growth</span>
+										</a>
+									</li>
+									<li>
+										<a href="historycspsessions.csp">
+											<span class="sub-item">CSP Sessions</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- End Sidebar -->
+
+		<!-- Begin Dashboard Content -->
+		<div class="main-panel">
+			<div class="content">
+				<div class="panel-header bg-primary-gradient">
+					<div class="page-inner py-5">
+						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+							<!-- Name Dashboard + Server | Instance -->
+							<div>
+								<h2 class="text-white pb-2 fw-bold">System Dashboard</h2>
+								<h5 class="text-white pb-2 mb-2">#($piece($SYSTEM,":",1))# | #($piece($SYSTEM,":",2))#</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Begin Widgets Sensors -->
+				<div class="page-inner mt--5">
+
+					<!-- Line Licesing + System Time -->
+					<div class="row mt--2">
+
+						<!-- Licesing -->
+						<div class="col-md-6">
+							<div class="card full-height">
+								<div class="card-body">
+									<div class="card-title">Licensing</div>
+									<div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
+										<div class="px-2 pb-2 pb-md-0 text-center">
+											<div id="circles-1"></div>
+											<h6 class="fw-bold mt-3 mb-0">Current License Use</h6>
+										</div>
+										<div class="px-2 pb-2 pb-md-0 text-center">
+											<div id="circles-2"></div>
+											<h6 class="fw-bold mt-3 mb-0">Highest License Use</h6>
+										</div>
+										<div class="px-2 pb-2 pb-md-0 text-center">
+											<div id="circles-3"></div>
+											<h6 class="fw-bold mt-3 mb-0">License Limit</h6>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- System Time -->
+						<div class="col-md-6">
+							<div class="card full-height">
+								<div class="card-body">
+									<div class="card-title">System Time</div>
+									<div class="card-body pb-0">
+										<div class="d-flex">
+											<div class="d-flex align-items-center">
+												<i class="fa fa-desktop fa-2x text-primary"></i>
+											</div>
+											<div class="flex-1 pt-1 ml-2">
+												<h4 class="fw-bold mb-1">System Up Time</h4>
+												<small class="text-muted">Elapsed time since this system was started</small>
+											</div>
+											<div class="d-flex ml-auto align-items-center">
+												<h3 id="upTime" class="text-info fw-bold"></h3>
+											</div>
+										</div>
+										<div class="separator-dashed"></div>
+										<div class="d-flex">
+											<div class="d-flex align-items-center">
+												<i class="fa fa-database fa-2x text-primary"></i>
+											</div>
+											<div class="flex-1 pt-1 ml-2">
+												<h4 class="fw-bold mb-1">Last Backup</h4>
+												<small class="text-muted">Date and time of the last full system backup</small>
+											</div>
+											<div class="d-flex ml-auto align-items-center">
+												<h3 id="lastBackup" class="text-info fw-bold"></h3>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Application Errors | Cache Processes | CSP Sessions -->
+					<div class="row">
+
+						<!-- Application Errors -->
+						<div class="col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">Application Errors</div>
+								</div>
+								<div class="card-body">
+									<div id="divAppErrors" class="chart-container"></div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Cache Processes -->
+						<div class="col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">Cache Processes</div>
+								</div>
+								<div class="card-body">
+									<div id="divCacheProcesses" class="chart-container"></div>
+								</div>
+							</div>
+						</div>
+
+						<!-- CSP Sessions -->
+						<div class="col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">CSP Sessions</div>
+								</div>
+								<div class="card-body">
+									<div id="divCSPSessions" class="chart-container"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sensors Lock Table | Journal Space | Journal Status | ECP AppServer | ECP DataServer | Write Daemon -->
+					<div class="row">
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconLockTable"></div>
+									<div id="idLockTable" class="h1 m-0"></div>
+									<div class="text-muted mb-3">Lock Table</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconJournalSpace"></div>
+									<div id="idJournalSpace" class="h1 m-0"></div>
+									<div class="text-muted mb-3">Journal Space</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconJournalStatus"></div>
+									<div id="idJournalStatus" class="h1 m-0"></div>
+									<div class="text-muted mb-3">Journal Status</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconECPAppServer"></div>
+									<div id="idECPAppServer" class="h1 m-0"></div>
+									<div class="text-muted mb-3">ECP AppServer</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconECPDataServer"></div>
+									<div id="idECPDataServer" class="h1 m-0"></div>
+									<div class="text-muted mb-3">ECP DataServer</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-4 col-lg-2">
+							<div class="card">
+								<div class="card-body p-3 text-center">
+									<div id="idIconWriteDaemon"></div>
+									<div id="idWriteDaemon" class="h1 m-0"></div>
+									<div class="text-muted mb-3">Write Daemon </div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Line Cache Efficiency + Serious Alerts -->
+					<div class="row">
+						<!-- Cache Efficiency -->
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">Cache Efficiency</div>
+								</div>
+								<div class="card-body">
+									<div id="divCacheEfficiency" class="chart-container"></div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Serious Alerts -->
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">Serious Alerts</div>
+								</div>
+								<div class="card-body">
+									<div id="divSeriourAlerts" class="chart-container"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Begin Footer -->
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul class="nav">
+							<li class="nav-item">
+								<a class="nav-link" id="urlPortal" href="#">
+									Management Portal
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright ml-auto">2019 <i class="far fa-copyright"></i> by 
+						<a href="https://github.com/diashenrique/iris-history-monitor" target="_blank">
+							Henrique Dias
+						</a>
+					</div>
+				</div>
+			</footer>
+			<!-- End Footer -->
+		</div>
+		<!-- End Conteudo Dashboard -->
+	</div>
+	<!-- End Wrapper -->
+
+	<!--   Core JS Files   -->
+	<script src="resources/plugins/atlantis-lite/assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/core/popper.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/core/bootstrap.min.js"></script>
+
+	<!-- jQuery UI -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+	<!-- jQuery Scrollbar -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+	<!-- Chart Circle -->
+	<script src="resources/plugins/atlantis-lite/assets/js/plugin/chart-circle/circles.min.js"></script>
+
+	<!-- Atlantis JS -->
+	<script src="resources/plugins/atlantis-lite/assets/js/atlantis.min.js"></script>
+
+	<!-- Highcharts -->
+	<script src="resources/plugins/charts/highcharts/code/highcharts.js"></script>
+
+	<script type="text/javascript">
+		var urlPreparacao = '#(URLPreparacao)#'
+		var chartAppErrors, chartCacheProcesses, chartCSPSessions, divCacheEfficiency, divSeriourAlerts;
+
+		// Gauges Licensing
+		function createGauges(licObject) {
+			// Current License Use
+			Circles.create({
+				id: 'circles-1',
+				radius: 45,
+				value: licObject.licCurrent,
+				maxValue: licObject.licLimit,
+				width: 7,
+				text: licObject.licCurrentPct + "%",
+				colors: ['#f1f1f1', '#2BB930'],
+				duration: 0,
+				wrpClass: 'circles-wrp',
+				textClass: 'circles-text',
+				styleWrapper: true,
+				styleText: true
+			});
+
+			// Highest License Use
+			Circles.create({
+				id: 'circles-2',
+				radius: 45,
+				value: licObject.licHighest,
+				maxValue: licObject.licLimit,
+				width: 7,
+				text: licObject.licHighestPct + "%",
+				colors: ['#f1f1f1', '#FF9E27'],
+				duration: 0,
+				wrpClass: 'circles-wrp',
+				textClass: 'circles-text',
+				styleWrapper: true,
+				styleText: true
+			});
+
+			// License Limit 
+			Circles.create({
+				id: 'circles-3',
+				radius: 45,
+				value: licObject.licLimit,
+				maxValue: 100,
+				width: 7,
+				text: licObject.licLimit,
+				colors: ['#146FE3', '#146FE3'],
+				duration: 0,
+				wrpClass: 'circles-wrp',
+				textClass: 'circles-text',
+				styleWrapper: true,
+				styleText: true
+			});
+		}
+
+		// ************* Charts ************* // 
+
+		// Application Errors
+		chartAppErrors = Highcharts.chart("divAppErrors", {
+			chart: {
+				type: "spline"
+			},
+			title: false,
+			xAxis: {
+				type: "datetime",
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: false
+			},
+			time: {
+				useUTC: false
+			},
+			legend: {
+				enabled: false
+			},
+			credits: {
+				enabled: false
+			},
+			series: [{
+				name: "Application Errors",
+				data: []
+			}],
+			exporting: false
+		});
+
+		// Chart Cache Processes
+		chartCacheProcesses = Highcharts.chart("divCacheProcesses", {
+			chart: {
+				type: "spline"
+			},
+			title: false,
+			xAxis: {
+				type: "datetime",
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: false
+			},
+			time: {
+				useUTC: false
+			},
+			legend: {
+				enabled: false
+			},
+			credits: {
+				enabled: false
+			},
+			series: [{
+				name: "Cache Processes",
+				data: []
+			}],
+			exporting: false
+		});
+
+		// Chart CSP Sessions
+		chartCSPSessions = Highcharts.chart("divCSPSessions", {
+			chart: {
+				type: "spline"
+			},
+			title: false,
+			xAxis: {
+				type: "datetime",
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: false
+			},
+			time: {
+				useUTC: false
+			},
+			legend: {
+				enabled: false
+			},
+			credits: {
+				enabled: false
+			},
+			series: [{
+				name: "CSP Sessions",
+				data: []
+			}],
+			exporting: false
+		});
+
+		// Chart Cache Efficiency
+		chartCacheEfficiency = Highcharts.chart("divCacheEfficiency", {
+			chart: {
+				type: "spline"
+			},
+			title: false,
+			xAxis: {
+				type: "datetime",
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: false
+			},
+			time: {
+				useUTC: false
+			},
+			legend: {
+				enabled: false
+			},
+			credits: {
+				enabled: false
+			},
+			series: [{
+				name: "Cache Efficiency",
+				data: []
+			}],
+			exporting: false
+		});
+
+		// Chart Serious Alerts
+		chartSeriourAlerts = Highcharts.chart("divSeriourAlerts", {
+			chart: {
+				type: "spline"
+			},
+			title: false,
+			xAxis: {
+				type: "datetime",
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: false
+			},
+			time: {
+				useUTC: false
+			},
+			legend: {
+				enabled: false
+			},
+			credits: {
+				enabled: false
+			},
+			series: [{
+				name: "Serious Alerts",
+				data: []
+			}],
+			exporting: false
+		});
+
+
+		function getSamples() {
+			$.getJSON(urlPreparacao, {
+				method: "getMetrics"
+			}, function (retornoMetricas) {
+				var datetimeNow = (new Date()).getTime();
+
+				// Licensing
+				// -----------------------------------------------------
+				var licObject = {}
+				licObject.licCurrent = retornoMetricas.LicenseCurrent;
+				licObject.licCurrentPct = retornoMetricas.LicenseCurrentPct;
+				licObject.licHighest = retornoMetricas.LicenseHigh;
+				licObject.licHighestPct = retornoMetricas.LicenseHighPct;
+				licObject.licLimit = retornoMetricas.LicenseLimit;
+				createGauges(licObject);
+
+				// System Time 
+				// -----------------------------------------------------
+				$("#upTime").html(retornoMetricas.SystemUpTime);
+
+				if (retornoMetricas.LastBackup) {
+					$("#lastBackup").html(retornoMetricas.LastBackup);
+				} else {
+					$("#lastBackup").html("Never")
+				}
+
+
+				// Charts 
+				// -----------------------------------------------------
+
+				// Application Errors
+				if (chartAppErrors) {
+					var shiftAppErrors;
+					if (chartAppErrors.series[0].data.length > 20) {
+						shiftAppErrors = true;
+					} else {
+						shiftAppErrors = false;
+					}
+					chartAppErrors.series[0].addPoint([datetimeNow, parseInt(retornoMetricas.ApplicationErrors)], true, shiftAppErrors);
+				}
+
+				// Cache Processes
+				if (chartCacheProcesses) {
+					var shiftCacheProcesses;
+					if (chartCacheProcesses.series[0].data.length > 20) {
+						shiftCacheProcesses = true;
+					} else {
+						shiftCacheProcesses = false;
+					}
+					chartCacheProcesses.series[0].addPoint([datetimeNow, parseInt(retornoMetricas.Processes)], true, shiftCacheProcesses);
+				}
+
+				// CSP Sessions
+				if (chartCSPSessions) {
+					var shiftCSPSessions;
+					if (chartCSPSessions.series[0].data.length > 20) {
+						shiftCSPSessions = true;
+					} else {
+						shiftCSPSessions = false;
+					}
+					chartCSPSessions.series[0].addPoint([datetimeNow, parseInt(retornoMetricas.CSPSessions)], true, shiftCSPSessions);
+				}
+
+				// Cache Efficiency
+				if (chartCacheEfficiency) {
+					var shiftCacheEfficiency;
+					if (chartCacheEfficiency.series[0].data.length > 20) {
+						shiftCacheEfficiency = true;
+					} else {
+						shiftCacheEfficiency = false;
+					}
+					chartCacheEfficiency.series[0].addPoint([datetimeNow, parseInt(retornoMetricas.CacheEfficiency)], true, shiftCacheEfficiency);
+				}
+
+				// Seriour Alerts
+				if (chartSeriourAlerts) {
+					var shiftSeriourAlerts;
+					if (chartSeriourAlerts.series[0].data.length > 20) {
+						shiftSeriourAlerts = true;
+					} else {
+						shiftSeriourAlerts = false;
+					}
+					chartSeriourAlerts.series[0].addPoint([datetimeNow, parseInt(retornoMetricas.SeriousAlerts)], true, shiftSeriourAlerts);
+				}
+
+				// Single Stats
+				// -----------------------------------------------------
+
+				// LockTable
+				$("#idLockTable").html(retornoMetricas.LockTable);
+				if (retornoMetricas.LockTable == "Normal") {
+					$("#idIconLockTable").removeClass().addClass("text-right text-success");
+					$("#idIconLockTable").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconLockTable").removeClass().addClass("text-right text-danger");
+					$("#idIconLockTable").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+
+				// Journal Space 
+				$("#idJournalSpace").html(retornoMetricas.JournalSpace);
+				if (retornoMetricas.JournalSpace == "Normal") {
+					$("#idIconJournalSpace").removeClass().addClass("text-right text-success");
+					$("#idIconJournalSpace").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconJournalSpace").removeClass().addClass("text-right text-danger");
+					$("#idIconJournalSpace").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+
+				// Journal Status
+				$("#idJournalStatus").html(retornoMetricas.JournalStatus);
+				if (retornoMetricas.JournalStatus == "Normal") {
+					$("#idIconJournalStatus").removeClass().addClass("text-right text-success");
+					$("#idIconJournalStatus").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconJournalStatus").removeClass().addClass("text-right text-danger");
+					$("#idIconJournalStatus").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+
+				// ECP AppServer
+				$("#idECPAppServer").html(retornoMetricas.ECPAppServer);
+				if (retornoMetricas.ECPAppServer == "OK") {
+					$("#idIconECPAppServer").removeClass().addClass("text-right text-success");
+					$("#idIconECPAppServer").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconECPAppServer").removeClass().addClass("text-right text-danger");
+					$("#idIconECPAppServer").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+
+				// ECP DataServer 
+				$("#idECPDataServer").html(retornoMetricas.ECPDataServer);
+				if (retornoMetricas.ECPDataServer == "OK") {
+					$("#idIconECPDataServer").removeClass().addClass("text-right text-success");
+					$("#idIconECPDataServer").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconECPDataServer").removeClass().addClass("text-right text-danger");
+					$("#idIconECPDataServer").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+
+				// Write Daemon 
+				$("#idWriteDaemon").html(retornoMetricas.WriteDaemon);
+				if (retornoMetricas.WriteDaemon == "Normal") {
+					$("#idIconWriteDaemon").removeClass().addClass("text-right text-success");
+					$("#idIconWriteDaemon").empty().append("<i class='fas fa-check-circle fa-2x'></i>");
+				} else {
+					$("#idIconWriteDaemon").removeClass().addClass("text-right text-danger");
+					$("#idIconWriteDaemon").empty().append("<i class='fas fa-exclamation-triangle fa-2x'></i>");
+				}
+			});
+		}
+
+
+		$(document).ready(function () {
+			var urlOrigin = window.location.origin;
+			var newUrl = urlOrigin + "/csp/sys/UtilHome.csp"
+			$("#urlPortal").attr("href", newUrl);
+
+			getSamples();
+			setInterval(function () {
+				getSamples();
+			}, 5000);
+		});
+	</script>
+</body>
+
+</html>
