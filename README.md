@@ -34,7 +34,7 @@ The username _SYSTEM can run the dashboard and the other features.
 
 ## System Dashboard
 
-![System Dashboard](./images/SystemDashboard.png)
+![System Dashboard](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master//images/SystemDashboard.png)
 
 System Dashboard shows the following items:
 
@@ -53,23 +53,23 @@ System Dashboard shows the following items:
 * Serious Alerts
 
 The line charts widgets plot a point every 5 seconds
-![Widget_SystemDashboard](./images/widget_dashboard.gif)
+![Widget_SystemDashboard](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/widget_dashboard.gif)
 
 ## System Menu
 
-![Menu](./images/menu.gif)
+![Menu](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/menu.gif)
 
 ## System Processes
 
-![System Processes](./images/SystemProcesses.png)
+![System Processes](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/SystemProcesses.png)
 
 ## Processes Filters
 
-![System Processes filters](./images/SystemProcesses_filter.gif)
+![System Processes filters](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/SystemProcesses_filter.gif)
 
 Use different filters to achieve the result that you need. You can also use Multiple Sorts, pressing `Shift` + `clicking on the column header.` and even export the data grid to _**Excel**_!
 
-![System Processes Excel](./images/SystemProcesses_output.png)
+![System Processes Excel](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/SystemProcesses_output.png)
 
 ## History Monitor
 
@@ -85,7 +85,7 @@ The history pages share the features below:
 
 ### Date Range Picker
 
-![Date Range Picker](./images/daterangepicker.png)
+![Date Range Picker](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/daterangepicker.png)
 
 The default value is "Last 7 Days."
 
@@ -93,13 +93,13 @@ The default value is "Last 7 Days."
 
 On the top right of every each section, there are two buttons (Chart/Data Table)
 
-![Chart_DataTable](./images/chart.png)
+![Chart_DataTable](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/chart.png)
 
 The Data Table shows the information that creates the chart, and you can also download in excel format.
 
-![Data Table](./images/chart_datagrid.png)
+![Data Table](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/chart_datagrid.png)
 
-![Data Table Excel](./images/chart_datagrid_output.png)
+![Data Table Excel](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/chart_datagrid_output.png)
 
 The excel shows the same format, content, and group defined in the CSP.
 
@@ -107,7 +107,7 @@ The excel shows the same format, content, and group defined in the CSP.
 
 All charts have the Zoom option to visualize the information with more details.
 
-![Chart_Zooming](./images/demo_CSP_Sessions.gif)
+![Chart_Zooming](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/demo_CSP_Sessions.gif)
 
 ### Average and Maximum
 
@@ -115,8 +115,8 @@ For the Sections Hourly and Daily, the charts show Average and Maximum values.
 
 #### AVG
 
-![Avg](./images/History_Hourly.png)
+![Avg](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/History_Hourly.png)
 
 #### Max
 
-![Max](./images/History_Daily.png)
+![Max](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/History_Daily.png)
