@@ -30,7 +30,7 @@ Open the browser and go
 
 Ex.: <http://localhost:52773/csp/irismonitor/dashboard.csp>
 
-The username _SYSTEM can run the dashboard and the other features.
+The username \_SYSTEM can run the dashboard and the other features.
 
 ## System Dashboard
 
@@ -38,19 +38,19 @@ The username _SYSTEM can run the dashboard and the other features.
 
 System Dashboard shows the following items:
 
-* Licensing
-* System Time
-* Application Errors
-* Cache Processes
-* CSP Sessions
-* Lock Table
-* Journal Space
-* Journal Status
-* ECP AppServer
-* ECP DataServer
-* Write Daemon
-* Cache Efficiency
-* Serious Alerts
+- Licensing
+- System Time
+- Application Errors
+- Cache Processes
+- CSP Sessions
+- Lock Table
+- Journal Space
+- Journal Status
+- ECP AppServer
+- ECP DataServer
+- Write Daemon
+- Cache Efficiency
+- Serious Alerts
 
 The line charts widgets plot a point every 5 seconds
 ![Widget_SystemDashboard](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/widget_dashboard.gif)
@@ -71,13 +71,37 @@ Use different filters to achieve the result that you need. You can also use Mult
 
 ![System Processes Excel](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/SystemProcesses_output.png)
 
+## Message Viewer
+
+![System Processes](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/MessageViewer.png)
+
+The Message Viewer brings the same features and flexibility of the System Processes page, the enhanced Message viewer allowing you to create different filters, group the columns in N-Levels.
+
+### Filter Builder
+
+![Filter Builder](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/filterBuilder.png)
+
+### Column Chooser
+
+![Column Chooser](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/column_chooser.gif)
+
+This page has all columns from **Ens.MessageHeader**, showing only the default columns in the initial view. But you can choose the other columns using the button "Column Chooser."
+
+### Resend Messages
+
+Select the message(s) you need and click to Resend. This feature uses the ClassMethod below:
+
+```
+##class(Ens.MessageHeader).ResendDuplicatedMessage(id)
+```
+
 ## History Monitor
 
 The History Monitor for CSP Sessions and Licensing shows the information between three sections:
 
-* Every 5 Minutes
-* Daily
-* Hourly
+- Every 5 Minutes
+- Daily
+- Hourly
 
 Database Growth _only_ shows Daily information.
 
