@@ -147,7 +147,7 @@
 						<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
 							<!-- Nome Dashboard + Servidor | Instancia -->
 							<div>
-								<h2 class="text-white pb-2 fw-bold">Ensemble > Message Viewer</h2>
+								<h2 class="text-white pb-2 fw-bold">Interoperability > Message Viewer</h2>
 								<h5 class="text-white pb-2 mb-2">#($piece($SYSTEM,":",1))# | #($piece($SYSTEM,":",2))#</h5>
 							</div>
 						</div>
