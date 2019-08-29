@@ -92,6 +92,11 @@
 											<span class="sub-item">System Processes</span>
 										</a>
 									</li>
+									<li>
+										<a href="ensmessageviewer.csp">
+											<span class="sub-item">Message Viewer</span>
+										</a>
+									</li>
 								</ul>
 							</div>
 						</li>
