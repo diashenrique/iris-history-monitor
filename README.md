@@ -1,6 +1,6 @@
 # IRIS History Monitor
 
-This personal project has the intention to show in a visual way the information generate by the System Monitor _**^%SYSMONMGR**_ and a different approach for the System Dashboard and System Processes.
+This personal project has the intention to show in a visual way the information generate by the System Monitor _**^%SYSMONMGR**_ and a different approach for the System Dashboard, System Processes and Message Viewer.
 
 ## How to Run
 
