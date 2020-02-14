@@ -1,10 +1,22 @@
-version: "2.4"
+version: "3.6"
 services:
   iris:
     build: .
+    container_name: iris-history-monitor
     restart: always
     ports:
-      - 52773:52773
+      - 51773
+      - ${IRIS_PORT}:52773
+      - 53773
     volumes:
+      # Sets up a named volume durable_data that will keep the durable %SYS data
+      - durable:/durable
+      - ./src/csp:/opt/irisapp/csp
       - ~/iris.key:/usr/irissys/mgr/iris.key
       - ./:/iris/app
+    environment:
+      # Set the variable ISC_DATA_DIRECTORY to the durable_data volume that we defined above to use durable %SYS
+      - ISC_DATA_DIRECTORY=/durable/irissys
+    #Declares the named volume for the IRIS durable %SYS
+volumes:
+  durable:

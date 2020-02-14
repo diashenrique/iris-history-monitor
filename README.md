@@ -1,6 +1,6 @@
 # IRIS History Monitor
 
-This personal project has the intention to show in a visual way the information generate by the System Monitor _**^%SYSMONMGR**_ and a different approach for the System Dashboard, System Processes and Message Viewer.
+This personal project has the intention to show in a visual way the information generate by the System Monitor _**^%SYSMONMGR**_ and a different approach for the System Dashboard and System Processes.
 
 ## How to Run
 
@@ -70,30 +70,6 @@ The line charts widgets plot a point every 5 seconds
 Use different filters to achieve the result that you need. You can also use Multiple Sorts, pressing `Shift` + `clicking on the column header.` and even export the data grid to _**Excel**_!
 
 ![System Processes Excel](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/SystemProcesses_output.png)
-
-## Message Viewer
-
-![System Processes](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/MessageViewer.png)
-
-The Message Viewer brings the same features and flexibility of the System Processes page, the enhanced Message viewer allowing you to create different filters, group the columns in N-Levels.
-
-### Filter Builder
-
-![Filter Builder](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/filterBuilder.png)
-
-### Column Chooser
-
-![Column Chooser](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/column_chooser.gif)
-
-This page has all columns from **Ens.MessageHeader**, showing only the default columns in the initial view. But you can choose the other columns using the button "Column Chooser."
-
-### Resend Messages
-
-Select the message(s) you need and click to Resend. This feature uses the ClassMethod below:
-
-```
-##class(Ens.MessageHeader).ResendDuplicatedMessage(id)
-```
 
 ## History Monitor
 
