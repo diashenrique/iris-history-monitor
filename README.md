@@ -120,3 +120,11 @@ For the Sections Hourly and Daily, the charts show Average and Maximum values.
 #### Max
 
 ![Max](https://raw.githubusercontent.com/diashenrique/iris-history-monitor/master/images/History_Daily.png)
+
+## Other information
+
+The project was created as a Technology Example using the possibilities provided by InterSystems IRIS.
+
+The library used for this demo, DevExtreme, it's free to use and to develop non-commercial applications.
+
+For specific feature availability and license restrictions, please, visit the website to the product feature [comparison](https://js.devexpress.com/Buy/), and the [DevExtreme Non-Commercial, Non-Competitive License Agreement](https://js.devexpress.com/EULAs/DevExtremeNonCommercial/), respectively.
