@@ -32,6 +32,9 @@ XData MyInstall [ XMLNamespace = INSTALLER ]
   </Invoke>
 
   <Invoke Class="App.Installer" Method="CustomApplicationMetrics" />
+
+  <Invoke Class="App.Installer" Method="CreateFavorite" />
+
 </Manifest>
 }
 
@@ -57,6 +60,16 @@ ClassMethod CustomApplicationMetrics() As %Status
   Set $Namespace = "%SYS"
 
   Set status = ##class(SYS.Monitor.SAM.Config).AddApplicationClass("diashenrique.historymonitor.util.customSensors","IRISMONITOR")
+  
+  Quit status
+}
+
+ClassMethod CreateFavorite() As %Status
+{
+  New $Namespace
+  Set $Namespace = "IRISMONITOR"
+
+  Set status = ##class(diashenrique.historymonitor.util.Favorite).%AddFavorite("HistoryMonitor","/csp/irismonitor/dashboard.csp")
   
   Quit status
 }

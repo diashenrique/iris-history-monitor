@@ -3,13 +3,17 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.1.0</Version>
+      <Version>1.1.10</Version>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="diashenrique.historymonitor.dashboard.PKG"/>
       <Resource Name="diashenrique.historymonitor.util.PKG"/>
       <Invokes>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
+        <Invoke Class="diashenrique.historymonitor.util.Favorite" Method="%AddFavorite">
+          <Arg>HistoryMonitor</Arg>
+          <Arg>/csp/irismonitor/dashboard.csp</Arg>
+        </Invoke>
       </Invokes>
       <CSPApplication
         Url="/csp/irismonitor"
@@ -19,7 +23,7 @@
         Recurse="1"
         CookiePath="/csp/irismonitor"
         UseCookies="2"
-        MatchRoles=":{$dbrole}"
+        MatchRoles=":%DB_${Namespace}"
         PasswordAuthEnabled="32"
         UnauthenticatedEnabled="0"
        />
