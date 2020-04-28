@@ -5,6 +5,7 @@ ClassMethod %AddFavorite(pPageName As %String, pURLData As %List) As %Status [ I
 {
     New $Namespace
     Set $Namespace = "%SYS"
+    Set tSC = $$$OK
 
     Try {
 
@@ -43,6 +44,8 @@ ClassMethod %AddFavorite(pPageName As %String, pURLData As %List) As %Status [ I
     Catch (oException) {
         Set tSC = oException.AsStatus()
     }
+
+    Quit tSC
 }
 
 Storage Default
