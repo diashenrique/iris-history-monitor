@@ -44,10 +44,11 @@ ClassMethod getDashboardWS(Output dashboard)
 
 ClassMethod CustomApplicationMetrics() As %Status
 {
+    Set oldNamespace = $Namespace
     New $Namespace
     Set $Namespace = "%SYS"
 
-    Set status = ##class(SYS.Monitor.SAM.Config).AddApplicationClass("diashenrique.historymonitor.util.customSensors","IRISMONITOR")
+    Set status = ##class(SYS.Monitor.SAM.Config).AddApplicationClass("diashenrique.historymonitor.util.customSensors",oldNamespace)
 
     Quit status
 }

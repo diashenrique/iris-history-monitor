@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.1.10</Version>
+      <Version>1.1.11</Version>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="diashenrique.historymonitor.dashboard.PKG"/>
