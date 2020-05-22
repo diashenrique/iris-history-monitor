@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.1.11</Version>
+      <Version>1.2.2</Version>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="diashenrique.historymonitor.dashboard.PKG"/>
@@ -24,7 +24,7 @@
         CookiePath="/csp/irismonitor"
         UseCookies="2"
         MatchRoles=":%DB_${Namespace}"
-        PasswordAuthEnabled="32"
+        PasswordAuthEnabled="1"
         UnauthenticatedEnabled="0"
        />
     </Module>
