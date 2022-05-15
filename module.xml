@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.2.3</Version>
+      <Version>1.2.4</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
