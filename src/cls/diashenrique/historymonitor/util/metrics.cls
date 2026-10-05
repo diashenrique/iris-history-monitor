@@ -10,15 +10,20 @@ ClassMethod OnPage() As %Status
 
     Set Method = $Get(%request.Data("method",1))
 
-    Xecute "do .."_Method_"()"
-
-    Quit $$$OK
+	Quit ##class(diashenrique.historymonitor.util.Dispatcher).Run($ClassName(), Method, "readMetrics")
 }
 
 ClassMethod readMetrics() As %Status
 {
     Set urlhostname = $Get(%request.Data("urlhostname",1))
     Set urlport = $Get(%request.Data("urlport",1))
+
+    // SSRF guard: only call hosts this instance is expected to serve
+    If '..IsAllowedTarget(urlhostname, urlport) {
+        Set %response.Status = "400 Bad Request"
+        Write "{""error"":""invalid host or port""}"
+        Quit $$$OK
+    }
 
     Set httprequest = ##class(%Net.HttpRequest).%New()
     Set httprequest.Server = urlhostname
@@ -100,6 +105,26 @@ ClassMethod readMetrics() As %Status
     Write $Replace($Replace(jsonMetrics.%ToJSON(),"""'",""),"'""","")
 
     Quit $$$OK
+}
+
+/// Accepts only a well-formed numeric port and a host that is loopback, the host this
+/// request was served from, or one explicitly listed in ^IRISMonitor("AllowedHosts", host).
+ClassMethod IsAllowedTarget(host As %String, port As %String) As %Boolean
+{
+    If (port '? 1.5N) || (port < 1) || (port > 65535) {
+        Quit 0
+    }
+    If (host '? 1.ANP) || (host [ "/") || (host [ "@") || (host [ "?") || (host [ "#") {
+        Quit 0
+    }
+    Set host = $ZConvert(host, "L")
+    If (host = "localhost") || (host = "127.0.0.1") || (host = "[::1]") {
+        Quit 1
+    }
+    If $IsObject($Get(%request)), (host = $ZConvert(%request.GetCgiEnv("SERVER_NAME"), "L")) {
+        Quit 1
+    }
+    Quit ($Data(^IRISMonitor("AllowedHosts", host)) > 0)
 }
 
 }

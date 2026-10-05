@@ -10,9 +10,7 @@ ClassMethod OnPage() As %Status
 
 	Set Method = $Get(%request.Data("method",1))
 
-	Xecute "do .."_Method_"()"
-
-	Quit $$$OK
+	Quit ##class(diashenrique.historymonitor.util.Dispatcher).Run($ClassName(), Method, "getDatabaseDailySize,getDatabaseDailySizeDataGrid")
 }
 
 /// do ##class(diashenrique.historymonitor.dashboard.database).getDatabaseDailySize()
@@ -47,13 +45,13 @@ ClassMethod getDatabaseDailySize() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-		Set sql = "SELECT Daily, element_key as Metrica, DB_FileSize as FileSize FROM SYS_History.Daily_DB WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+		Set sql = "SELECT Daily, element_key as Metrica, DB_FileSize as FileSize FROM SYS_History.Daily_DB WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -172,13 +170,13 @@ ClassMethod getDatabaseDailySizeDataGrid() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Daily, element_key as Metrica, DB_FileSize as FileSize FROM SYS_History.Daily_DB WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Daily, element_key as Metrica, DB_FileSize as FileSize FROM SYS_History.Daily_DB WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 

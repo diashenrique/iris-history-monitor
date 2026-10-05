@@ -1,0 +1,39 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start IRIS Community
+        run: |
+          docker run -d --name iris -v "$PWD":/home/irisowner/repo \
+            -e IRIS_USERNAME=_SYSTEM -e IRIS_PASSWORD=SYS \
+            intersystemsdc/iris-community:latest
+          for i in $(seq 1 60); do
+            docker exec iris iris session IRIS -U %SYS "write 1" >/dev/null 2>&1 && break
+            sleep 2
+          done
+
+      - name: Load source and run %UnitTest
+        run: |
+          docker exec -i iris iris session IRIS -U USER <<'EOS'
+          set sc = $SYSTEM.OBJ.LoadDir("/home/irisowner/repo/src/cls","ck",,1)
+          if $SYSTEM.Status.IsError(sc) { do $SYSTEM.Status.DisplayError(sc) halt }
+          set ^UnitTestRoot = "/home/irisowner/repo/src/cls"
+          do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete/noload")
+          halt
+          EOS
+
+      - name: Fail if any test failed
+        run: |
+          docker exec -i iris iris session IRIS -U USER <<'EOS' | tee out.txt
+          &sql(SELECT COUNT(*) INTO :n FROM %UnitTest_Result.TestMethod WHERE Status = 0 AND TestCase->TestSuite->TestInstance = (SELECT MAX(ID) FROM %UnitTest_Result.TestInstance))
+          write "FAILED_COUNT=",n,!
+          halt
+          EOS
+          grep -q "FAILED_COUNT=0" out.txt
