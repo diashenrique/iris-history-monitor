@@ -10,9 +10,7 @@ ClassMethod OnPage() As %Status
 
 	Set Method = $Get(%request.Data("method",1))
 
-	Xecute "do .."_Method_"()"
-
-	Quit $$$OK
+	Quit ##class(diashenrique.historymonitor.util.Dispatcher).Run($ClassName(), Method, "getLicenseLiveHistory,getLicenseEveryFiveMinutesDataTable,getLicenseHourlyHistory,getLicenseHourlyDataTable,getLicenseDailyHistory,getLicenseDailyDataTable")
 }
 
 /// do ##class(diashenrique.historymonitor.dashboard.license).getLicenseLiveHistory()
@@ -45,7 +43,7 @@ ClassMethod getLicenseLiveHistory() As %Status
 
     Try {
 
-	    Set sql = "SELECT top 1000 DateTime, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.SysData WHERE ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+	    Set sql = "SELECT top 1000 DateTime, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.SysData WHERE ZDATE BETWEEN ? AND ?"
 
 	    Set oRS = ##class(%SQL.Statement).%New()
 
@@ -53,7 +51,7 @@ ClassMethod getLicenseLiveHistory() As %Status
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 	        While result.%Next() {
@@ -107,7 +105,7 @@ ClassMethod getLicenseEveryFiveMinutesDataTable() As %Status
 
     Try {
 
-	    Set sql = "SELECT top 1000 DateTime, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.SysData WHERE ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+	    Set sql = "SELECT top 1000 DateTime, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.SysData WHERE ZDATE BETWEEN ? AND ?"
 
 	    Set oRS = ##class(%SQL.Statement).%New()
 
@@ -115,7 +113,7 @@ ClassMethod getLicenseEveryFiveMinutesDataTable() As %Status
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 	        While result.%Next() {
@@ -174,13 +172,13 @@ ClassMethod getLicenseHourlyHistory() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Hourly, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Hourly, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -314,13 +312,13 @@ ClassMethod getLicenseHourlyDataTable() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Hourly, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Hourly, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -419,13 +417,13 @@ ClassMethod getLicenseDailyHistory() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Daily, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Daily, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -559,13 +557,13 @@ ClassMethod getLicenseDailyDataTable() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Daily, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Daily, element_key as Metrica, Sys_LicUsedLocal as LicUsedLocal FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 

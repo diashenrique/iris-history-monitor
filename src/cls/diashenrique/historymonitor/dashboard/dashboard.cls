@@ -10,9 +10,7 @@ ClassMethod OnPage() As %Status
 
 	Set Method = $Get(%request.Data("method",1))
 
-	Xecute "do .."_Method_"()"
-
-	Quit $$$OK
+	Quit ##class(diashenrique.historymonitor.util.Dispatcher).Run($ClassName(), Method, "getMetrics")
 }
 
 ClassMethod getMetrics() As %Status

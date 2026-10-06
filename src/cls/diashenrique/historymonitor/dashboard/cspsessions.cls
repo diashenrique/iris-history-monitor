@@ -10,9 +10,7 @@ ClassMethod OnPage() As %Status
 
 	Set Method = $Get(%request.Data("method",1))
 
-	Xecute "do .."_Method_"()"
-
-	Quit $$$OK
+	Quit ##class(diashenrique.historymonitor.util.Dispatcher).Run($ClassName(), Method, "getCSPLiveHistory,getCSPSessionEveryFiveMinDataGrid,getCSPHourlyHistory,getCSPHourlyDataGrid,getCSPDailyHistory,getCSPDailyDataGrid")
 }
 
 /// do ##class(diashenrique.historymonitor.dashboard.cspsessions).getCSPLiveHistory()
@@ -46,13 +44,13 @@ ClassMethod getCSPLiveHistory() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT top 1000 DateTime, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.SysData WHERE ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT top 1000 DateTime, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.SysData WHERE ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -108,13 +106,13 @@ ClassMethod getCSPSessionEveryFiveMinDataGrid() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT top 1000 DateTime, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.SysData WHERE ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT top 1000 DateTime, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.SysData WHERE ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -174,13 +172,13 @@ ClassMethod getCSPHourlyHistory() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Hourly, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Hourly, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -313,13 +311,13 @@ ClassMethod getCSPHourlyDataGrid() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Hourly, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Hourly, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Hourly_Sys WHERE Hourly->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -416,13 +414,13 @@ ClassMethod getCSPDailyHistory() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Daily, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Daily, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
@@ -555,13 +553,13 @@ ClassMethod getCSPDailyDataGrid() As %Status
     Try {
 	    Set oRS = ##class(%SQL.Statement).%New()
 
-        Set sql = "SELECT Daily, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN "_dtFrom_" AND "_dtTo
+        Set sql = "SELECT Daily, element_key as Metrica, NVL(Sys_CSPSession,0) as CSPSession FROM SYS_History.Daily_Sys WHERE Daily->ZDATE BETWEEN ? AND ?"
 
         Set tSC = oRS.%Prepare(sql)
 
         Quit:$System.Status.IsError(tSC)
 
-        Set result = oRS.%Execute()
+        Set result = oRS.%Execute(dtFrom, dtTo)
 
         If (result.%SQLCODE '< 0) {
 
