@@ -9,6 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Contract JSON matches the YAML
+        run: |
+          python3 -c "import yaml" 2>/dev/null || pip install --user --break-system-packages pyyaml
+          python3 scripts/openapi_to_json.py
+          git diff --exit-code -- specs/001-api-v1/contracts/openapi.json
+
       - name: Start IRIS Community
         run: |
           set +e
