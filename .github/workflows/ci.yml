@@ -12,10 +12,12 @@ jobs:
       - name: Start IRIS Community
         run: |
           set +e
-          # Official image. intersystemsdc `latest` (2026.1) fails in its own after-start script and shuts IRIS
-          # down; intersystemsdc 2020.2 (the Dockerfile's version) does not start on current runner kernels.
-          docker run -d --init --name iris -v "$PWD":/home/irisowner/repo \
-            containers.intersystems.com/intersystems/iris-community:2025.1
+          # intersystemsdc `latest` (2026.1) starts fine, but its docker-entrypoint.sh runs an after-start
+          # script that fails (dbapi.connect) and shuts IRIS down. Calling iris-main directly skips that script.
+          # (The 2020.2 tag from the Dockerfile does not start on current runner kernels; the official
+          # containers.intersystems.com tag tried earlier could not be pulled.)
+          docker run -d --name iris --entrypoint /tini -v "$PWD":/home/irisowner/repo \
+            intersystemsdc/iris-community:latest -- /iris-main
           # ready = the container is running and `iris session` no longer reports "inhibited"
           for i in $(seq 1 90); do
             if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
