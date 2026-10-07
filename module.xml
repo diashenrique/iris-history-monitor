@@ -3,13 +3,16 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.2.4</Version>
+      <Version>1.3.0</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
       <Resource Name="diashenrique.historymonitor.dashboard.PKG"/>
       <Resource Name="diashenrique.historymonitor.util.PKG"/>
+      <Resource Name="diashenrique.historymonitor.api.PKG"/>
+      <Resource Name="diashenrique.historymonitor.service.PKG"/>
       <Invokes>
+        <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.Favorite" Method="%AddFavorite">
           <Arg>HistoryMonitor</Arg>
@@ -27,6 +30,16 @@
         MatchRoles=":%DB_${Namespace}"
         PasswordAuthEnabled="1"
         UnauthenticatedEnabled="0"
+       />
+      <CSPApplication
+        Url="/api/historymonitor/v1"
+        DispatchClass="diashenrique.historymonitor.api.Dispatch"
+        Resource="HistoryMonitorRead"
+        MatchRoles=":%DB_${Namespace}"
+        PasswordAuthEnabled="1"
+        UnauthenticatedEnabled="0"
+        CookiePath="/api/historymonitor/v1"
+        UseCookies="2"
        />
     </Module>
   </Document>
