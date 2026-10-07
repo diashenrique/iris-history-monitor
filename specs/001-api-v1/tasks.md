@@ -14,7 +14,7 @@ Nothing counts as verified until the CI run is green (T001).
 ## Phase 2: Foundation (blocks every story)
 
 - [x] T004 [P] Write tests for `Problem` (shape, content type, status) in `test/api/ProblemTest.cls`
-- [ ] T005 [P] Write tests for `Validate` (dates, range order, enums, limit bounds, database name pattern, injection strings) in `test/api/ValidateTest.cls`
+- [x] T005 [P] Write tests for `Validate` (dates, range order, enums, limit bounds, database name pattern, injection strings) in `test/api/ValidateTest.cls`
 - [ ] T006 Measure System Monitor retention for 5-minute, hourly and daily tables on the reference image and record it in `research.md` under R2
 - [ ] T007 Implement `service/Validate.cls` and `api/Problem.cls` so T004 and T005 pass
 - [ ] T008 Implement `api/Dispatch.cls` with the URL map, authentication check, and error mapping to `Problem`; add the web application and version bump to `module.xml`
