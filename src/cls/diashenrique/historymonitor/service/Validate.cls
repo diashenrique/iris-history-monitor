@@ -82,8 +82,8 @@ ClassMethod Database(value As %String) As %String
 {
 	Set v = $Get(value)
 	Set msg = "must be 1 to 64 characters of letters, digits, '_', '.', '%' or '-'"
-	If v '? 1.64(1AN, 1"_", 1".", 1"%", 1"-") Quit msg
-	If $Length($ZConvert(v, "O", "UTF8")) '= $Length(v) Quit msg
+	// $MATCH needs the whole string to match, and the explicit ASCII classes keep Unicode letters out.
+	If '$Match(v, "[A-Za-z0-9_.%-]{1,64}") Quit msg
 	Quit ""
 }
 
