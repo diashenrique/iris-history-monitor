@@ -12,6 +12,12 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
   Run: `do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete")`.
 - Keep the IPM version in `module.xml` in step with behavior changes (SemVer).
 
+## Spec-driven workflow (Spec Kit)
+- Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
+- A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
+  `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
+- Open specs: `specs/001-api-v1` (Phase 2).
+
 ## Phase backlog
 - [x] Phase 0: tests + CI
 - [x] Phase 1: remove `Xecute`, parameterize SQL, SSRF guard on `readMetrics`
