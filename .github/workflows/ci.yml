@@ -11,6 +11,7 @@ jobs:
 
       - name: Start IRIS Community
         run: |
+          set +e
           # Same version the project's Dockerfile targets. The `latest` tag (2026.1) fails in its own
           # after-start script (dbapi.connect) and shuts IRIS down seconds after start.
           docker run -d --name iris -v "$PWD":/home/irisowner/repo \
