@@ -19,7 +19,7 @@ Nothing counts as verified until the CI run is green (T001).
 - [x] T007 Implement `service/Validate.cls` and `api/Problem.cls` so T004 and T005 pass
 - [x] T008 Implement `api/Dispatch.cls` with the URL map, authentication check, and error mapping to `Problem`; add the web application and version bump to `module.xml`
 - [x] T009 [P] Write the authorization test (no credentials 401, no role 403, role 200) in `test/api/AuthTest.cls`
-- [ ] T010 Add the contract-test helper that compares a response with `contracts/openapi.yaml` in `test/api/ContractHelper.cls`
+- [x] T010 Add the contract-test helper that compares a response with the contract in `test/api/ContractHelper.cls` (reads `contracts/openapi.json`, generated from the YAML by `scripts/openapi_to_json.py`; CI checks they match)
 
 ## Phase 3: User Story 1 - Overview (P1)
 
