@@ -11,21 +11,23 @@ jobs:
 
       - name: Start IRIS Community
         run: |
-          # No IRIS_USERNAME / IRIS_PASSWORD: they trigger the image's after-start script, which fails on
-          # current images (dbapi.connect) and shuts IRIS down a few seconds after it starts.
+          # Same version the project's Dockerfile targets. The `latest` tag (2026.1) fails in its own
+          # after-start script (dbapi.connect) and shuts IRIS down seconds after start.
           docker run -d --name iris -v "$PWD":/home/irisowner/repo \
-            intersystemsdc/iris-community:latest
-          # wait for the image healthcheck: starting IRIS inhibits sign-on and `iris session` fails
-          for i in $(seq 1 150); do
+            intersystemsdc/iris-community:2020.2.0.196.0-zpm
+          # ready = the container is running and `iris session` no longer reports "inhibited"
+          for i in $(seq 1 90); do
             if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
               echo "IRIS container exited" >&2; exit 1
             fi
-            st=$(docker inspect -f '{{.State.Health.Status}}' iris)
-            echo "health: $st ($i)"
-            [ "$st" = "healthy" ] && exit 0
+            out=$(docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' 2>&1)
+            echo "probe $i: exit=$? ${out:0:80}"
+            if [ -z "$out" ] || ! echo "$out" | grep -qi "inhibited\|not running\|error"; then
+              docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' >/dev/null 2>&1 && exit 0
+            fi
             sleep 2
           done
-          echo "IRIS did not become healthy in 300 s" >&2
+          echo "IRIS did not become ready in 180 s" >&2
           exit 1
 
       - name: Load source and run %UnitTest
