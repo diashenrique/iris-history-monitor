@@ -14,11 +14,31 @@
   creates them from `util.Security` and is the first thing to try on a real instance.
 
 ## R2. Does the System Monitor hold 90 days?
-- **Decision**: treat retention as unknown. The history service reads the tables directly and returns
-  `coverage` (first and last timestamp present) plus `partial: true` when the window is not fully covered.
-- **Rationale**: the spec requires 90 days answerable without failing; the real retention is a setting
-  of the instance and has not been measured. The tables used today are the 5-minute, hourly and daily ones.
-- **Task**: T006 measures retention on the reference image and records the result here.
+- **Decision**: do not assume 90 days. The default settings keep far less at the fine grains, so the
+  history service reads the tables directly and returns `coverage` (first and last timestamp present)
+  plus `partial: true` when the window is not fully covered. A 90-day window is answerable at `daily`
+  granularity; `hourly` and `5min` need an administrator to raise the retention first.
+- **Measured** (task T006, 2026-10-07, a fresh IRIS Community 2026.1 container in CI, by reading the
+  `SYS.History.*` classes; the tables themselves were empty, so this is configuration, not data):
+
+  | Table family | Retention setting | Value on a fresh instance | Source |
+  | --- | --- | --- | --- |
+  | `PerfData`, `SharedMemoryData` (detail samples) | `SYS.History.PerfData.SetPurge("")` and `SYS.History.SharedMemoryData.SetPurge("")` return the current days to keep | **7 days** (returned by the call) | class method docs and a call |
+  | `Hourly_*` | `SYS.History.Hourly.SetPurge("")` | **60 days** (returned by the call) | class method docs and a call |
+  | `SysData` (the 5-minute system table the history pages read) | `SysData.Purge(Keep)` uses "the current system default for Keep"; there is no `SetPurge` on this class | **not determined** | class method docs only |
+  | `Daily_*` | `Daily.Purge(Date)` takes an explicit date; there is no `SetPurge` | **no automatic limit found** | class method docs only |
+
+- **What this means for the spec**:
+  - FR-013 (90 days at hourly and daily) holds for daily data only if nothing purges it, which is not confirmed.
+    Hourly data is 30 days short of 90 by default.
+  - The `coverage` and `partial` fields are required, not optional polish. They are how the UI says
+    "this instance keeps 60 days of hourly data" without failing.
+  - Do not promise 90-day hourly or 5-minute history in the UI copy. Phase 3 (own rollups) is justified
+    only if the daily table turns out to be purged or too coarse.
+- **Not verified**: the retention of `SysData` and `Daily_*` on a real, running instance; whether an
+  instance's administrator changed the 60 and 7 day defaults; behavior on 2020.2. Verifying means
+  running `Hourly.SetPurge("")`, `PerfData.SetPurge("")` and a `MIN`/`MAX` of `DateTime` over each table
+  on the target instance. Calling `SetPurge("")` is documented as a read that leaves the setting unchanged.
 - **Alternatives**: build own rollup tables now (more code, a purge task and a migration, decided in
   Phase 3 only if measurement shows a gap).
 
