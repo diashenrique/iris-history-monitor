@@ -14,10 +14,15 @@ jobs:
           docker run -d --name iris -v "$PWD":/home/irisowner/repo \
             -e IRIS_USERNAME=_SYSTEM -e IRIS_PASSWORD=SYS \
             intersystemsdc/iris-community:latest
-          for i in $(seq 1 60); do
-            docker exec iris iris session IRIS -U %SYS "write 1" >/dev/null 2>&1 && break
+          # wait for the image healthcheck: starting IRIS inhibits sign-on and `iris session` fails
+          for i in $(seq 1 150); do
+            st=$(docker inspect -f '{{.State.Health.Status}}' iris)
+            echo "health: $st ($i)"
+            [ "$st" = "healthy" ] && exit 0
             sleep 2
           done
+          echo "IRIS did not become healthy in 300 s" >&2
+          exit 1
 
       - name: Load source and run %UnitTest
         run: |
