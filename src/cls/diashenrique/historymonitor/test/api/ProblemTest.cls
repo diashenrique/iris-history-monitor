@@ -28,12 +28,11 @@ Method TestStatusIsAnInteger()
 
 Method TestTitleComesFromStatus()
 {
-	Set p = ##class(diashenrique.historymonitor.api.Problem)
-	Do $$$AssertEquals(p.Body(400, "invalid-parameter", "x").title, "Bad Request", "400")
-	Do $$$AssertEquals(p.Body(401, "unauthorized", "x").title, "Unauthorized", "401")
-	Do $$$AssertEquals(p.Body(403, "forbidden", "x").title, "Forbidden", "403")
-	Do $$$AssertEquals(p.Body(404, "not-found", "x").title, "Not Found", "404")
-	Do $$$AssertEquals(p.Body(500, "internal-error", "x").title, "Internal Server Error", "500")
+	Do $$$AssertEquals(##class(diashenrique.historymonitor.api.Problem).Body(400, "invalid-parameter", "x").title, "Bad Request", "400")
+	Do $$$AssertEquals(##class(diashenrique.historymonitor.api.Problem).Body(401, "unauthorized", "x").title, "Unauthorized", "401")
+	Do $$$AssertEquals(##class(diashenrique.historymonitor.api.Problem).Body(403, "forbidden", "x").title, "Forbidden", "403")
+	Do $$$AssertEquals(##class(diashenrique.historymonitor.api.Problem).Body(404, "not-found", "x").title, "Not Found", "404")
+	Do $$$AssertEquals(##class(diashenrique.historymonitor.api.Problem).Body(500, "internal-error", "x").title, "Internal Server Error", "500")
 }
 
 Method TestErrorsOmittedWhenNone()
