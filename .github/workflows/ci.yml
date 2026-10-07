@@ -12,10 +12,10 @@ jobs:
       - name: Start IRIS Community
         run: |
           set +e
-          # Same version the project's Dockerfile targets. The `latest` tag (2026.1) fails in its own
-          # after-start script (dbapi.connect) and shuts IRIS down seconds after start.
-          docker run -d --name iris -v "$PWD":/home/irisowner/repo \
-            intersystemsdc/iris-community:2020.2.0.196.0-zpm
+          # Official image. intersystemsdc `latest` (2026.1) fails in its own after-start script and shuts IRIS
+          # down; intersystemsdc 2020.2 (the Dockerfile's version) does not start on current runner kernels.
+          docker run -d --init --name iris -v "$PWD":/home/irisowner/repo \
+            containers.intersystems.com/intersystems/iris-community:2025.1
           # ready = the container is running and `iris session` no longer reports "inhibited"
           for i in $(seq 1 90); do
             if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
