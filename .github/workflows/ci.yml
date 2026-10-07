@@ -35,7 +35,7 @@ jobs:
           grep -q "TEST_METHODS=[1-9][0-9]* FAILED_COUNT=0" out.txt
 
       - name: Container diagnostics
-        if: always()
+        if: failure()
         run: |
           {
             echo "== docker ps -a"; docker ps -a
