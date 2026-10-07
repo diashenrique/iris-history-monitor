@@ -7,9 +7,9 @@ Nothing counts as verified until the CI run is green (T001).
 
 ## Phase 1: Setup and gate
 
-- [ ] T001 Repair the CI so IRIS stays up and `%UnitTest` runs: `.github/workflows/ci.yml`, `src/cls/diashenrique/historymonitor/test/Runner.cls` (branch `fix/ci-diagnostics` has an attempt; read `docker logs` first)
-- [ ] T002 [P] Create the empty class skeletons and the `test/api/` folder: `src/cls/diashenrique/historymonitor/{api,service}/`, `test/api/`
-- [ ] T003 [P] Add `util/Security.cls` that creates the monitor resource and a role holding it: `src/cls/diashenrique/historymonitor/util/Security.cls`
+- [x] T001 Repair the CI so IRIS stays up and `%UnitTest` runs: `.github/workflows/ci.yml`, `src/cls/diashenrique/historymonitor/test/Runner.cls` (branch `fix/ci-diagnostics` has an attempt; read `docker logs` first)
+- [x] T002 [P] Create the empty class skeletons and the `test/api/` folder: `src/cls/diashenrique/historymonitor/{api,service}/`, `test/api/`
+- [x] T003 [P] Add `util/Security.cls` that creates the monitor resource and a role holding it: `src/cls/diashenrique/historymonitor/util/Security.cls`
 
 ## Phase 2: Foundation (blocks every story)
 
