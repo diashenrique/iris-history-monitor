@@ -11,11 +11,15 @@ jobs:
 
       - name: Start IRIS Community
         run: |
+          # No IRIS_USERNAME / IRIS_PASSWORD: they trigger the image's after-start script, which fails on
+          # current images (dbapi.connect) and shuts IRIS down a few seconds after it starts.
           docker run -d --name iris -v "$PWD":/home/irisowner/repo \
-            -e IRIS_USERNAME=_SYSTEM -e IRIS_PASSWORD=SYS \
             intersystemsdc/iris-community:latest
           # wait for the image healthcheck: starting IRIS inhibits sign-on and `iris session` fails
           for i in $(seq 1 150); do
+            if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
+              echo "IRIS container exited" >&2; exit 1
+            fi
             st=$(docker inspect -f '{{.State.Health.Status}}' iris)
             echo "health: $st ($i)"
             [ "$st" = "healthy" ] && exit 0
