@@ -44,7 +44,7 @@ jobs:
           echo "run exit code: $?" >> out.txt
           grep -v -E '^(Loading|Imported|Compiling)' load.txt | tail -c 2000 > load.short
           cat load.short out.txt
-          msg="$(cat load.short; echo ---; tail -c 5000 out.txt)"
+          msg="$(cat load.short; echo ---; grep -E "^ +Test[A-Za-z]+ (passed|failed)|ERROR|Detected|TEST_METHODS" out.txt | cut -c1-220 | tail -c 12000)"
           echo "::notice title=unit test log::$(printf '%s' "$msg" | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
           grep -q "TEST_METHODS=[1-9][0-9]* FAILED_COUNT=0" out.txt
 
