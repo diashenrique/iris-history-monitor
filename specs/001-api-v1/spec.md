@@ -143,4 +143,4 @@ Until the new interface exists, the existing pages keep rendering and read their
 
 - Q: How far back must history reach? -> A: 90 days. A 90-day window must be answerable at daily and hourly granularity. When the System Monitor holds less than the requested window at a granularity, the response returns what exists and reports the real coverage, instead of failing.
 - Q: Should the old pages move to the API in this feature? -> A: Yes. The existing pages read from the API in this feature; their old class URLs keep responding but no page uses them.
-- Q: Which authentication does the API accept? -> Not answered. Working default, to be confirmed: the same authentication the IRIS web application already provides (password login, session cookie or HTTP basic), no tokens in v1. Anonymous access stays disabled.
+- Q: Which authentication does the API accept? -> The same authentication the IRIS web application already provides (password login, session cookie or HTTP basic), no tokens in v1. Anonymous access stays disabled. Confirmed by the owner on 2026-10-07.

@@ -8,7 +8,7 @@
   convention, and lets the version live in the application path.
 - **Alternatives**: routes inside the existing `/csp/irismonitor` application (mixes file serving and
   REST, harder to secure separately); reusing the Management Portal resources (too broad).
-- **Open point**: authentication beyond the platform default is unanswered (see spec Clarifications).
+- **Confirmed** (2026-10-07): authentication is the web application's own (password, session cookie or HTTP basic).
   Tokens are out of scope for v1.
 - **Not verified here**: how `module.xml` should declare the role and resource for IPM. Task T003
   creates them from `util.Security` and is the first thing to try on a real instance.
