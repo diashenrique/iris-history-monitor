@@ -11,29 +11,51 @@ jobs:
 
       - name: Start IRIS Community
         run: |
-          docker run -d --name iris -v "$PWD":/home/irisowner/repo \
-            -e IRIS_USERNAME=_SYSTEM -e IRIS_PASSWORD=SYS \
-            intersystemsdc/iris-community:latest
-          for i in $(seq 1 60); do
-            docker exec iris iris session IRIS -U %SYS "write 1" >/dev/null 2>&1 && break
+          set +e
+          # intersystemsdc `latest` (2026.1) starts fine, but its docker-entrypoint.sh runs an after-start
+          # script that fails (dbapi.connect) and shuts IRIS down. Calling iris-main directly skips that script.
+          # (The 2020.2 tag from the Dockerfile does not start on current runner kernels; the official
+          # containers.intersystems.com tag tried earlier could not be pulled.)
+          docker run -d --name iris --entrypoint /tini -v "$PWD":/home/irisowner/repo \
+            intersystemsdc/iris-community:latest -- /iris-main
+          # ready = the container is running and `iris session` no longer reports "inhibited"
+          for i in $(seq 1 90); do
+            if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
+              echo "IRIS container exited" >&2; exit 1
+            fi
+            out=$(docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' 2>&1)
+            echo "probe $i: exit=$? ${out:0:80}"
+            if [ -z "$out" ] || ! echo "$out" | grep -qi "inhibited\|not running\|error"; then
+              docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' >/dev/null 2>&1 && exit 0
+            fi
             sleep 2
           done
+          echo "IRIS did not become ready in 180 s" >&2
+          exit 1
 
       - name: Load source and run %UnitTest
         run: |
-          docker exec -i iris iris session IRIS -U USER <<'EOS'
-          set sc = $SYSTEM.OBJ.LoadDir("/home/irisowner/repo/src/cls","ck",,1)
-          if $SYSTEM.Status.IsError(sc) { do $SYSTEM.Status.DisplayError(sc) halt }
-          set ^UnitTestRoot = "/home/irisowner/repo/src/cls"
-          do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete/noload")
-          halt
-          EOS
+          set +e
+          docker exec iris iris session IRIS -U USER \
+            '##class(%SYSTEM.OBJ).LoadDir("/home/irisowner/repo/src/cls","ck",,1)' > load.txt 2>&1
+          echo "load exit code: $?" >> load.txt
+          docker exec iris iris session IRIS -U USER \
+            '##class(diashenrique.historymonitor.test.Runner).Run()' > out.txt 2>&1
+          echo "run exit code: $?" >> out.txt
+          grep -v -E '^(Loading|Imported|Compiling)' load.txt | tail -c 2000 > load.short
+          cat load.short out.txt
+          msg="$(cat load.short; echo ---; tail -c 5000 out.txt)"
+          echo "::notice title=unit test log::$(printf '%s' "$msg" | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          grep -q "TEST_METHODS=[1-9][0-9]* FAILED_COUNT=0" out.txt
 
-      - name: Fail if any test failed
+      - name: Container diagnostics
+        if: failure()
         run: |
-          docker exec -i iris iris session IRIS -U USER <<'EOS' | tee out.txt
-          &sql(SELECT COUNT(*) INTO :n FROM %UnitTest_Result.TestMethod WHERE Status = 0 AND TestCase->TestSuite->TestInstance = (SELECT MAX(ID) FROM %UnitTest_Result.TestInstance))
-          write "FAILED_COUNT=",n,!
-          halt
-          EOS
-          grep -q "FAILED_COUNT=0" out.txt
+          {
+            echo "== docker ps -a"; docker ps -a
+            echo "== inspect state"; docker inspect iris --format 'status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} error={{.State.Error}}'
+            echo "== logs"; docker logs --tail 60 iris 2>&1
+            echo "== host"; free -m; df -h / | tail -1
+          } > diag.txt 2>&1 || true
+          cat diag.txt
+          echo "::notice title=container diagnostics::$(tail -c 6000 diag.txt | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
