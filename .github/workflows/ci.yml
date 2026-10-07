@@ -59,3 +59,44 @@ jobs:
           } > diag.txt 2>&1 || true
           cat diag.txt
           echo "::notice title=container diagnostics::$(tail -c 6000 diag.txt | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+
+  ipm-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start IRIS Community
+        run: |
+          set +e
+          docker run -d --name iris --entrypoint /tini -v "$PWD":/home/irisowner/repo \
+            intersystemsdc/iris-community:latest -- /iris-main
+          for i in $(seq 1 90); do
+            if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
+              echo "IRIS container exited" >&2; exit 1
+            fi
+            out=$(docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' 2>&1)
+            if [ -z "$out" ] || ! echo "$out" | grep -qi "inhibited\|not running\|error"; then
+              docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' >/dev/null 2>&1 && exit 0
+            fi
+            sleep 2
+          done
+          echo "IRIS did not become ready in 180 s" >&2
+          exit 1
+
+      - name: Install IPM, load module.xml, check what was created
+        run: |
+          set +e
+          # IPM is pinned so a new release cannot change this job by itself.
+          curl -sSL -f -o zpm.xml https://pm.community.intersystems.com/packages/zpm/0.10.9/installer || { echo "could not download IPM" >&2; exit 1; }
+          docker cp zpm.xml iris:/tmp/zpm.xml
+          {
+            docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/tmp/zpm.xml","c")'
+            docker exec iris iris session IRIS -U USER '##class(%IPM.Main).Shell("load /home/irisowner/repo")'
+            docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/home/irisowner/repo/.github/ci/InstallCheck.cls","ck")'
+            docker exec iris iris session IRIS -U %SYS '##class(ci.InstallCheck).Run()'
+          } > ipm.txt 2>&1
+          # keep only printable text; the raw IPM output carries control characters that break annotations
+          sed -E 's/\x1b\[[0-9;?]*[A-Za-z]//g' ipm.txt | tr -cd '\11\12\40-\176' | grep -E '^(PASS|FAIL|INSTALL_CHECK|\[USER\|iris-history-monitor\].*(FAIL|ERROR))' | cut -c1-200 > summary.txt
+          cat summary.txt
+          echo "::notice title=ipm install check::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' summary.txt)"
+          grep -q '^INSTALL_CHECK=OK' summary.txt
