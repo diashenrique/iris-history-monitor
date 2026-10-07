@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: IRIS History Monitor API
+  version: 1.0.0
+  description: Read-only API for the overview, history series and process list.
+servers:
+  - url: /api/historymonitor/v1
+security:
+  - basicAuth: []
+  - sessionCookie: []
+paths:
+  /overview:
+    get:
+      operationId: getOverview
+      summary: Current snapshot of the instance
+      responses:
+        '200':
+          description: Snapshot
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OverviewSnapshot' }
+        '401': { $ref: '#/components/responses/Problem' }
+        '403': { $ref: '#/components/responses/Problem' }
+  /history/{metric}:
+    get:
+      operationId: getHistory
+      summary: Time series for one metric
+      parameters:
+        - { name: metric, in: path, required: true, schema: { type: string, enum: [license, csp-sessions, database-size] } }
+        - { name: granularity, in: query, required: true, schema: { type: string, enum: [5min, hourly, daily] } }
+        - { name: from, in: query, required: true, schema: { type: string, format: date-time } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date-time } }
+        - { name: database, in: query, schema: { type: string, pattern: '^[A-Za-z0-9_.%-]{1,64}$' }, description: Only valid for database-size }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 5000, default: 1000 } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Series, possibly partial or truncated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HistorySeries' }
+        '400': { $ref: '#/components/responses/Problem' }
+        '401': { $ref: '#/components/responses/Problem' }
+        '403': { $ref: '#/components/responses/Problem' }
+  /processes:
+    get:
+      operationId: listProcesses
+      summary: Running processes, filtered, sorted and paged on the server
+      parameters:
+        - { name: namespace, in: query, schema: { type: string } }
+        - { name: user, in: query, schema: { type: string } }
+        - { name: state, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string, maxLength: 100 } }
+        - { name: sort, in: query, schema: { type: string }, description: 'Field name, prefix with - for descending; must be a returned field' }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 500, default: 100 } }
+      responses:
+        '200':
+          description: One page of processes
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProcessPage' }
+        '400': { $ref: '#/components/responses/Problem' }
+        '401': { $ref: '#/components/responses/Problem' }
+        '403': { $ref: '#/components/responses/Problem' }
+components:
+  securitySchemes:
+    basicAuth: { type: http, scheme: basic }
+    sessionCookie: { type: apiKey, in: cookie, name: CSPSESSIONID }
+  responses:
+    Problem:
+      description: Error
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status, detail]
+      properties:
+        type: { type: string, example: /problems/invalid-parameter }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        errors:
+          type: array
+          items:
+            type: object
+            required: [parameter, message]
+            properties: { parameter: { type: string }, message: { type: string } }
+    Metric:
+      type: object
+      required: [name, value, unit, status]
+      properties:
+        name: { type: string }
+        value: { nullable: true, oneOf: [{ type: string }, { type: number }] }
+        unit: { type: string }
+        status: { type: string, enum: [ok, warning, critical, unavailable] }
+        reason: { type: string }
+    OverviewSnapshot:
+      type: object
+      required: [generatedAt, metrics]
+      properties:
+        generatedAt: { type: string, format: date-time }
+        metrics: { type: array, items: { $ref: '#/components/schemas/Metric' } }
+    Point:
+      type: object
+      required: [t, v]
+      properties: { t: { type: string, format: date-time }, v: { type: number } }
+    Series:
+      type: object
+      required: [name, points]
+      properties:
+        name: { type: string }
+        points: { type: array, items: { $ref: '#/components/schemas/Point' } }
+    HistorySeries:
+      type: object
+      required: [metric, granularity, from, to, coverage, partial, truncated, series]
+      properties:
+        metric: { type: string }
+        granularity: { type: string }
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        coverage:
+          nullable: true
+          type: object
+          properties: { first: { type: string, format: date-time }, last: { type: string, format: date-time } }
+        partial: { type: boolean }
+        truncated: { type: boolean }
+        next: { type: string }
+        series: { type: array, items: { $ref: '#/components/schemas/Series' } }
+    Process:
+      type: object
+      additionalProperties: true
+      description: Fields of the CONTROLPANEL query; empty values omitted
+    ProcessPage:
+      type: object
+      required: [items, total, page, pageSize]
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Process' } }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+        next: { type: string }
