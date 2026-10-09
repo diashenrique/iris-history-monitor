@@ -18,6 +18,8 @@ ClassMethod Run() As %Status
 		}
 	}
 	// One short line per failed method, then the totals, so a tail of the log always shows them.
+	// Start on a fresh line: the %UnitTest output can end without one, which hid the first name from grep.
+	Write !
 	For i = 1:1:$ListLength(names) Write "FAILED_METHOD ", $List(names, i), !
 	Write "TEST_METHODS=", total, " FAILED_COUNT=", failed, !
 	Quit $$$OK
