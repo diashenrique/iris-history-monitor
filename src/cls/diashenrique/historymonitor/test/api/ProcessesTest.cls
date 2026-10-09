@@ -119,7 +119,8 @@ Method TestLiveDaemonHasNoPlaceholders()
 
 /// The service does not call CONTROLPANEL (it needs %Admin_Manage, research.md R10) but must give the
 /// same values. The tests run as a superuser, so CONTROLPANEL can be read here for comparison.
-/// Long-lived system daemons are compared, because their counters do not move between the two reads.
+/// Long-lived system daemons are compared on fields that do not move between the two reads (counters
+/// and state can change in between, so they are left out).
 Method TestLiveValuesMatchControlPanel()
 {
 	Do ..ControlPanel(.cp)
@@ -132,7 +133,7 @@ Method TestLiveValuesMatchControlPanel()
 		Continue:'$Data(cp(p.pid))
 		Continue:'$ListFind($ListBuild("CONTROL", "WRTDMN", "GARCOL", "JRNDMN", "EXPDMN"), p.routine)
 		Set compared = compared + 1
-		For field = "job", "displayPid", "username", "device", "namespace", "routine", "state", "clientName", "exeName", "ipAddress", "osUsername", "parentPid" {
+		For field = "job", "displayPid", "username", "device", "namespace", "routine", "clientName", "exeName", "ipAddress", "osUsername", "parentPid" {
 			Do $$$AssertEquals(p.%Get(field), $Get(cp(p.pid, field)), p.routine_" "_field)
 		}
 	}
