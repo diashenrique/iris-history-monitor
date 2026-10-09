@@ -43,7 +43,8 @@ Method OnAfterAllTests() As %Status
 	Quit ..Cleanup()
 }
 
-/// The attributes of <WebApplication> in module.xml, with ${Namespace} resolved to this namespace.
+/// The attributes of the API's <WebApplication> in module.xml (the one with a DispatchClass), with
+/// ${Namespace} resolved to this namespace.
 ClassMethod ReadWebApplication(Output props) As %Status
 {
 	Kill props
@@ -53,11 +54,12 @@ ClassMethod ReadWebApplication(Output props) As %Status
 	Quit:$$$ISERR(sc) sc
 	While reader.Read() {
 		Continue:(reader.NodeType'="element")||(reader.LocalName'="WebApplication")
+		Kill attrs
 		For i = 1:1:reader.AttributeCount {
 			Do reader.MoveToAttributeIndex(i)
-			Set props(reader.LocalName) = $Replace(reader.Value, "${Namespace}", $Namespace)
+			Set attrs(reader.LocalName) = $Replace(reader.Value, "${Namespace}", $Namespace)
 		}
-		Quit
+		If $Data(attrs("DispatchClass")) Merge props = attrs Quit
 	}
 	Quit $Select($Data(props("DispatchClass")): $$$OK, 1: $$$ERROR($$$GeneralError, "no WebApplication in "_file))
 }
