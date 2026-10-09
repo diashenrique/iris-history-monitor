@@ -71,3 +71,23 @@
 - **Decision**: write for the IRIS version in the current `Dockerfile` (2020.2). If the image is updated
   in Phase 5, newer APIs may be adopted then.
 - **Rationale**: avoids breaking existing installs; the used classes exist in that version.
+
+## R8. Overview source, statuses and the access it needs (task T012)
+- **Decision**: every overview value comes from one call to `SYS.Stats.Dashboard.Sample()`. The SAM
+  sensors are not read separately: `util.customSensors` publishes the same dashboard properties, and
+  reading `/api/monitor/metrics` would be an outbound HTTP call the plan rules out.
+- **Statuses**: the rules are listed in data-model.md. The license thresholds (80 and 95 percent) and
+  "serious alerts above 0 is a warning" are product choices made here, because neither dashboard colors
+  these values today. They are constants in `service.Overview` and are easy to change.
+- **Observed on a fresh IRIS Community 2026.1 container** (2026-10-09): `LastBackup` is empty (so the
+  overview reports a warning), `SeriousAlerts` is 1, the state texts are `Normal` and `OK`, and
+  `SystemUpTime` is text such as `0d  0h 07m`. The unit is `text`; it is not converted to seconds.
+- **Access**: switching to `%SYS` needs Read on `%DB_IRISSYS`. A real HTTP call by a user holding only
+  `HistoryMonitorViewer` got `<PROTECT>` and every metric unavailable. `util.Security.Setup` now gives the
+  role `%DB_IRISSYS:R` and adds it to a role created by version 1.3.0. With it, the same call returned
+  200 with all 18 metrics and no contract mismatch. No administrator privilege is needed.
+- **Found for task T021**: a user without the role gets `401` with an HTML body, not `403` with
+  problem+json. The web application's `Resource` check rejects the request before `OnPreDispatch` runs,
+  so the 403 branch of `Dispatch.Authorize` is never reached over HTTP. Choosing between "web application
+  resource as the gate (401, HTML)" and "role check in `OnPreDispatch` only (403, problem+json)" is part
+  of T021. `404` and `405` over HTTP already return problem+json.
