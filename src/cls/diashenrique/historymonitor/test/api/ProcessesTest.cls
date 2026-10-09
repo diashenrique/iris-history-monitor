@@ -79,11 +79,26 @@ Method TestLiveItemsUseTheDocumentedFieldsOnly()
 
 Method TestLiveListShowsThisProcess()
 {
-	Set q("namespace") = $Namespace
+	// While the snapshot is read this process is in %SYS, so it is found by pid, not by namespace.
+	Set q("q") = $Job
 	Set page = ..Get(.q, .code)
-	Do $$$AssertTrue(","_..Values(page, "pid")_"," [ (","_$Job_","), "this process ("_$Job_") is in the "_$Namespace_" list")
+	Do $$$AssertTrue(","_..Values(page, "pid")_"," [ (","_$Job_","), "this process ("_$Job_") is listed")
+}
+
+Method TestLiveNamespaceFilterKeepsOnlyThatNamespace()
+{
+	Set all = ..Get(.q, .code)
+	Set ns = ""
+	Set it = all.items.%GetIterator()
+	While it.%GetNext(.k, .p) { If p.namespace '= "" Set ns = p.namespace Quit }
+	Do $$$AssertNotEquals(ns, "", "some live process has a namespace")
+	Quit:ns=""
+	Set q("namespace") = ns
+	Set page = ..Get(.q, .code)
+	Do $$$AssertTrue(page.total > 0, "the namespace "_ns_" matches at least one process")
+	Do $$$AssertTrue(page.total <= all.total, "a filter never adds processes")
 	Set it = page.items.%GetIterator()
-	While it.%GetNext(.k, .p) { Do $$$AssertEquals(p.namespace, $Namespace, "only "_$Namespace_" processes") }
+	While it.%GetNext(.k, .p) { Do $$$AssertEquals(p.namespace, ns, "only "_ns_" processes") }
 }
 
 Method TestLiveDaemonHasNoPlaceholders()
@@ -100,6 +115,47 @@ Method TestLiveDaemonHasNoPlaceholders()
 		Do $$$AssertEquals(p.%GetTypeOf("pid"), "number", "pid is a number")
 	}
 	Do $$$AssertTrue(found, "the CONTROL daemon is listed")
+}
+
+/// The service does not call CONTROLPANEL (it needs %Admin_Manage, research.md R10) but must give the
+/// same values. The tests run as a superuser, so CONTROLPANEL can be read here for comparison.
+/// Long-lived system daemons are compared, because their counters do not move between the two reads.
+Method TestLiveValuesMatchControlPanel()
+{
+	Do ..ControlPanel(.cp)
+	Do $$$AssertTrue($Data(cp) > 0, "CONTROLPANEL rows read")
+	Set q("pageSize") = 500
+	Set page = ..Get(.q, .code)
+	Set compared = 0
+	Set it = page.items.%GetIterator()
+	While it.%GetNext(.k, .p) {
+		Continue:'$Data(cp(p.pid))
+		Continue:'$ListFind($ListBuild("CONTROL", "WRTDMN", "GARCOL", "JRNDMN", "EXPDMN"), p.routine)
+		Set compared = compared + 1
+		For field = "job", "displayPid", "username", "device", "namespace", "routine", "state", "clientName", "exeName", "ipAddress", "osUsername", "parentPid" {
+			Do $$$AssertEquals(p.%Get(field), $Get(cp(p.pid, field)), p.routine_" "_field)
+		}
+	}
+	Do $$$AssertTrue(compared >= 2, "compared "_compared_" daemons")
+}
+
+/// CONTROLPANEL rows by pid: cp(pid, field) = value, using the API field names.
+ClassMethod ControlPanel(Output cp)
+{
+	Kill cp
+	Set names = $ListBuild("job", "pid", "displayPid", "username", "device", "namespace", "routine", "commands", "globals", "state", "clientName", "exeName", "ipAddress", "", "", "", "", "privateGlobalBlocks", "osUsername", "cpuTime", "parentPid", "elapsedTime")
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Set stmt = ##class(%SQL.Statement).%New()
+	Quit:$$$ISERR(stmt.%PrepareClassQuery("%SYS.ProcessQuery", "CONTROLPANEL"))
+	Set rs = stmt.%Execute()
+	While rs.%Next() {
+		Set pid = rs.%GetData(2)
+		For i = 1:1:$ListLength(names) {
+			Set name = $List(names, i)
+			If (name '= "") && (rs.%GetData(i) '= "") Set cp(pid, name) = rs.%GetData(i)
+		}
+	}
 }
 
 Method TestFilters()
