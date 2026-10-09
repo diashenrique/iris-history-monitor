@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.8.0</Version>
+      <Version>1.9.0</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
@@ -15,9 +15,15 @@
       <Invokes>
         <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
+        <!-- Compile the old pages at install: IRIS otherwise compiles a .csp page on its first request, which
+             fails with 404 for a user without development rights (spec 002 FR-024: they stay reachable). -->
+        <Invoke Class="%SYSTEM.CSP" Method="LoadPageDir">
+          <Arg>/csp/irismonitor/</Arg>
+          <Arg>ck</Arg>
+        </Invoke>
         <Invoke Class="diashenrique.historymonitor.util.Favorite" Method="%AddFavorite">
           <Arg>HistoryMonitor</Arg>
-          <Arg>/csp/irismonitor/dashboard.csp</Arg>
+          <Arg>/historymonitor/index.html</Arg>
         </Invoke>
       </Invokes>
       <CSPApplication
