@@ -10,7 +10,7 @@ Parameter D = "diashenrique.historymonitor.api.Dispatch";
 /// The contract test class of each operation.
 ClassMethod ContractTestClass(operationId As %String) As %String
 {
-	Quit $Case(operationId, "getOverview": "OverviewTest", "getHistory": "HistoryTest", "listProcesses": "ProcessesTest", : "")
+	Quit $Case(operationId, "getSettings": "SettingsTest", "getOverview": "OverviewTest", "getHistory": "HistoryTest", "listProcesses": "ProcessesTest", : "")
 }
 
 /// routes(contract path, method in lower case) = "" for every Route of the UrlMap, with :name written

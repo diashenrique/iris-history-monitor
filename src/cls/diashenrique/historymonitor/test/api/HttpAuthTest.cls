@@ -8,7 +8,10 @@
 Class diashenrique.historymonitor.test.api.HttpAuthTest Extends %UnitTest.TestCase
 {
 
-Parameter APP = "/api/historymonitor-test/v1";
+/// The test copy of the API application; its prefix replaces /historymonitor/ wherever module.xml uses it.
+Parameter PREFIX = "/historymonitor-test/";
+
+Parameter APP = "/historymonitor-test/api/v1";
 
 Parameter VIEWER = "HMTestViewer";
 
@@ -22,7 +25,7 @@ Property Password As %String;
 /// The routes, each with valid query values.
 ClassMethod Routes() As %List
 {
-	Quit $ListBuild("/overview", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02", "/processes?pageSize=1")
+	Quit $ListBuild("/settings", "/overview", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02", "/processes?pageSize=1")
 }
 
 Method OnBeforeAllTests() As %Status
@@ -66,8 +69,8 @@ ClassMethod CreateAppAndUsers(ByRef props, password As %String) As %Status
 	New $Namespace
 	Set $Namespace = "%SYS"
 	Set p("DispatchClass") = props("DispatchClass"), p("NameSpace") = ns, p("Enabled") = 1
-	For name = "AutheEnabled", "Resource", "MatchRoles", "UseCookies" {
-		Set:$Data(props(name)) p(name) = props(name)
+	For name = "AutheEnabled", "Resource", "MatchRoles", "UseCookies", "CookiePath" {
+		Set:$Data(props(name)) p(name) = $Replace(props(name), "/historymonitor/", ..#PREFIX)
 	}
 	Set sc = ##class(Security.Applications).Create(..#APP, .p)
 	Quit:$$$ISERR(sc) sc
@@ -167,7 +170,7 @@ Method TestViewerGetsJson()
 
 Method TestViewerResponsesMatchTheContract()
 {
-	For pair = "/overview:OverviewSnapshot", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02:HistorySeries", "/processes?pageSize=5:ProcessPage" {
+	For pair = "/settings:Settings", "/overview:OverviewSnapshot", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02:HistorySeries", "/processes?pageSize=5:ProcessPage" {
 		Set path = $Piece(pair, ":", 1), schema = $Piece(pair, ":", 2)
 		Set body = ""
 		Try { Set body = {}.%FromJSON($List(..Call(path, ..#VIEWER, ..Password), 3)) } Catch {}

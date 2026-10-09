@@ -8,7 +8,7 @@ ClassMethod Run()
 	New $Namespace
 	Set $Namespace = "%SYS"
 	Set bad = 0
-	Set sc = ##class(Security.Applications).Get("/api/historymonitor/v1", .p)
+	Set sc = ##class(Security.Applications).Get("/historymonitor/api/v1", .p)
 	Do ..Check(sc, "API web application exists", .bad)
 	Do ..Check($Get(p("DispatchClass")) = "diashenrique.historymonitor.api.Dispatch", "dispatch class", .bad)
 	// The resource is checked by Dispatch.OnPreDispatch (403 problem+json); a web application resource
@@ -17,9 +17,17 @@ ClassMethod Run()
 	// 32 = password only. Any other value (64 = unauthenticated) would open the API.
 	Do ..Check($Get(p("AutheEnabled")) = 32, "authentication is password only (AutheEnabled="_$Get(p("AutheEnabled"))_")", .bad)
 	Do ..Check($Get(p("Enabled")) = 1, "enabled", .bad)
+	Do ..Check($Get(p("CookiePath")) = "/historymonitor/", "API session cookie path is /historymonitor/ (got "_$Get(p("CookiePath"))_")", .bad)
+	Do ..Check('##class(Security.Applications).Exists("/api/historymonitor/v1"), "the old API address is gone", .bad)
+	Set sc4 = ##class(Security.Applications).Get("/historymonitor", .u)
+	Do ..Check(sc4, "interface web application exists", .bad)
+	Do ..Check($Get(u("AutheEnabled")) = 32, "interface authentication is password only (AutheEnabled="_$Get(u("AutheEnabled"))_")", .bad)
+	Do ..Check($Get(u("CookiePath")) = "/historymonitor/", "interface session cookie path is /historymonitor/", .bad)
+	Do ..Check(##class(%File).Exists(##class(%File).NormalizeFilename("index.html", $Get(u("Path")))), "interface files installed (index.html in "_$Get(u("Path"))_")", .bad)
 	Set sc2 = ##class(Security.Applications).Get("/csp/irismonitor", .q)
 	Do ..Check(sc2, "dashboard web application exists", .bad)
 	Do ..Check($Get(q("AutheEnabled")) = 32, "dashboard authentication unchanged (AutheEnabled="_$Get(q("AutheEnabled"))_")", .bad)
+	Do ..Check($Get(q("CookiePath")) [ "/csp/irismonitor", "old pages keep their own cookie path", .bad)
 	Do ..Check(##class(Security.Resources).Exists("HistoryMonitorRead"), "resource created", .bad)
 	Do ..Check(##class(Security.Roles).Exists("HistoryMonitorViewer"), "role created", .bad)
 	Set sc3 = ##class(Security.Roles).Get("HistoryMonitorViewer", .r)
@@ -31,7 +39,7 @@ ClassMethod Run()
 	}
 	Do ..Check(n = 8, "role may SELECT the 8 history tables (got "_n_")", .bad)
 	Set $Namespace = "USER"
-	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security" {
+	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Settings" {
 		Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor."_c), "class "_c_" compiled", .bad)
 	}
 	Write $Select(bad = 0: "INSTALL_CHECK=OK", 1: "INSTALL_CHECK=FAILED "_bad), !
