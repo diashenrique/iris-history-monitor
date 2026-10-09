@@ -18,7 +18,9 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: none. `specs/001-api-v1` (Phase 2) is complete: `GET /overview`, `/history/{metric}`, `/processes`
+- Open specs: `specs/002-new-ui` (Phase 4, new interface): plan done; React + TypeScript + Vite source in `web/`,
+  build committed to `src/web/historymonitor/`, everything under `/historymonitor/` (API at `/historymonitor/api/v1`).
+- `specs/001-api-v1` (Phase 2) is complete: `GET /overview`, `/history/{metric}`, `/processes`
   under `/api/historymonitor/v1`. User story 5 (old pages read the API) was withdrawn: the old pages will not be used.
   History rows are keyed in UTC (`ZDATE`/`ZTIME`); never format a UTC value with `$ZDateTime(..., 7)`.
   The role is checked in `Dispatch.OnPreDispatch` (403); the web application has no resource on purpose (research.md R11).
