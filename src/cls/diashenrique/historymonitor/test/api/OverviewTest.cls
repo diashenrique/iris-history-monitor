@@ -197,7 +197,7 @@ Method TestRouteIsMapped()
 	Do $$$AssertTrue($IsObject(xdata), "UrlMap exists")
 	Quit:'$IsObject(xdata)
 	Set text = xdata.Data.Read(32000)
-	Do $$$AssertTrue($Match($ZStrip(text, "*W"), ".*<RouteUrl=""/overview""Method=""GET""Call=""Overview""/>.*"), "GET /overview calls Overview")
+	Do $$$AssertTrue($ZStrip(text, "*WC") [ "<RouteUrl=""/overview""Method=""GET""Call=""Overview""/>", "GET /overview calls Overview")
 }
 
 }
