@@ -108,6 +108,9 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   (task in Phase 1 of tasks). Motion respects "reduce motion".
 - **Rationale**: the spec asks for an attractive, modern look but leaves the exact design to the plan
   with an owner review (spec Assumptions).
+- **Approved** by the owner on 2026-10-09: the Overview mock-up `web/mockup/overview.html` (attention band
+  of non-ok cards first, healthy metrics grouped by area with sparklines and a license meter, live
+  indicator with pause, out-of-date banner, light/dark/system). Screens follow it.
 
 ## R11. Performance budget (SC-002)
 - **Decision**: the first screen's JavaScript stays under 200 KB gzipped; ECharts loads only with the
