@@ -1,0 +1,114 @@
+{
+  "generatedAt": "2026-10-09T17:32:10Z",
+  "metrics": [
+    {
+      "name": "systemUpTime",
+      "value": "12d  4h 18m",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "lastBackup",
+      "value": null,
+      "unit": "text",
+      "status": "warning"
+    },
+    {
+      "name": "lockTable",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "journalSpace",
+      "value": "Troubled",
+      "unit": "text",
+      "status": "critical"
+    },
+    {
+      "name": "journalStatus",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "ecpAppServer",
+      "value": "OK",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "ecpDataServer",
+      "value": null,
+      "unit": "text",
+      "status": "unavailable",
+      "reason": "not reported by the dashboard sample"
+    },
+    {
+      "name": "writeDaemon",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "licenseCurrent",
+      "value": 5,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "licenseCurrentPct",
+      "value": 63,
+      "unit": "percent",
+      "status": "ok"
+    },
+    {
+      "name": "licenseHigh",
+      "value": 7,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "licenseHighPct",
+      "value": 88,
+      "unit": "percent",
+      "status": "warning"
+    },
+    {
+      "name": "licenseLimit",
+      "value": 8,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "applicationErrors",
+      "value": 0,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "cspSessions",
+      "value": 42,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "cacheEfficiency",
+      "value": 221.85,
+      "unit": "ratio",
+      "status": "ok"
+    },
+    {
+      "name": "processes",
+      "value": 87,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "seriousAlerts",
+      "value": 1,
+      "unit": "count",
+      "status": "warning"
+    }
+  ]
+}

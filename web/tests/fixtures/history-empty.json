@@ -1,0 +1,10 @@
+{
+  "metric": "csp-sessions",
+  "granularity": "daily",
+  "from": "2001-01-01T00:00:00Z",
+  "to": "2001-01-31T00:00:00Z",
+  "coverage": null,
+  "partial": true,
+  "truncated": false,
+  "series": []
+}

@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "job": 1,
+      "pid": 429,
+      "displayPid": 429,
+      "routine": "CONTROL",
+      "commands": 0,
+      "globals": 0,
+      "state": "RUN",
+      "privateGlobalBlocks": 0,
+      "osUsername": "irisowner",
+      "cpuTime": 1870,
+      "elapsedTime": "00:38:24"
+    },
+    {
+      "job": 18,
+      "pid": 4285,
+      "displayPid": 4285,
+      "username": "alice",
+      "device": "|TCP|10.0.0.5:51000",
+      "namespace": "USER",
+      "routine": "MyApp.Orders.1",
+      "commands": 14177,
+      "globals": 522,
+      "state": "READ",
+      "clientName": "WS-ALICE",
+      "exeName": "java",
+      "ipAddress": "10.0.0.5",
+      "privateGlobalBlocks": 1,
+      "osUsername": "irisowner",
+      "cpuTime": 120,
+      "parentPid": 499,
+      "elapsedTime": "00:02:10"
+    }
+  ],
+  "total": 48,
+  "page": 1,
+  "pageSize": 2,
+  "next": "2"
+}

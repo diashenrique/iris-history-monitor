@@ -1,0 +1,6 @@
+{
+  "type": "/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "The authenticated user is not allowed to use this API."
+}

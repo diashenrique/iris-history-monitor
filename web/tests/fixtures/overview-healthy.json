@@ -1,0 +1,113 @@
+{
+  "generatedAt": "2026-10-09T17:32:20Z",
+  "metrics": [
+    {
+      "name": "systemUpTime",
+      "value": "12d  4h 18m",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "lastBackup",
+      "value": "2026-10-08 23:00:00",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "lockTable",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "journalSpace",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "journalStatus",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "ecpAppServer",
+      "value": "OK",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "ecpDataServer",
+      "value": "OK",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "writeDaemon",
+      "value": "Normal",
+      "unit": "text",
+      "status": "ok"
+    },
+    {
+      "name": "licenseCurrent",
+      "value": 6,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "licenseCurrentPct",
+      "value": 75,
+      "unit": "percent",
+      "status": "ok"
+    },
+    {
+      "name": "licenseHigh",
+      "value": 7,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "licenseHighPct",
+      "value": 79,
+      "unit": "percent",
+      "status": "ok"
+    },
+    {
+      "name": "licenseLimit",
+      "value": 8,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "applicationErrors",
+      "value": 0,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "cspSessions",
+      "value": 44,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "cacheEfficiency",
+      "value": 230.1,
+      "unit": "ratio",
+      "status": "ok"
+    },
+    {
+      "name": "processes",
+      "value": 90,
+      "unit": "count",
+      "status": "ok"
+    },
+    {
+      "name": "seriousAlerts",
+      "value": 0,
+      "unit": "count",
+      "status": "ok"
+    }
+  ]
+}
