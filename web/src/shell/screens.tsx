@@ -61,13 +61,3 @@ export function LoadingScreen({ label }: { label: string }) {
     </main>
   );
 }
-
-export function SoonScreen() {
-  const { t } = useTranslation();
-  return (
-    <div className="py-10">
-      <h1 className="mb-2 text-2xl font-semibold">{t('soon.title')}</h1>
-      <p className="text-muted">{t('soon.body')}</p>
-    </div>
-  );
-}

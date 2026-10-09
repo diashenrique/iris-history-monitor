@@ -126,12 +126,12 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Implementation
 
-- [ ] T047 [US3] Implement `web/src/features/processes/useProcesses.ts` (query from address, previous data kept while loading, 15 s refresh with pause)
-- [ ] T048 [P] [US3] Implement `web/src/features/processes/ProcessFilters.tsx`
-- [ ] T049 [P] [US3] Implement `web/src/features/processes/ProcessTable.tsx` with TanStack Table in manual sorting and paging mode, horizontal scroll inside the table at narrow widths
-- [ ] T050 [P] [US3] Implement `web/src/features/processes/ProcessDetail.tsx` as a dialog on `#/processes/:pid`
-- [ ] T051 [US3] Implement `web/src/features/processes/ProcessesPage.tsx` with CSV export of the shown page so T045 passes
-- [ ] T052 [US3] Add the Processes strings to the three catalogues; rebuild and commit; quickstart step 5; T046 green in CI
+- [x] T047 [US3] Implement `web/src/features/processes/useProcesses.ts` (query from address, previous data kept while loading, 15 s refresh with pause)
+- [x] T048 [P] [US3] Implement `web/src/features/processes/ProcessFilters.tsx`
+- [x] T049 [P] [US3] Implement `web/src/features/processes/ProcessTable.tsx` with TanStack Table in manual sorting and paging mode, horizontal scroll inside the table at narrow widths
+- [x] T050 [P] [US3] Implement `web/src/features/processes/ProcessDetail.tsx` as a dialog on `#/processes/:pid`
+- [x] T051 [US3] Implement `web/src/features/processes/ProcessesPage.tsx` with CSV export of the shown page so T045 passes
+- [x] T052 [US3] Add the Processes strings to the three catalogues; rebuild and commit; quickstart step 5; T046 green in CI
 
 **Checkpoint**: three screens work independently.
 

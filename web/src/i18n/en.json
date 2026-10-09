@@ -104,10 +104,6 @@
     "retry": "Try again",
     "network": "The monitor did not answer."
   },
-  "soon": {
-    "title": "Not available yet",
-    "body": "This screen is part of a later delivery."
-  },
   "common": {
     "close": "Close",
     "loading": "Loading…"
@@ -159,5 +155,51 @@
     "rows": "Rows {{from}}–{{to}} of {{total}}",
     "chartLabel": "{{metric}}, {{granularity}}, {{from}} to {{to}}",
     "tableCaption": "{{metric}} values"
+  },
+  "processes": {
+    "title": "Processes",
+    "filters": "Filters",
+    "namespace": "Namespace",
+    "user": "User",
+    "state": "State",
+    "search": "Search",
+    "apply": "Apply filters",
+    "clear": "Clear filters",
+    "total_one": "{{count}} process",
+    "total_other": "{{count}} processes",
+    "rowsPerPage": "Rows per page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "pageOf": "Page {{page}} of {{pages}}",
+    "pause": "Pause updates",
+    "resume": "Resume updates",
+    "export": "Export CSV",
+    "details": "Details of process {{pid}}",
+    "detailTitle": "Process {{pid}}",
+    "ended": "This process is no longer running.",
+    "none": "No process matches these filters.",
+    "loading": "Loading the processes…",
+    "invalid": "Some values in the address were not valid and were replaced by defaults: {{names}}.",
+    "tableLabel": "Running processes",
+    "fields": {
+      "job": "Job",
+      "pid": "PID",
+      "displayPid": "Display PID",
+      "username": "User",
+      "device": "Device",
+      "namespace": "Namespace",
+      "routine": "Routine",
+      "commands": "Commands",
+      "globals": "Global references",
+      "state": "State",
+      "clientName": "Client",
+      "exeName": "Executable",
+      "ipAddress": "IP address",
+      "privateGlobalBlocks": "Private global blocks",
+      "osUsername": "OS user",
+      "cpuTime": "CPU time",
+      "parentPid": "Parent PID",
+      "elapsedTime": "Elapsed time"
+    }
   }
 }

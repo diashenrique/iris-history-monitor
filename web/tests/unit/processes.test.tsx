@@ -104,7 +104,7 @@ describe('processes', () => {
     const dialog = await screen.findByRole('dialog', { name: 'Process 429' });
     expect(within(dialog).queryByText('User')).not.toBeInTheDocument();
     expect(within(dialog).queryByText('Device')).not.toBeInTheDocument();
-    expect(within(dialog).getByText('CONTROL')).toBeInTheDocument();
+    expect(await within(dialog).findByText('CONTROL')).toBeInTheDocument();
   });
 
   it('says when an opened process has ended', async () => {

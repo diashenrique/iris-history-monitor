@@ -37,25 +37,18 @@ describe('shell', () => {
     expect(await screen.findByRole('navigation', { name: 'Main' })).toBeInTheDocument();
   });
 
-  it('when on, shows the layout: skip link first, navigation with delivered screens only, title', async () => {
+  it('when on, shows the layout: skip link first, navigation with the three screens, title', async () => {
     const { container } = renderApp();
     const nav = await screen.findByRole('navigation', { name: 'Main' });
     expect(nav).toHaveTextContent('Overview');
     expect(nav).toHaveTextContent('History');
-    expect(nav).not.toHaveTextContent('Processes');
+    expect(nav).toHaveTextContent('Processes');
     await userEvent.tab();
     expect(screen.getByText('Skip to content')).toHaveFocus();
     expect(document.title).toBe('Overview · IRIS History Monitor');
     expect(screen.getByLabelText('Language')).toBeInTheDocument();
     expect(screen.getByLabelText('Appearance')).toBeInTheDocument();
     await expectNoSeriousAxeIssues(container);
-  });
-
-  it('a later screen addressed directly says it is not available yet', async () => {
-    const api = fakeApi();
-    window.location.hash = '#/processes?namespace=USER';
-    render(<App client={api} queryClient={testQueryClient()} />);
-    expect(await screen.findByRole('heading', { name: 'Not available yet' })).toBeInTheDocument();
   });
 
   it('re-reads the switch every 60 s, so turning it off reaches an open screen (spec Edge Cases)', async () => {
