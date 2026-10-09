@@ -42,8 +42,8 @@ Nothing counts as verified until the CI run is green (T001).
 
 ## Phase 6: User Story 4 - Errors and access (P2)
 
-- [ ] T021 [US4] Run `AuthTest` and `ProblemTest` against every route and fix gaps in `api/Dispatch.cls` (open gap: no role gives 401 HTML instead of 403 problem+json over HTTP, research.md R8)
-- [ ] T022 [P] [US4] Check that no route response differs from `contracts/openapi.yaml` and no route lacks a test
+- [x] T021 [US4] Run `AuthTest` and `ProblemTest` against every route and fix gaps in `api/Dispatch.cls` (done over real HTTP in `test/api/HttpAuthTest.cls`; research.md R11)
+- [x] T022 [P] [US4] Check that no route response differs from `contracts/openapi.yaml` and no route lacks a test
 
 ## Phase 7: User Story 5 - Existing pages read the API (P3)
 

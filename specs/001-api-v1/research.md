@@ -86,7 +86,7 @@
   `HistoryMonitorViewer` got `<PROTECT>` and every metric unavailable. `util.Security.Setup` now gives the
   role `%DB_IRISSYS:R` and adds it to a role created by version 1.3.0. With it, the same call returned
   200 with all 18 metrics and no contract mismatch. No administrator privilege is needed.
-- **Found for task T021**: a user without the role gets `401` with an HTML body, not `403` with
+- **Found for task T021** (resolved there, see R11): a user without the role gets `401` with an HTML body, not `403` with
   problem+json. The web application's `Resource` check rejects the request before `OnPreDispatch` runs,
   so the 403 branch of `Dispatch.Authorize` is never reached over HTTP. Choosing between "web application
   resource as the gate (401, HTML)" and "role check in `OnPreDispatch` only (403, problem+json)" is part
@@ -145,3 +145,25 @@
   `-` for descending; a process without the field sorts last either way; ties go by job number.
   Default order is job number. `next` is the following page number; a page past the end is empty, not an
   error, which covers processes ending between requests.
+
+## R11. Errors and access over real HTTP (tasks T021, T022)
+- **Measured**: `test.api.HttpAuthTest` creates the web application from the `<WebApplication>` of
+  `module.xml` under a test URL, a viewer and a user without the role, and calls every route on the
+  instance web server. It runs in CI (the container has a web server on port 52773).
+- **403**: with `Resource="HistoryMonitorRead"` on the web application, CSP refused a user without the
+  role before `api.Dispatch` ran, with a 401 HTML page; the 403 branch of `Authorize` was unreachable.
+  The resource was removed from the web application, so `OnPreDispatch` (which runs on every request)
+  is the role check and answers 403 problem+json. Password authentication stays required and
+  unauthenticated access stays disabled; the CI install check asserts there is no web application resource.
+- **401**: CSP answers a request without valid credentials by calling `Login` on the dispatch class
+  before login, as `CSPSystem` with no roles. Overriding `Login` moved that code into the namespace
+  database, which that context cannot read: the request failed with `#5916 Illegal Web Request` and came
+  back as 404. The only way to send a problem body would be to allow unauthenticated access, which the
+  owner ruled out. So 401 is IRIS's own answer: status 401 and an empty body (no `WWW-Authenticate`
+  header was observed behind Apache). The contract now describes 401 that way, without a problem body.
+- **Shapes**: 200 responses match their schemas over HTTP; 400, 403, 404 and 405 are problem+json.
+- **Coverage**: `test.api.ContractCoverageTest` fails when a contract operation has no route, a route is
+  missing from the contract, or an operation lacks a contract test class or an HTTP call. A route added
+  only to the UrlMap was caught in a trial run.
+- **Runner**: a test case whose `OnBeforeAllTests` fails runs no method and was invisible in the totals
+  (the HTTP test was silently skipped once). The Runner now reports it as `FAILED_CASE` and counts it.
