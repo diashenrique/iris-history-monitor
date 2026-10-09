@@ -108,6 +108,11 @@ ClassMethod History(metric As %String, ByRef q, Output clean) As %DynamicArray
 	}
 	Set err = ..Limit($Get(q("limit")), .limit)
 	If err '= "" { Do ..Add(errs, "limit", err) } Else { Set clean("limit") = limit }
+	// cursor is the "next" value of a previous page: a UTC timestamp, checked like from and to.
+	If $Get(q("cursor")) '= "" {
+		Set err = ..Date(q("cursor"), .cursor)
+		If err '= "" { Do ..Add(errs, "cursor", err) } Else { Set clean("cursor") = cursor }
+	}
 	If $Get(q("database")) '= "" {
 		If metric '= "database-size" {
 			Do ..Add(errs, "database", "is only valid for the database-size metric")
