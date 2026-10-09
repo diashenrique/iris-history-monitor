@@ -70,9 +70,9 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Tests (write first, must fail)
 
-- [ ] T024 [P] [US1] Component tests in `web/tests/unit/overview.test.tsx`: all 18 metrics with value, unit and status; display order `critical`, `unavailable`, `warning`, `ok` and API order inside a status (data-model OverviewState); unavailable shows the API reason; status has icon and label; axe passes
-- [ ] T025 [P] [US1] Live-behaviour tests with fake timers in `web/tests/unit/overview-live.test.tsx`: refresh every 10 s, pause stops it, a hidden tab stops it, a failed refresh keeps figures and marks them stale with the last success time, the next success clears stale, the trend keeps the last 60 values per numeric metric
-- [ ] T026 [P] [US1] End-to-end `web/tests/e2e/overview.spec.ts`: spec US1 scenarios 1 to 4, every figure equals `GET /overview` read in the same test, the complete Overview appears within 2 s of opening (SC-002), axe in light and dark, 360 px, every request under `/historymonitor/` (SC-006)
+- [x] T024 [P] [US1] Component tests in `web/tests/unit/overview.test.tsx`: all 18 metrics with value, unit and status; display order `critical`, `unavailable`, `warning`, `ok` and API order inside a status (data-model OverviewState); unavailable shows the API reason; status has icon and label; axe passes
+- [x] T025 [P] [US1] Live-behaviour tests with fake timers in `web/tests/unit/overview-live.test.tsx`: refresh every 10 s, pause stops it, a hidden tab stops it, a failed refresh keeps figures and marks them stale with the last success time, the next success clears stale, the trend keeps the last 60 values per numeric metric
+- [x] T026 [P] [US1] End-to-end `web/tests/e2e/overview.spec.ts`: spec US1 scenarios 1 to 4, every figure equals `GET /overview` read in the same test, the complete Overview appears within 2 s of opening (SC-002), axe in light and dark, 360 px, every request under `/historymonitor/` (SC-006)
 
 ### Implementation
 
