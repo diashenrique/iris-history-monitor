@@ -75,6 +75,17 @@ Method TestGeneratedAtIsUtc()
 	Do $$$AssertTrue($Match(s.generatedAt, "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"), "generatedAt is a UTC date-time: "_s.generatedAt)
 }
 
+/// $ZDateTime time format 7 converts local time to UTC, so applying it to a UTC value shifts it by the
+/// server offset. This only shows on a server outside UTC (the CI runs in America/Sao_Paulo).
+Method TestGeneratedAtIsTheCurrentUtcTime()
+{
+	Set s = $ClassMethod(..#O, "Snapshot")
+	Set h = $ZDateTimeH($Translate($Extract(s.generatedAt, 1, 19), "T", " "), 3)
+	Set now = $ZTimeStamp
+	Set diff = ((+now - h) * 86400) + ($Piece(now, ",", 2) - $Piece(h, ",", 2))
+	Do $$$AssertTrue($ZAbs(diff) < 120, "generatedAt "_s.generatedAt_" is within two minutes of UTC now (difference "_(diff \ 1)_" s)")
+}
+
 Method TestHealthySampleIsAllOk()
 {
 	Do ..Healthy(.v)

@@ -147,10 +147,11 @@ ClassMethod Unavailable(m As %DynamicObject, unit As %String, reason As %String)
 	Quit m
 }
 
-/// Current time as YYYY-MM-DDThh:mm:ssZ.
+/// Current time as YYYY-MM-DDThh:mm:ssZ. $ZTimeStamp is already UTC; $ZDateTime time format 7 would
+/// convert it from local time again and shift it by the server offset.
 ClassMethod UtcNow() As %String
 {
-	Quit $ZDateTime($ZTimeStamp, 3, 7)
+	Quit $Translate($ZDateTime($ZTimeStamp, 3, 1), " ", "T")_"Z"
 }
 
 }

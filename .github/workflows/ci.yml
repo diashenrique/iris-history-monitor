@@ -22,7 +22,9 @@ jobs:
           # script that fails (dbapi.connect) and shuts IRIS down. Calling iris-main directly skips that script.
           # (The 2020.2 tag from the Dockerfile does not start on current runner kernels; the official
           # containers.intersystems.com tag tried earlier could not be pulled.)
-          docker run -d --name iris --entrypoint /tini -v "$PWD":/home/irisowner/repo \
+          # TZ: the tests run outside UTC on purpose. History rows are keyed in UTC while DateTime is local,
+          # and $ZDateTime time format 7 converts local to UTC; on a UTC server those mistakes are invisible.
+          docker run -d --name iris -e TZ=America/Sao_Paulo --entrypoint /tini -v "$PWD":/home/irisowner/repo \
             intersystemsdc/iris-community:latest -- /iris-main
           # ready = the container is running and `iris session` no longer reports "inhibited"
           for i in $(seq 1 90); do
