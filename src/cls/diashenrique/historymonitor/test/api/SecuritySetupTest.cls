@@ -1,5 +1,7 @@
 /// Tests for util.Security (task T003). Uses its own resource and role names so it never
 /// touches the real ones on a developer instance.
+/// The role also needs Read on the IRISSYS database: service.Overview switches to %SYS to read the
+/// dashboard sample, and without it a real HTTP call returned every metric unavailable (task T012).
 Class diashenrique.historymonitor.test.api.SecuritySetupTest Extends %UnitTest.TestCase
 {
 
@@ -35,6 +37,53 @@ Method TestRoleHoldsUsePermissionOnResource()
 	Set sc = ##class(Security.Roles).Get(..#ROLE, .props)
 	Do $$$AssertStatusOK(sc, "role can be read")
 	Do $$$AssertEquals($Find($Get(props("Resources")), ..#RES_":U") > 0, 1, "role holds Use on the resource")
+}
+
+Method TestRoleCanReadTheSystemDatabase()
+{
+	Do ##class(diashenrique.historymonitor.util.Security).Setup(..#RES, ..#ROLE)
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Do ##class(Security.Roles).Get(..#ROLE, .props)
+	Do $$$AssertEquals(..Holds($Get(props("Resources")), "%DB_IRISSYS", "R"), 1, "role holds Read on %DB_IRISSYS: "_$Get(props("Resources")))
+}
+
+Method TestSetupCompletesARoleFromAnOlderInstall()
+{
+	Do ##class(diashenrique.historymonitor.util.Security).Teardown(..#RES, ..#ROLE)
+	Do ..CreateOldRole()
+	Set sc = ##class(diashenrique.historymonitor.util.Security).Setup(..#RES, ..#ROLE)
+	Do $$$AssertStatusOK(sc, "Setup on an existing role")
+	Set res = ..RoleResources()
+	Do $$$AssertEquals(..Holds(res, ..#RES, "U"), 1, "keeps Use on the resource: "_res)
+	Do $$$AssertEquals(..Holds(res, "%DB_IRISSYS", "R"), 1, "adds Read on %DB_IRISSYS: "_res)
+}
+
+/// The resource and role as version 1.3.0 created them: Use on the resource only.
+ClassMethod CreateOldRole()
+{
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Do ##class(Security.Resources).Create(..#RES, "test", "")
+	Do ##class(Security.Roles).Create(..#ROLE, "role as version 1.3.0 created it", ..#RES_":U")
+}
+
+ClassMethod RoleResources() As %String
+{
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Do ##class(Security.Roles).Get(..#ROLE, .props)
+	Quit $Get(props("Resources"))
+}
+
+/// True when the comma list of resource:permissions grants perm on name.
+ClassMethod Holds(list As %String, name As %String, perm As %String) As %Boolean
+{
+	For i = 1:1:$Length(list, ",") {
+		Set item = $Piece(list, ",", i)
+		If ($Piece(item, ":", 1) = name) && ($Piece(item, ":", 2) [ perm) Return 1
+	}
+	Quit 0
 }
 
 Method TestSetupIsIdempotent()
