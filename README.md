@@ -113,8 +113,37 @@ Docker image.
 
 - Every API call needs a signed-in user with the `HistoryMonitorViewer` role (or an administrator).
   Errors come back as `application/problem+json`.
-- The interface loads no code from other sites. A Content-Security-Policy header, if you want one, is
-  set in the web server in front of IRIS, not by this module.
+- The interface loads nothing from other sites and has no inline script or style, so it runs under a
+  strict Content-Security-Policy. IRIS does not send one; set it in the web server in front of IRIS, on
+  the interface's static files only (`index.html` and `assets/`). The IRIS sign-in page uses inline script
+  and style and would break under it. The end-to-end test
+  [`web/tests/e2e/csp.spec.ts`](web/tests/e2e/csp.spec.ts) runs every screen under this policy:
+
+  ```text
+  default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  ```
+
+  Apache (with the Web Gateway), `mod_headers`:
+
+  ```apache
+  <LocationMatch "^/historymonitor/(index\.html|assets/)">
+      Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+  </LocationMatch>
+  ```
+
+  Nginx, in the `server` that passes `/historymonitor/` to IRIS (repeat the same gateway or proxy
+  directives inside this `location`):
+
+  ```nginx
+  location ~ ^/historymonitor/(index\.html|assets/) {
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+      # ... the same proxy_pass / gateway directives as for /historymonitor/
+  }
+  ```
+
+## Releases
+
+Changes per version: [`CHANGELOG.md`](CHANGELOG.md). How a version is released: [`docs/releasing.md`](docs/releasing.md).
 
 ## License
 
