@@ -42,7 +42,8 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
 ## R4. The instance-wide switch (FR-002)
 - **Decision**: a single setting `interfaceEnabled` (default false), stored in a namespace global owned by
   a new class `util.Settings`, changed only by `util.Settings.SetInterfaceEnabled(flag)`, which requires
-  `%Admin_Manage:USE`. The API gains one read-only route, `GET /settings`, returning
+  `%Admin_Manage:USE`. The access decision is a pure method, `CanChange(hasAdmin)`, so the refusal can be
+  tested although the suite runs as a superuser (the pattern of `Dispatch.Authorize` in spec 001). The API gains one read-only route, `GET /settings`, returning
   `{"interfaceEnabled": bool}` to any monitor viewer (contract change in `contracts/api-v1-changes.md`).
   The interface shell always loads, reads `/settings` first, and shows a "not enabled" page with a link to
   the old pages when the switch is off. The overview, history and process routes stay available either

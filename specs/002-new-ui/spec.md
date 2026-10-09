@@ -138,7 +138,7 @@ A user switches the interface between English, Brazilian Portuguese and Spanish,
 - **FR-021**: Every screen MUST be usable from a 360-pixel-wide phone screen up to a wide desktop screen.
 - **FR-022**: Error messages MUST be short, in the chosen language, based on the problem returned by the source, and MUST never show stack traces or internal text.
 - **FR-023**: The screens MUST be delivered in this order, each usable on its own: Overview (with sign-in), then History, then Processes.
-- **FR-024**: The existing pages MUST keep working, unchanged, while the new interface is being delivered. When the three screens are complete, the old pages MUST be marked obsolete and removed from the menu, with the new interface as the default entry point; they MUST stay reachable by their address until a later release removes them.
+- **FR-024**: The existing pages MUST keep working, unchanged, while the new interface is being delivered. When the three screens are complete, the old pages MUST be marked obsolete (a banner on each page linking to the new interface) and the Management Portal favourite created at install MUST point to the new interface instead of the old dashboard, making it the default entry point; they MUST stay reachable by their address until a later release removes them.
 - **FR-025**: The sign-in MUST be shared between the interface and the API by serving both under one common address prefix, with the session limited to that prefix, so that no other application on the same server sees the session. The API keeps its v1 contract; only its address moves under the prefix.
 
 ### Key Entities *(include if feature involves data)*
