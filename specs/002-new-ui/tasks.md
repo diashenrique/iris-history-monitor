@@ -49,7 +49,7 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Interface foundation
 
-- [ ] T015 [P] Create design tokens and themes in `web/src/design/tokens.css` and `web/src/design/theme.ts` (light, dark, `system` default; bundled Inter font in `web/src/design/fonts/`; reduced-motion handling) and a test `web/tests/unit/contrast.test.ts` that fails when a text pair is below 4.5:1 or a status/non-text pair below 3:1 in either theme
+- [x] T015 [P] Create design tokens and themes in `web/src/design/tokens.css` and `web/src/design/theme.ts` (light, dark, `system` default; bundled Inter font in `web/src/design/fonts/`; reduced-motion handling) and a test `web/tests/unit/contrast.test.ts` that fails when a text pair is below 4.5:1 or a status/non-text pair below 3:1 in either theme
 - [ ] T016 Build a static mock-up of the Overview in `web/mockup/overview.html` (light and dark, desktop and 360 px, every status, stale state) from the tokens of T015, and get the owner's approval recorded in `specs/002-new-ui/research.md` R10 — **gate for all screen UI** (research R10)
 - [ ] T017 Add accessible base components on Radix primitives in `web/src/design/components/` (Button, Select, Switch, Dialog, Tabs, StatusBadge with icon + label + color per FR-004) with axe tests in `web/tests/unit/components.test.tsx`; after T016 is approved, so their look follows the approved mock-up
 - [ ] T018 [P] Set up i18next in `web/src/i18n/` with `en.json`, `pt-BR.json`, `es.json`, browser-language detection with fallback `en`, persistence in browser storage, and Intl helpers for numbers, dates and time zone names in `web/src/i18n/format.ts`; test `web/tests/unit/i18n.test.ts` fails when any key is missing in a catalogue (SC-005)

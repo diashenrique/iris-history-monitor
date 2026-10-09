@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 
 // The build is committed to src/web/historymonitor and installed by IPM as the static web
@@ -8,7 +9,7 @@ export const outDir = fileURLToPath(new URL('../src/web/historymonitor', import.
 
 export default defineConfig({
   base: './',
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   build: {
     outDir,
     emptyOutDir: true,
