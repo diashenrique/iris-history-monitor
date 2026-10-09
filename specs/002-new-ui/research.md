@@ -33,6 +33,12 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   IRIS routes a request to the web application with the longest matching path, so the API keeps its own
   application inside the prefix. Both share the session cookie because they share the cookie path
   (measured in 001 R12 with path `/`; the narrower path is verified by the first implementation task, before any screen work).
+- **Measured (task T014, 2026-10-09)**: a static file of the interface application is served without a
+  sign-in and **does not open a CSP session**, so it cannot start the shared session. A class page inside the
+  same application does: unauthenticated it shows the IRIS login form; after sign-in it sets the session
+  cookie with path `/historymonitor/...` (not `/`), and the API accepts that cookie (200), while a client
+  without it gets 401. The interface therefore signs in through `web.Login` (R5). Serving `index.html`
+  without a sign-in exposes no data: every figure comes from the API, which requires the session.
   The old address `/api/historymonitor/v1` is removed: nothing has been released with it (spec 001 lives
   in unmerged pull requests), and keeping two addresses would keep two sessions.
 - **Rationale**: owner's answer to FR-025; the session is visible only to these two applications.
@@ -55,10 +61,12 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   Assumptions); disabling the web application (no explanation shown).
 
 ## R5. Sign-in, session expiry, no access (FR-014 to FR-016)
-- **Decision**: the static application requires password authentication, so IRIS shows its own login page
-  before serving the interface; after login the same address is served. The interface keeps all view
-  state in the address (R6), so on a 401 from the API (empty body, 001 R11) it reloads the current
-  address: IRIS asks for the sign-in and returns the user to the same view. A 403 problem from the API
+- **Decision** (revised after the T014 measurement in R3): the interface signs in through a small class
+  page, `web.Login`, in the interface application. On a 401 from the API (empty body, 001 R11), and on the
+  first load without a session, the interface goes to
+  `diashenrique.historymonitor.web.Login.cls?return=<current hash route>`. IRIS shows its login form; after
+  sign-in the page redirects to `index.html` plus the route, so the user returns to the same view. The
+  route is kept only when it is a plain hash route of URL-safe characters (no open redirect). A 403 problem from the API
   shows the "no access" screen naming the role `HistoryMonitorViewer`.
 - **Rationale**: reuses the instance's accounts and login (FR-014) with no new authentication code.
 - **Known gap**: the login page is IRIS's standard page, not part of this interface; its languages and

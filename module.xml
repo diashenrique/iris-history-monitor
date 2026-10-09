@@ -11,6 +11,7 @@
       <Resource Name="diashenrique.historymonitor.util.PKG"/>
       <Resource Name="diashenrique.historymonitor.api.PKG"/>
       <Resource Name="diashenrique.historymonitor.service.PKG"/>
+      <Resource Name="diashenrique.historymonitor.web.PKG"/>
       <Invokes>
         <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>

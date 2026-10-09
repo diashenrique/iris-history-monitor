@@ -57,5 +57,5 @@ contract pattern. Invalid address values fall back to the defaults (license, hou
 | appearance | `system`, `light`, `dark` | default `system` |
 
 ## Session states (client)
-`signed-in` → (API 401) → reload → IRIS login → `signed-in` on the same address.
+`signed-out` or `signed-in` → (API 401) → `web.Login.cls?return=<route>` → IRIS login → `signed-in` on the same route.
 `signed-in` → (API 403) → `no-access` screen. `/settings` false → `not-enabled` screen.

@@ -39,7 +39,7 @@ ClassMethod Run()
 	}
 	Do ..Check(n = 8, "role may SELECT the 8 history tables (got "_n_")", .bad)
 	Set $Namespace = "USER"
-	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Settings" {
+	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Settings", "web.Login" {
 		Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor."_c), "class "_c_" compiled", .bad)
 	}
 	Write $Select(bad = 0: "INSTALL_CHECK=OK", 1: "INSTALL_CHECK=FAILED "_bad), !
