@@ -54,6 +54,8 @@ jobs:
           cat load.short out.txt
           msg="$(cat load.short; echo ---; grep -E '^(FAILED_METHOD|FAILED_CASE|TEST_METHODS)' out.txt | tail -n 60)"
           echo "::notice title=unit test log::$(printf '%s' "$msg" | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          # A class that does not compile never runs, so the totals alone would hide it.
+          if grep -q '^ERROR' load.txt; then echo "source did not compile" >&2; grep '^ERROR' load.txt >&2; exit 1; fi
           grep -q "TEST_METHODS=[1-9][0-9]* FAILED_COUNT=0" out.txt
 
       - name: Container diagnostics
