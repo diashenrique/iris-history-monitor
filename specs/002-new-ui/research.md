@@ -182,7 +182,20 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   container installed the same way. Measured in the browser: the complete Overview in about 0.6 s, a
   90-day hourly history view in about 0.7 s (SC-002: 2 s and 3 s). First screen 143.7 KB gzipped; the
   chart (190 KB) loads only with History.
-- **Security headers (analysis finding S1)**: IRIS static web applications cannot set response headers
+- **Security headers (analysis finding S1)**: see R16. IRIS static web applications cannot set response headers
   such as `Content-Security-Policy` per application; that is web-server configuration. Not set here.
   React escapes output and the interface loads nothing from other hosts, which keeps the risk low.
 - **Not done here**: SC-001 and SC-008 need operators (`usability-test.md`, for the owner to run).
+
+## R16. Content-Security-Policy and the native dialog (after delivery, 1.9.3)
+- **Decision**: the process dialog is the native `<dialog>` with `showModal()`; Radix Dialog (R1 table)
+  is removed. The README recommends a strict policy for the static files (`script-src 'self';
+  style-src 'self'`, full text in `web/tests/e2e/csp.spec.ts`), and that e2e test runs every screen under
+  it and fails on any violation.
+- **Why**: served with that policy (Playwright adding the header), the only violation was
+  `style-src-elem inline` when the dialog opened: Radix's scroll lock (`react-remove-scroll`) injects a
+  `<style>` with computed values, so neither a hash nor a nonce (static files) can allow it. The native
+  element gives a modal with an inert page, Escape and focus inside it with no injected style; `index.css`
+  locks the page scroll (`html:has(dialog[open])`), and the component gives focus back to the opener.
+- **Not covered**: the IRIS sign-in page (`web.Login.cls`) uses inline script and style, so the policy
+  is set on `index.html` and `assets/` only. This replaces the "Security headers" note in R15.

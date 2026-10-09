@@ -42,6 +42,11 @@ html {
   outline: none;
 }
 
+/* The page behind a modal dialog does not scroll (the dialog itself scrolls when it is long). */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
