@@ -35,7 +35,9 @@ test('database size: choose databases', async ({ page }) => {
   await signIn(page, env.viewer, '#/history?metric=database-size&granularity=daily&preset=30d');
   const user = page.getByRole('checkbox', { name: 'USER' });
   await expect(user).toBeVisible();
-  await user.check();
+  // The box follows the address, which updates right after the click.
+  await user.click();
+  await expect(user).toBeChecked();
   await expect(page).toHaveURL(/db=USER/);
   await expect(page.getByRole('table').getByRole('columnheader')).toHaveCount(2);
 });

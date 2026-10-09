@@ -52,7 +52,7 @@ describe('fetchHistory', () => {
   });
 
   it('starts from a cursor to load more', async () => {
-    const history = vi.fn(async () => fixture('history-hourly-page2'));
+    const history = vi.fn(async (_metric: string, _params: Record<string, unknown>) => fixture('history-hourly-page2'));
     const r = await fetchHistory(fakeApi({ history }), 'license', 'hourly', range, '2026-10-03T02:00:00Z');
     expect(history.mock.calls[0]?.[1]).toMatchObject({ cursor: '2026-10-03T02:00:00Z' });
     expect(r.complete).toBe(true);

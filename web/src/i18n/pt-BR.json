@@ -118,5 +118,50 @@
   },
   "shell": {
     "checking": "Verificando o monitor…"
+  },
+  "history": {
+    "title": "Histórico",
+    "metric": "Métrica",
+    "metrics": {
+      "license": "Uso de licenças",
+      "csp-sessions": "Sessões CSP",
+      "database-size": "Tamanho dos bancos"
+    },
+    "granularity": "Granularidade",
+    "granularities": {
+      "5min": "5 minutos",
+      "hourly": "Por hora",
+      "daily": "Por dia"
+    },
+    "period": "Período",
+    "presets": {
+      "24h": "Últimas 24 horas",
+      "7d": "Últimos 7 dias",
+      "30d": "Últimos 30 dias",
+      "90d": "Últimos 90 dias",
+      "custom": "Período personalizado"
+    },
+    "from": "De",
+    "to": "Até",
+    "databases": "Bancos",
+    "loading": "Carregando o histórico…",
+    "noData": "Sem dados neste período.",
+    "partial": "Esta instância guarda dados de só parte do período: de {{first}} a {{last}}.",
+    "incomplete": "Mostrando {{count}} pontos; o período tem mais.",
+    "loadMore": "Carregar mais",
+    "export": "Exportar CSV",
+    "invalid": "Alguns valores do endereço não eram válidos e foram trocados pelo padrão: {{names}}.",
+    "time": "Hora ({{zone}})",
+    "series": {
+      "Avg": "Média",
+      "Max": "Máximo",
+      "value": "Valor"
+    },
+    "unitMB": "MB",
+    "previous": "Linhas anteriores",
+    "next": "Próximas linhas",
+    "rows": "Linhas {{from}}–{{to}} de {{total}}",
+    "chartLabel": "{{metric}}, {{granularity}}, de {{from}} a {{to}}",
+    "tableCaption": "Valores de {{metric}}"
   }
 }

@@ -101,14 +101,14 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Implementation
 
-- [ ] T037 [US2] Implement `web/src/features/history/useHistory.ts` (query from address state, paging per research R8) so T034 passes
-- [ ] T038 [P] [US2] Implement `web/src/features/history/HistoryForm.tsx` (metric, granularity, presets, custom range, database multi-select)
-- [ ] T039 [P] [US2] Implement `web/src/features/history/HistoryChart.tsx` lazily loaded, with modular ECharts (line chart, tooltip, data zoom, legend), light and dark themes, ARIA description enabled, reduced motion respected
-- [ ] T040 [P] [US2] Implement `web/src/features/history/HistoryTable.tsx` and the coverage, partial and no-data notices
-- [ ] T041 [P] [US2] Implement CSV export in `web/src/lib/csv.ts` (UTF-8 with BOM, ISO UTC times plus a local-time column) with tests in `web/tests/unit/csv.test.ts`
-- [ ] T042 [US2] Implement `web/src/features/history/HistoryPage.tsx` wiring form, chart, table and export to the address so T033 and T035 pass
-- [ ] T043 [US2] Add the History strings to the three catalogues in `web/src/i18n/`
-- [ ] T044 [US2] Rebuild, commit `src/web/historymonitor/`, quickstart step 4; T036 green in CI and the first-screen size check still under 200 KB
+- [x] T037 [US2] Implement `web/src/features/history/useHistory.ts` (query from address state, paging per research R8) so T034 passes
+- [x] T038 [P] [US2] Implement `web/src/features/history/HistoryForm.tsx` (metric, granularity, presets, custom range, database multi-select)
+- [x] T039 [P] [US2] Implement `web/src/features/history/HistoryChart.tsx` lazily loaded, with modular ECharts (line chart, tooltip, data zoom, legend), light and dark themes, ARIA description enabled, reduced motion respected
+- [x] T040 [P] [US2] Implement `web/src/features/history/HistoryTable.tsx` and the coverage, partial and no-data notices
+- [x] T041 [P] [US2] Implement CSV export in `web/src/lib/csv.ts` (UTF-8 with BOM, ISO UTC times plus a local-time column) with tests in `web/tests/unit/csv.test.ts`
+- [x] T042 [US2] Implement `web/src/features/history/HistoryPage.tsx` wiring form, chart, table and export to the address so T033 and T035 pass
+- [x] T043 [US2] Add the History strings to the three catalogues in `web/src/i18n/`
+- [x] T044 [US2] Rebuild, commit `src/web/historymonitor/`, quickstart step 4; T036 green in CI and the first-screen size check still under 200 KB
 
 **Checkpoint**: US1 and US2 work independently.
 

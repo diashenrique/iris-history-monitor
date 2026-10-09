@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, useLocation } from 'react-router';
@@ -67,10 +67,9 @@ describe('history form', () => {
     await userEvent.selectOptions(await screen.findByLabelText('Period'), 'custom');
     const from = screen.getByLabelText('From');
     const to = screen.getByLabelText('To');
-    await userEvent.clear(from);
-    await userEvent.type(from, '2026-10-01T08:00');
-    await userEvent.clear(to);
-    await userEvent.type(to, '2026-10-02T08:00');
+    // jsdom does not type into datetime-local inputs, so the value is set as the browser would.
+    fireEvent.change(from, { target: { value: '2026-10-01T08:00' } });
+    fireEvent.change(to, { target: { value: '2026-10-02T08:00' } });
     const expectedFrom = new Date('2026-10-01T08:00').toISOString().replace(/\.\d{3}Z$/, 'Z');
     expect(search().get('from')).toBe(expectedFrom);
     const last = api.history.mock.calls.at(-1)?.[1] as Record<string, string>;

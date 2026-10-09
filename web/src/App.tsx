@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { HashRouter, Route, Routes, useLocation } from 'react-router';
 import { ApiError, takeReturnRoute, type ApiClient } from './api/client';
 import { ApiProvider, useApi } from './api/context';
+import { HistoryPage } from './features/history/HistoryPage';
 import { OverviewPage } from './features/overview/OverviewPage';
 import { Header } from './shell/Header';
 import { SCREENS } from './shell/routes';
@@ -52,7 +53,7 @@ function Layout() {
       <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 pb-12 outline-none">
         <Routes>
           <Route path="/" element={<OverviewPage />} />
-          <Route path="/history" element={<SoonScreen />} />
+          <Route path="/history" element={<HistoryPage />} />
           <Route path="/processes" element={<SoonScreen />} />
           <Route path="/processes/:pid" element={<SoonScreen />} />
           <Route path="*" element={<OverviewPage />} />
