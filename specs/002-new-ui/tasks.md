@@ -121,8 +121,8 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Tests (write first, must fail)
 
-- [ ] T045 [P] [US3] Component tests in `web/tests/unit/processes.test.tsx`: filters `namespace`, `user`, `state`, `q` (at most 100 characters), sort by any column with `-` for descending, `pageSize` one of 25, 50, 100 (default 50), total shown, detail shows only the fields present, refresh every 15 s pausable, a process that disappears does not raise an error; axe passes
-- [ ] T046 [P] [US3] End-to-end `web/tests/e2e/processes.spec.ts`: spec US3 scenarios 1 to 3, rows and total equal the API, CSV export downloads the shown page, every request under `/historymonitor/` (SC-006), axe, 360 px
+- [x] T045 [P] [US3] Component tests in `web/tests/unit/processes.test.tsx`: filters `namespace`, `user`, `state`, `q` (at most 100 characters), sort by any column with `-` for descending, `pageSize` one of 25, 50, 100 (default 50), total shown, detail shows only the fields present, refresh every 15 s pausable, a process that disappears does not raise an error; axe passes
+- [x] T046 [P] [US3] End-to-end `web/tests/e2e/processes.spec.ts`: spec US3 scenarios 1 to 3, rows and total equal the API, CSV export downloads the shown page, every request under `/historymonitor/` (SC-006), axe, 360 px
 
 ### Implementation
 
