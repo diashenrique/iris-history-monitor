@@ -1,0 +1,9 @@
+.git
+.github
+.claude
+.specify
+web/node_modules
+web/test-results
+web/playwright-report
+web/tests/e2e/.auth
+images
