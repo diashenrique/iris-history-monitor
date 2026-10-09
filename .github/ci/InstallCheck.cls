@@ -11,7 +11,9 @@ ClassMethod Run()
 	Set sc = ##class(Security.Applications).Get("/api/historymonitor/v1", .p)
 	Do ..Check(sc, "API web application exists", .bad)
 	Do ..Check($Get(p("DispatchClass")) = "diashenrique.historymonitor.api.Dispatch", "dispatch class", .bad)
-	Do ..Check($Get(p("Resource")) = "HistoryMonitorRead", "requires the HistoryMonitorRead resource", .bad)
+	// The resource is checked by Dispatch.OnPreDispatch (403 problem+json); a web application resource
+	// would make CSP answer 401 HTML instead (research.md R11).
+	Do ..Check($Get(p("Resource")) = "", "no web application resource; the role is checked in OnPreDispatch", .bad)
 	// 32 = password only. Any other value (64 = unauthenticated) would open the API.
 	Do ..Check($Get(p("AutheEnabled")) = 32, "authentication is password only (AutheEnabled="_$Get(p("AutheEnabled"))_")", .bad)
 	Do ..Check($Get(p("Enabled")) = 1, "enabled", .bad)

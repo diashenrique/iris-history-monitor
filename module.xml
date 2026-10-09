@@ -34,7 +34,6 @@
       <WebApplication
         Url="/api/historymonitor/v1"
         DispatchClass="diashenrique.historymonitor.api.Dispatch"
-        Resource="HistoryMonitorRead"
         MatchRoles=":%DB_${Namespace}"
         AutheEnabled="32"
         CookiePath="/api/historymonitor/v1"
