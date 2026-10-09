@@ -91,3 +91,32 @@
   so the 403 branch of `Dispatch.Authorize` is never reached over HTTP. Choosing between "web application
   resource as the gate (401, HTML)" and "role check in `OnPreDispatch` only (403, problem+json)" is part
   of T021. `404` and `405` over HTTP already return problem+json.
+
+## R9. History: keys, series, paging and access (tasks T014 to T017)
+- **UTC keys**: every `SYS.History` row has `ZDATE` and `ZTIME`, documented as the "UTC date key" and
+  "UTC time key", while `DateTime` is local time. Seen in a container with `TZ=America/Sao_Paulo`: a row
+  with `DateTime` 00:00 has `ZTIME` 10800 (03:00 UTC). The service filters and reports by these keys, so
+  no time zone conversion is done. The legacy pages filter on `ZDATE` but show `DateTime`, mixing the two.
+- **Formatting trap**: `$ZDateTime(h, 3, 7)` converts local time to UTC. Applied to a UTC value it shifts
+  it by the server offset; this hit both `History.Iso` and the overview `generatedAt`, and was invisible
+  on a UTC server. Both now add `T` and `Z` to format 1, and the CI unit-test container runs with
+  `TZ=America/Sao_Paulo` so this kind of mistake fails a test.
+- **Series**: 5-minute license and CSP sessions give one series named `value`. Hourly and daily give
+  `Avg` and `Max` (the statistics the pages show; `StDev` is left out). Database size gives one series per
+  database, using the `Max` statistic for hourly and daily, in MB as stored (`DB_FileSize`); the legacy
+  page divides by 1024 and hides IRISTEMP and USER, which is left to the page mapping (T023).
+- **Empty values**: a null value (for example CSP sessions not collected) is left out of the points, not
+  sent as 0 as the legacy `NVL(..., 0)` did.
+- **Paging**: `limit` counts timestamps, not points, so every series of a page covers the same instants.
+  `next` is the last timestamp of the page; the next request reads after it. Rows are read oldest first
+  and reading stops one timestamp past the limit.
+- **Partial**: true when coverage is null or data is missing at either end by more than one step
+  (5 minutes, 1 hour, 1 day). The end is measured up to now, so a range that ends in the future is not
+  partial only because the future has no data. Gaps in the middle are not detected.
+- **Access**: a real HTTP call by the viewer failed with `SQLCODE -99`. `util.Security.Setup` now grants
+  the role `SELECT` on the eight `SYS_History` tables the service reads (and nothing else: no insert,
+  update or delete, no other history table). With it the viewer got 200 for every metric and granularity
+  on three days of `SYS.History.SysData.Demo` data, with no contract mismatch.
+- **Test data**: the tests write real `SYS.History` rows in February 2001 and delete them afterwards
+  (`test.api.HistoryFixture`). On a developer instance this touches the system history tables for the
+  length of the test run.

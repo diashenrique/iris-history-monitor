@@ -31,8 +31,8 @@ Nothing counts as verified until the CI run is green (T001).
 
 - [x] T014 [P] [US2] Contract tests for `GET /history/{metric}`: each metric and granularity, ascending order, empty range, bad dates, unknown metric, truncation with cursor, coverage and `partial` in `test/api/HistoryTest.cls`
 - [x] T015 [P] [US2] Concurrency test: two overlapping requests with different ranges return only their own data in `test/api/ConcurrencyTest.cls`
-- [ ] T016 [US2] Implement `service/History.cls` with parameterized SQL on the four history tables, timestamp cursor and coverage
-- [ ] T017 [US2] Add the `/history/{metric}` route in `api/Dispatch.cls`
+- [x] T016 [US2] Implement `service/History.cls` with parameterized SQL on the four history tables, timestamp cursor and coverage
+- [x] T017 [US2] Add the `/history/{metric}` route in `api/Dispatch.cls`
 
 ## Phase 5: User Story 3 - Processes (P2)
 

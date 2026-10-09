@@ -18,7 +18,8 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); US1 `GET /overview` done (T011-T013); next is US2 history (T014).
+- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); US1 `GET /overview` (T011-T013) and US2 `GET /history/{metric}` (T014-T017) done; next is US3 processes (T018).
+  History rows are keyed in UTC (`ZDATE`/`ZTIME`); never format a UTC value with `$ZDateTime(..., 7)`.
 
 ## Phase backlog
 - [x] Phase 0: tests + CI
