@@ -2,6 +2,7 @@
 /// The role holds Use on the resource; the web application requires the resource (task T008).
 /// It also holds Read on %DB_IRISSYS, because the services read SYS.Stats.Dashboard and other %SYS
 /// classes; without it the overview is all unavailable for a user who is not an administrator.
+/// Finally it may SELECT the System Monitor history tables the history service reads, and nothing else.
 Class diashenrique.historymonitor.util.Security
 {
 
@@ -11,6 +12,9 @@ Parameter ROLE = "HistoryMonitorViewer";
 
 /// Read on the system database, needed to switch to %SYS. Read only: nothing is written there.
 Parameter SYSTEMREAD = "%DB_IRISSYS:R";
+
+/// The SYS_History tables service.History reads. The role gets SELECT on these only.
+Parameter HISTORYTABLES = "SysData,SysData_DB,Hourly,Hourly_Sys,Hourly_DB,Daily,Daily_Sys,Daily_DB";
 
 /// Creates the resource and the role if they do not exist. Safe to call more than once.
 /// do ##class(diashenrique.historymonitor.util.Security).Setup()
@@ -28,20 +32,26 @@ ClassMethod Setup(resource As %String = "HistoryMonitorRead", role As %String = 
 		Set wanted = resource_":U,"_..#SYSTEMREAD
 		If '##class(Security.Roles).Exists(role) {
 			Set sc = ##class(Security.Roles).Create(role, "Can read the IRIS History Monitor API", wanted)
-			Quit
+			Quit:$$$ISERR(sc)
+		} Else {
+			// A role created by an older version may lack a grant; add what is missing, keep the rest.
+			Set sc = ##class(Security.Roles).Get(role, .props)
+			Quit:$$$ISERR(sc)
+			Set have = $Get(props("Resources")), add = ""
+			For i = 1:1:$Length(wanted, ",") {
+				Set grant = $Piece(wanted, ",", i)
+				If '..Holds(have, $Piece(grant, ":", 1), $Piece(grant, ":", 2)) Set add = add_$ListBuild(grant)
+			}
+			If add '= "" {
+				Set props("Resources") = $Select(have = "": "", 1: have_",")_$ListToString(add, ",")
+				Set sc = ##class(Security.Roles).Modify(role, .props)
+				Quit:$$$ISERR(sc)
+			}
 		}
-		// A role created by an older version may lack a grant; add what is missing, keep the rest.
-		Set sc = ##class(Security.Roles).Get(role, .props)
-		Quit:$$$ISERR(sc)
-		Set have = $Get(props("Resources")), add = ""
-		For i = 1:1:$Length(wanted, ",") {
-			Set grant = $Piece(wanted, ",", i)
-			If '..Holds(have, $Piece(grant, ":", 1), $Piece(grant, ":", 2)) Set add = add_$ListBuild(grant)
-		}
-		If add '= "" {
-			Set props("Resources") = $Select(have = "": "", 1: have_",")_$ListToString(add, ",")
-			Set sc = ##class(Security.Roles).Modify(role, .props)
-		}
+		// SQL privileges live in the namespace of the tables, %SYS. Granting again is harmless.
+		Set tables = ""
+		For i = 1:1:$Length(..#HISTORYTABLES, ",") Set tables = tables_$Select(i > 1: ",", 1: "")_"SYS_History."_$Piece(..#HISTORYTABLES, ",", i)
+		Set sc = $SYSTEM.SQL.Security.GrantPrivilege("SELECT", tables, "TABLE", role)
 	}
 	Catch ex {
 		Set sc = ex.AsStatus()
