@@ -11,12 +11,14 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
 - Tests live in `src/cls/diashenrique/historymonitor/test` (not shipped in `module.xml`).
   Run: `do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete")`.
 - Keep the IPM version in `module.xml` in step with behavior changes (SemVer).
+- `module.xml` changes are checked by the `ipm-install` CI job. `<WebApplication>` needs an explicit
+  `AutheEnabled`; `PasswordAuthEnabled`/`UnauthenticatedEnabled` belong to `<CSPApplication>` only.
 
 ## Spec-driven workflow (Spec Kit)
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: `specs/001-api-v1` (Phase 2).
+- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); routes start at T011.
 
 ## Phase backlog
 - [x] Phase 0: tests + CI

@@ -1,0 +1,79 @@
+/// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
+/// Routes are added by tasks T013, T017 and T020.
+///
+/// Access has two layers. The web application (module.xml) requires password authentication, allows no
+/// unauthenticated access and requires the HistoryMonitorRead resource. This class repeats the check in
+/// OnPreDispatch, so a misconfigured web application cannot open the API. Errors leave as problem+json
+/// and never carry internal error text.
+Class diashenrique.historymonitor.api.Dispatch Extends %CSP.REST
+{
+
+Parameter CONTENTTYPE = "application/json";
+
+Parameter CHARSET = "utf-8";
+
+XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
+{
+<Routes>
+</Routes>
+}
+
+/// The resource a caller must hold Use on. One definition, shared with util.Security.
+ClassMethod Resource() As %String
+{
+	Quit ##class(diashenrique.historymonitor.util.Security).#RESOURCE
+}
+
+/// The access decision, kept free of the session so it can be tested.
+/// 401: nobody is authenticated. 403: authenticated without Use on the resource. 200: allowed.
+ClassMethod Authorize(username As %String, hasUse As %Boolean) As %Integer
+{
+	If ($Get(username) = "") || (username = "UnknownUser") Quit 401
+	If '$Get(hasUse) Quit 403
+	Quit 200
+}
+
+/// Runs before routing. Stops the request with a problem+json response when access is not allowed.
+ClassMethod OnPreDispatch(pUrl As %String, pMethod As %String, ByRef pContinue As %Boolean) As %Status
+{
+	Set code = ..Authorize($Username, $SYSTEM.Security.Check(..Resource(), "USE"))
+	If code '= 200 {
+		Set pContinue = 0
+		Do ..Fail(code)
+	}
+	Quit $$$OK
+}
+
+/// Replaces the default error page for 404, 405 and unhandled errors with problem+json.
+ClassMethod ReportHttpStatusCode(pHttpStatus As %String, pSC As %Status = {$$$OK}) As %Status
+{
+	Do ..Fail(+pHttpStatus, pSC)
+	Quit $$$OK
+}
+
+/// The problem object for a status. Unmapped statuses become a generic 500. The text of sc is never
+/// copied into the response, because it can hold paths, globals or SQL.
+ClassMethod ErrorBody(code As %Integer, sc As %Status = {$$$OK}) As %DynamicObject
+{
+	If '$ListFind($ListBuild(400, 401, 403, 404, 405, 500), code) Set code = 500
+	Set slug = $Case(code, 400: "invalid-request", 401: "unauthorized", 403: "forbidden", 404: "not-found", 405: "method-not-allowed", : "internal-error")
+	Set detail = $Case(code, 400: "The request is not valid.", 401: "Authentication is required.", 403: "The authenticated user is not allowed to use this API.", 404: "No such route.", 405: "This method is not allowed for this route.", : "An internal error occurred.")
+	Quit ##class(diashenrique.historymonitor.api.Problem).Body(code, slug, detail)
+}
+
+/// Writes the problem+json response with the right status line and content type.
+ClassMethod Fail(code As %Integer, sc As %Status = {$$$OK})
+{
+	Set body = ..ErrorBody(code, sc)
+	If (body.status = 500) && $$$ISERR(sc) {
+		Try {
+			Do ##class(%SYS.System).WriteToConsoleLog("History Monitor API error: "_$SYSTEM.Status.GetOneStatusText(sc), 0, 1)
+		} Catch {
+		}
+	}
+	Set %response.ContentType = ##class(diashenrique.historymonitor.api.Problem).ContentType()
+	Set %response.Status = ##class(diashenrique.historymonitor.api.Problem).StatusLine(body.status)
+	Write body.%ToJSON()
+}
+
+}

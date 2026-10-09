@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-api-v1`
 **Created**: 2026-10-07
-**Status**: Draft
+**Status**: Clarified (one default pending confirmation)
 **Input**: User description: "Phase 2 of the redesign plan: replace the page-per-metric CSP classes with one versioned REST API that serves the overview, the process list and the history series, so a new interface can be built on a stable contract."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -72,9 +72,9 @@ Every failure returns the same error shape, and only accounts holding a dedicate
 
 ---
 
-### User Story 5 - Current screens keep working during the transition (Priority: P3)
+### User Story 5 - Current screens read from the API (Priority: P3)
 
-Until the new interface exists, the existing pages keep rendering and are fed by the API instead of their own queries.
+Until the new interface exists, the existing pages keep rendering and read their data from the API instead of running their own queries.
 
 **Why this priority**: It proves the API covers what users see today and lets old and new code share one source of truth before the old pages are retired.
 
@@ -108,7 +108,8 @@ Until the new interface exists, the existing pages keep rendering and are fed by
 - **FR-008**: Access MUST require a dedicated resource, separate from general administrative rights, and the install package MUST create the role that holds it.
 - **FR-009**: The API MUST NOT write shared per-request state, so concurrent requests cannot affect each other.
 - **FR-010**: The contract MUST be published as a machine-readable document kept in the repository, and every route MUST have a test that fails when its response shape drifts.
-- **FR-011**: Existing page URLs MUST keep responding until the new interface replaces them.
+- **FR-011**: The existing pages MUST read their data from the API, and their old class URLs MUST keep responding until the new interface replaces them.
+- **FR-013**: A history request MUST support windows up to 90 days at daily and hourly granularity, and MUST report the coverage actually available (first and last timestamp) when the System Monitor holds less than the window asked for.
 - **FR-012**: The API MUST honour the project constitution: no dynamic code execution from request data, parameterized SQL, host validation for any outbound call.
 
 ### Key Entities
@@ -123,7 +124,7 @@ Until the new interface exists, the existing pages keep rendering and are fed by
 ### Measurable Outcomes
 
 - **SC-001**: Every figure on the current Overview, License, CSP Sessions, Database and Processes pages can be obtained from the API, checked by a side-by-side comparison on a sample instance.
-- **SC-002**: A 30-day daily series is returned in under 2 seconds at the 95th percentile on the reference Docker image. This is a target, to be confirmed by measurement.
+- **SC-002**: A 90-day daily series and a 90-day hourly series are each returned in under 2 seconds at the 95th percentile on the reference Docker image. This is a target, to be confirmed by measurement.
 - **SC-003**: 100% of routes have a contract test and an authorization test, and the CI run is green before merge.
 - **SC-004**: No request handler writes to a shared scratch global, confirmed by a test that runs two overlapping requests with different ranges.
 - **SC-005**: The security tests from the earlier hardening phase still pass unchanged.
@@ -136,8 +137,10 @@ Until the new interface exists, the existing pages keep rendering and are fed by
 - The Message Viewer screen has no matching page in the repository and is out of scope here.
 - The new interface uses this API but is specified separately (Phase 4).
 
-## Open Questions
+## Clarifications
 
-- **Q1**: [NEEDS CLARIFICATION: Which authentication does the API accept: the web application's session login only, or also HTTP basic or tokens for scripts?]
-- **Q2**: [NEEDS CLARIFICATION: How far back must history reach? If the System Monitor keeps only a few days, the 30-day view needs the instance's own rollups (a separate spec, Phase 3).]
-- **Q3**: [NEEDS CLARIFICATION: Should the old pages be fed by the API (User Story 5) in this feature, or left untouched until Phase 4 to keep this change smaller?]
+### Session 2026-10-07
+
+- Q: How far back must history reach? -> A: 90 days. A 90-day window must be answerable at daily and hourly granularity. When the System Monitor holds less than the requested window at a granularity, the response returns what exists and reports the real coverage, instead of failing.
+- Q: Should the old pages move to the API in this feature? -> A: Yes. The existing pages read from the API in this feature; their old class URLs keep responding but no page uses them.
+- Q: Which authentication does the API accept? -> The same authentication the IRIS web application already provides (password login, session cookie or HTTP basic), no tokens in v1. Anonymous access stays disabled. Confirmed by the owner on 2026-10-07.
