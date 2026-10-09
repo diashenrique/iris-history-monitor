@@ -1,10 +1,34 @@
 {
-  "app": { "name": "History Monitor", "product": "IRIS", "title": "{{screen}} · IRIS History Monitor" },
-  "nav": { "main": "Main", "overview": "Overview", "history": "History", "processes": "Processes" },
+  "app": {
+    "name": "History Monitor",
+    "product": "IRIS",
+    "title": "{{screen}} · IRIS History Monitor"
+  },
+  "nav": {
+    "main": "Main",
+    "overview": "Overview",
+    "history": "History",
+    "processes": "Processes"
+  },
   "skip": "Skip to content",
-  "language": { "label": "Language", "en": "English", "pt-BR": "Português (Brasil)", "es": "Español" },
-  "appearance": { "label": "Appearance", "system": "System", "light": "Light", "dark": "Dark" },
-  "status": { "ok": "OK", "warning": "Warning", "critical": "Critical", "unavailable": "Unavailable" },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "pt-BR": "Português (Brasil)",
+    "es": "Español"
+  },
+  "appearance": {
+    "label": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "status": {
+    "ok": "OK",
+    "warning": "Warning",
+    "critical": "Critical",
+    "unavailable": "Unavailable"
+  },
   "summary": {
     "label": "Status summary",
     "critical_one": "{{count}} critical",
@@ -32,8 +56,19 @@
     "noValue": "No value",
     "trend": "Trend over the last {{minutes}} min: from {{from}} to {{to}}",
     "statusChanged": "{{metric}} is now {{status}}",
-    "groups": { "System": "System", "Journal": "Journal", "ECP": "ECP", "Licenses": "Licenses", "Activity": "Activity" },
-    "units": { "percent": "%", "ratio": "ratio", "count": "", "text": "" },
+    "groups": {
+      "System": "System",
+      "Journal": "Journal",
+      "ECP": "ECP",
+      "Licenses": "Licenses",
+      "Activity": "Activity"
+    },
+    "units": {
+      "percent": "%",
+      "ratio": "ratio",
+      "count": "",
+      "text": ""
+    },
     "metrics": {
       "systemUpTime": "System up time",
       "lastBackup": "Last backup",
@@ -64,6 +99,20 @@
     "title": "You do not have access to the monitor",
     "body": "Ask an administrator to give your account the {{role}} role."
   },
-  "error": { "title": "Something went wrong", "retry": "Try again", "network": "The monitor did not answer." },
-  "soon": { "title": "Not available yet", "body": "This screen is part of a later delivery." }
+  "error": {
+    "title": "Something went wrong",
+    "retry": "Try again",
+    "network": "The monitor did not answer."
+  },
+  "soon": {
+    "title": "Not available yet",
+    "body": "This screen is part of a later delivery."
+  },
+  "common": {
+    "close": "Close",
+    "loading": "Loading…"
+  },
+  "shell": {
+    "checking": "Checking the monitor…"
+  }
 }

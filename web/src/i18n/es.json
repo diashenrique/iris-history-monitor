@@ -1,10 +1,34 @@
 {
-  "app": { "name": "History Monitor", "product": "IRIS", "title": "{{screen}} · IRIS History Monitor" },
-  "nav": { "main": "Principal", "overview": "Resumen", "history": "Historial", "processes": "Procesos" },
+  "app": {
+    "name": "History Monitor",
+    "product": "IRIS",
+    "title": "{{screen}} · IRIS History Monitor"
+  },
+  "nav": {
+    "main": "Principal",
+    "overview": "Resumen",
+    "history": "Historial",
+    "processes": "Procesos"
+  },
   "skip": "Saltar al contenido",
-  "language": { "label": "Idioma", "en": "English", "pt-BR": "Português (Brasil)", "es": "Español" },
-  "appearance": { "label": "Apariencia", "system": "Sistema", "light": "Clara", "dark": "Oscura" },
-  "status": { "ok": "OK", "warning": "Advertencia", "critical": "Crítico", "unavailable": "No disponible" },
+  "language": {
+    "label": "Idioma",
+    "en": "English",
+    "pt-BR": "Português (Brasil)",
+    "es": "Español"
+  },
+  "appearance": {
+    "label": "Apariencia",
+    "system": "Sistema",
+    "light": "Clara",
+    "dark": "Oscura"
+  },
+  "status": {
+    "ok": "OK",
+    "warning": "Advertencia",
+    "critical": "Crítico",
+    "unavailable": "No disponible"
+  },
   "summary": {
     "label": "Resumen de estado",
     "critical_one": "{{count}} crítico",
@@ -36,8 +60,19 @@
     "noValue": "Sin valor",
     "trend": "Tendencia en los últimos {{minutes}} min: de {{from}} a {{to}}",
     "statusChanged": "{{metric}} ahora está {{status}}",
-    "groups": { "System": "Sistema", "Journal": "Journal", "ECP": "ECP", "Licenses": "Licencias", "Activity": "Actividad" },
-    "units": { "percent": "%", "ratio": "razón", "count": "", "text": "" },
+    "groups": {
+      "System": "Sistema",
+      "Journal": "Journal",
+      "ECP": "ECP",
+      "Licenses": "Licencias",
+      "Activity": "Actividad"
+    },
+    "units": {
+      "percent": "%",
+      "ratio": "razón",
+      "count": "",
+      "text": ""
+    },
     "metrics": {
       "systemUpTime": "Tiempo en marcha",
       "lastBackup": "Última copia de seguridad",
@@ -68,6 +103,20 @@
     "title": "No tiene acceso al monitor",
     "body": "Pida a un administrador que asigne a su cuenta el rol {{role}}."
   },
-  "error": { "title": "Algo salió mal", "retry": "Reintentar", "network": "El monitor no respondió." },
-  "soon": { "title": "Aún no disponible", "body": "Esta pantalla forma parte de una entrega posterior." }
+  "error": {
+    "title": "Algo salió mal",
+    "retry": "Reintentar",
+    "network": "El monitor no respondió."
+  },
+  "soon": {
+    "title": "Aún no disponible",
+    "body": "Esta pantalla forma parte de una entrega posterior."
+  },
+  "common": {
+    "close": "Cerrar",
+    "loading": "Cargando…"
+  },
+  "shell": {
+    "checking": "Comprobando el monitor…"
+  }
 }

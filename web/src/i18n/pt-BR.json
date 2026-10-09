@@ -111,5 +111,12 @@
   "soon": {
     "title": "Ainda não disponível",
     "body": "Esta tela faz parte de uma entrega posterior."
+  },
+  "common": {
+    "close": "Fechar",
+    "loading": "Carregando…"
+  },
+  "shell": {
+    "checking": "Verificando o monitor…"
   }
 }
