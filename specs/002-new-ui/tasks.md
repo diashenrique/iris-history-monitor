@@ -76,12 +76,12 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Implementation
 
-- [ ] T027 [US1] Implement `web/src/features/overview/useOverview.ts` (TanStack Query, `refetchInterval` 10 s, pause, hidden-tab pause, `lastSuccessAt`, `stale`, trend buffer of 60 values cleared on reload) so T025 passes
-- [ ] T028 [P] [US1] Implement `web/src/features/overview/Sparkline.tsx` (inline SVG, no chart library, text alternative "from X to Y over N minutes")
-- [ ] T029 [P] [US1] Implement `web/src/features/overview/MetricCard.tsx` (value and unit through `format.ts`, `StatusBadge`, reason for unavailable, sparkline for numeric metrics)
-- [ ] T030 [US1] Implement `web/src/features/overview/OverviewPage.tsx` (ordered grid per the approved mock-up, last-updated time, stale banner, pause switch, polite live region for status changes only) so T024 passes
-- [ ] T031 [US1] Add the Overview strings to `en.json`, `pt-BR.json`, `es.json` in `web/src/i18n/`
-- [ ] T032 [US1] Rebuild into `src/web/historymonitor/`, commit, and run quickstart steps 1 to 3 on a local IRIS container; T026 green in CI
+- [x] T027 [US1] Implement `web/src/features/overview/useOverview.ts` (TanStack Query, `refetchInterval` 10 s, pause, hidden-tab pause, `lastSuccessAt`, `stale`, trend buffer of 60 values cleared on reload) so T025 passes
+- [x] T028 [P] [US1] Implement `web/src/features/overview/Sparkline.tsx` (inline SVG, no chart library, text alternative "from X to Y over N minutes")
+- [x] T029 [P] [US1] Implement `web/src/features/overview/MetricCard.tsx` (value and unit through `format.ts`, `StatusBadge`, reason for unavailable, sparkline for numeric metrics)
+- [x] T030 [US1] Implement `web/src/features/overview/OverviewPage.tsx` (ordered grid per the approved mock-up, last-updated time, stale banner, pause switch, polite live region for status changes only) so T024 passes
+- [x] T031 [US1] Add the Overview strings to `en.json`, `pt-BR.json`, `es.json` in `web/src/i18n/`
+- [x] T032 [US1] Rebuild into `src/web/historymonitor/`, commit, and run quickstart steps 1 to 3 on a local IRIS container; T026 green in CI
 
 **Checkpoint**: US1 shippable on its own (switch on → Overview).
 

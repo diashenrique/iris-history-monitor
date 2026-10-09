@@ -3,6 +3,9 @@ import { execFileSync } from 'node:child_process';
 
 // Environment of the end-to-end run (set by the CI e2e job or by hand; .github/ci/e2e-setup.sh creates
 // the users and turns the interface on).
+/** Session of the viewer, signed in once by global-setup and reused by every test. */
+export const VIEWER_STATE = 'tests/e2e/.auth/viewer.json';
+
 export const env = {
   container: process.env.HM_IRIS_CONTAINER ?? 'iris',
   viewer: { user: 'e2eviewer', password: process.env.HM_VIEWER_PASSWORD ?? '' },
@@ -21,17 +24,20 @@ export function setInterfaceEnabled(on: boolean): void {
 }
 
 /**
- * Opens the interface at `route` and signs in through the IRIS login form when asked (research R5).
- * Returns when the interface shows a screen again.
+ * Opens the interface at `route`. A page in the viewer's saved session goes straight in; otherwise (or for
+ * another user, in a fresh context) it signs in through the IRIS login form (research R5).
  */
 export async function signIn(page: Page, who: { user: string; password: string }, route = '#/'): Promise<void> {
   await page.goto(`./index.html${route}`);
   const username = page.locator('input[name="IRISUsername"]');
-  await username.waitFor({ timeout: 15_000 });
-  await username.fill(who.user);
-  await page.locator('input[name="IRISPassword"]').fill(who.password);
-  await page.locator('input[name="IRISLogin"]').click();
-  await expect(page.locator('#main')).toBeVisible({ timeout: 15_000 });
+  const main = page.locator('#main');
+  await expect(username.or(main).first()).toBeVisible({ timeout: 15_000 });
+  if (await username.isVisible()) {
+    await username.fill(who.user);
+    await page.locator('input[name="IRISPassword"]').fill(who.password);
+    await page.locator('input[name="IRISLogin"]').click();
+  }
+  await expect(main).toBeVisible({ timeout: 15_000 });
 }
 
 /** Collects every request the page makes, to prove the interface reads only its own prefix (SC-006). */

@@ -88,7 +88,9 @@ describe('Overview live updates', () => {
   it('shows the time of the last successful update', async () => {
     renderOverview();
     await screen.findByRole('list', { name: 'Needs attention' });
-    expect(screen.getByText('Updated').parentElement?.querySelector('time')).toHaveAttribute('dateTime');
+    const time = document.querySelector('time[data-updated]');
+    expect(time).toHaveAttribute('dateTime');
+    expect(time?.textContent).toMatch(/\d{2}:\d{2}:\d{2}/);
   });
 });
 

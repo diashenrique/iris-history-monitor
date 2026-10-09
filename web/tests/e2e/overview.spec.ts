@@ -19,8 +19,8 @@ test('every metric with its status, matching the API, within 2 seconds', async (
   for (const m of api.metrics as { name: string; status: string; value: unknown; unit: string }[]) {
     const item = page.locator(`[data-metric="${m.name}"]`);
     await expect(item, m.name).toHaveCount(1);
-    await expect(item.locator('[data-status]'), `${m.name} status`).toHaveAttribute('data-status', m.status);
-    if (m.unit === 'text' && typeof m.value === 'string') await expect(item, `${m.name} value`).toContainText(m.value.trim());
+    await expect(item, `${m.name} status`).toHaveAttribute('data-status', m.status);
+    if (m.unit === 'text' && typeof m.value === 'string') await expect(item, `${m.name} value`).toContainText(m.value.replace(/\s+/g, ' ').trim());
     if (m.status !== 'ok') await expect(item).toContainText(STATUS_LABEL[m.status]!);
   }
   expect(outsidePrefix(requests, baseURL!), 'every request goes to /historymonitor/ (SC-006)').toEqual([]);
