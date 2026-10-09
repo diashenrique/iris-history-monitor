@@ -15,6 +15,9 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     assetsDir: 'assets',
+    // The chart chunk (ECharts) is large but loads only with the history screen; the first screen has
+    // its own budget, enforced by scripts/check-size.mjs.
+    chunkSizeWarningLimit: 700,
   },
   server: {
     // During development, API calls go to a local IRIS (set HM_IRIS, default localhost:52773).

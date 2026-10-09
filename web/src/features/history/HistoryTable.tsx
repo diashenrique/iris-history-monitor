@@ -44,9 +44,11 @@ export function HistoryTable({ series, caption, timeZone }: { series: Series[]; 
 
   return (
     <div className="grid gap-2">
-      {/* Focusable so keyboard users can scroll it sideways on narrow screens (WCAG 2.1.1). */}
+      {/* Focusable so keyboard users can scroll it sideways on narrow screens (WCAG 2.1.1, axe
+          scrollable-region-focusable); a labelled region is the recommended pattern. */}
       <div
         className="overflow-x-auto rounded-[10px] border border-divider bg-surface"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={0}
         role="region"
         aria-label={caption ?? t('history.title')}
