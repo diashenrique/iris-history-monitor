@@ -117,25 +117,33 @@ Method AssertProblem(response As %List, status As %Integer, what As %String)
 	Do $$$AssertEquals(body.status, status, what_": status in the body")
 }
 
+/// 401 comes from %CSP.REST.Login before any API code runs (research.md R11): the status and an
+/// empty body. Observed on IRIS 2026.1 behind Apache: no WWW-Authenticate header either.
+Method AssertUnauthorized(response As %List, what As %String)
+{
+	Do $$$AssertEquals($List(response, 1), 401, what_": status")
+	Do $$$AssertEquals($List(response, 3), "", what_": empty body, no API data")
+}
+
 Method TestWebServerAnswers()
 {
 	Set response = ..Call("/overview", ..#VIEWER, ..Password)
 	Do $$$AssertNotEquals($List(response, 1), 0, "the web server answered: "_$List(response, 3))
 }
 
-Method TestNoCredentialsIs401Problem()
+Method TestNoCredentialsIs401()
 {
 	Set routes = ..Routes()
 	For i = 1:1:$ListLength(routes) {
-		Do ..AssertProblem(..Call($List(routes, i)), 401, "no credentials "_$List(routes, i))
+		Do ..AssertUnauthorized(..Call($List(routes, i)), "no credentials "_$List(routes, i))
 	}
 }
 
-Method TestWrongPasswordIs401Problem()
+Method TestWrongPasswordIs401()
 {
 	Set routes = ..Routes()
 	For i = 1:1:$ListLength(routes) {
-		Do ..AssertProblem(..Call($List(routes, i), ..#VIEWER, "wrong-"_..Password), 401, "wrong password "_$List(routes, i))
+		Do ..AssertUnauthorized(..Call($List(routes, i), ..#VIEWER, "wrong-"_..Password), "wrong password "_$List(routes, i))
 	}
 }
 
