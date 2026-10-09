@@ -23,7 +23,7 @@ Nothing counts as verified until the CI run is green (T001).
 
 ## Phase 3: User Story 1 - Overview (P1)
 
-- [ ] T011 [P] [US1] Contract test for `GET /overview` including the unavailable-metric and never-backed-up cases in `test/api/OverviewTest.cls`
+- [x] T011 [P] [US1] Contract test for `GET /overview` including the unavailable-metric and never-backed-up cases in `test/api/OverviewTest.cls`
 - [ ] T012 [US1] Implement `service/Overview.cls` from `SYS.Stats.Dashboard.Sample()` and the SAM sensors; set `status` per metric
 - [ ] T013 [US1] Add the `/overview` route in `api/Dispatch.cls`
 
