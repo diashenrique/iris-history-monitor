@@ -43,6 +43,19 @@ ClassMethod Attributes(url As %String, Output props) As %Status
 		If $Get(attrs("Url")) = url Merge props = attrs Quit
 	}
 	Set props("Repo") = repo
+	// The files reach the application's Path through a <FileCopy>; its Name is the folder in the repository.
+	Set target = $Get(props("Path"))
+	Set sc = ##class(%XML.TextReader).ParseFile(repo_"module.xml", .reader)
+	Quit:$$$ISERR(sc) sc
+	While (target '= "") && reader.Read() {
+		Continue:(reader.NodeType'="element")||(reader.LocalName'="FileCopy")
+		Kill attrs
+		For i = 1:1:reader.AttributeCount {
+			Do reader.MoveToAttributeIndex(i)
+			Set attrs(reader.LocalName) = reader.Value
+		}
+		If $Get(attrs("Target")) = target Set props("Source") = $Get(attrs("Name")) Quit
+	}
 	Quit $Select($Data(props("Url")): $$$OK, 1: $$$ERROR($$$GeneralError, "no element with Url "_url_" in module.xml"))
 }
 
@@ -59,9 +72,9 @@ ClassMethod CreateAppsAndUser(password As %String) As %Status
 	// Interface: serve the files straight from the repository build folder.
 	Kill p
 	Set p("NameSpace") = ns, p("Enabled") = 1, p("ServeFiles") = 1, p("Recurse") = 1
-	Set p("Path") = ##class(%File).NormalizeDirectory(ui("Repo")_$Extract(ui("Path"), 2, *))
-	Set p("AutheEnabled") = $Select($Get(ui("PasswordAuthEnabled")) && '$Get(ui("UnauthenticatedEnabled")): 32, 1: 96)
-	For name = "MatchRoles", "UseCookies", "CookiePath" {
+	Quit:$Get(ui("Source"))="" $$$ERROR($$$GeneralError, "no <FileCopy> to the interface Path in module.xml")
+	Set p("Path") = ##class(%File).NormalizeDirectory(ui("Repo")_ui("Source"))
+	For name = "AutheEnabled", "MatchRoles", "UseCookies", "CookiePath" {
 		Set:$Data(ui(name)) p(name) = $Replace($Replace(ui(name), "${Namespace}", ns), "/historymonitor/", ..#PREFIX)
 	}
 	Set sc = ##class(Security.Applications).Create($Extract(..#PREFIX, 1, *-1), .p)
