@@ -1,0 +1,295 @@
+<title>History Monitor Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap">
+<style>
+/* Layout: a header bar, an attention band of large cards (non-ok first, FR-003), then healthy metrics
+   grouped by area as compact tiles. Colours are web/src/design/tokens.ts (light, then dark). */
+:root {
+  --bg: #f4f6fb; --surface: #ffffff; --raised: #ffffff; --text: #0f172a; --muted: #475569;
+  --divider: #e2e8f0; --control: #64748b; --accent: #4338ca; --on-accent: #ffffff;
+  --ok: #15803d; --ok-soft: #dcfce7; --warning: #854d0e; --warning-soft: #fef3c7;
+  --critical: #b91c1c; --critical-soft: #fee2e2; --unavailable: #57534e; --unavailable-soft: #e7e5e4;
+  --font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius: 10px; --shadow: 0 1px 2px rgb(15 23 42 / .06), 0 1px 1px rgb(15 23 42 / .04);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b1020; --surface: #121a2f; --raised: #1a2340; --text: #e2e8f0; --muted: #a3b0c4;
+  --divider: #243052; --control: #7d8bab; --accent: #a5b4fc; --on-accent: #0b1020;
+  --ok: #4ade80; --ok-soft: #0f2e1d; --warning: #fbbf24; --warning-soft: #33260a;
+  --critical: #f87171; --critical-soft: #3a1515; --unavailable: #c4c0bb; --unavailable-soft: #2a2826;
+  --shadow: none; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0b1020; --surface: #121a2f; --raised: #1a2340; --text: #e2e8f0; --muted: #a3b0c4;
+  --divider: #243052; --control: #7d8bab; --accent: #a5b4fc; --on-accent: #0b1020;
+  --ok: #4ade80; --ok-soft: #0f2e1d; --warning: #fbbf24; --warning-soft: #33260a;
+  --critical: #f87171; --critical-soft: #3a1515; --unavailable: #c4c0bb; --unavailable-soft: #2a2826;
+  --shadow: none; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font: 15px/1.5 var(--font); margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 0 48px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Header */
+header.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--raised);
+  border-bottom: 1px solid var(--divider); }
+.bar-in { max-width: 1180px; margin: 0 auto; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.01em; }
+.brand svg { color: var(--accent); }
+.brand small { color: var(--muted); font-weight: 500; }
+nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+nav a { display: block; padding: 6px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 550; }
+nav a[aria-current="page"] { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+nav a:hover { color: var(--text); }
+.tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--control);
+  border-radius: 8px; padding: 5px 10px; min-height: 34px; }
+button { cursor: pointer; }
+button:hover, select:hover { border-color: var(--text); }
+
+/* Page head */
+.head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; padding-block: 28px 18px; }
+h1 { font-size: 1.75rem; line-height: 1.2; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.instance { color: var(--muted); margin: 4px 0 0; }
+.live { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+.paused .dot { background: var(--control); box-shadow: none; }
+@media (prefers-reduced-motion: no-preference) { .pulse .dot { animation: pulse 1.2s ease-out 1; } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent); } 100% { box-shadow: 0 0 0 9px transparent; } }
+
+/* Stale banner */
+.stale { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; margin-bottom: 18px; border-radius: var(--radius);
+  background: var(--warning-soft); color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent); }
+.stale p { margin: 0; }
+
+/* Summary strip */
+.summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 999px; font-weight: 600; font-size: .875rem; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warning { background: var(--warning-soft); color: var(--warning); }
+.chip.critical { background: var(--critical-soft); color: var(--critical); }
+.chip.unavailable { background: var(--unavailable-soft); color: var(--unavailable); }
+
+h2 { font-size: .8125rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 650; }
+section + section { margin-top: 28px; }
+
+/* Attention cards */
+.attention { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.alert { background: var(--surface); border: 1px solid var(--divider); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 14px 16px; display: grid; gap: 6px; border-top: 4px solid var(--sev); min-width: 0; }
+.alert.critical { --sev: var(--critical); } .alert.warning { --sev: var(--warning); } .alert.unavailable { --sev: var(--unavailable); }
+.alert .name { font-weight: 600; }
+.alert .value { font-size: 1.5rem; font-weight: 650; letter-spacing: -.01em; }
+.alert .reason { color: var(--muted); font-size: .875rem; margin: 0; }
+
+/* Healthy groups */
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.group { background: var(--surface); border: 1px solid var(--divider); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 0; min-width: 0; }
+.group h3 { font-size: .9375rem; margin: 8px 16px 4px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label value" "spark spark"; gap: 2px 12px;
+  padding: 8px 16px; border-top: 1px solid var(--divider); align-items: baseline; }
+.row:first-of-type { border-top: 0; }
+.row .label { grid-area: label; color: var(--muted); }
+.row .value { grid-area: value; font-weight: 600; text-align: right; }
+.row .unit { color: var(--muted); font-weight: 500; font-size: .8125rem; margin-left: 3px; }
+.row svg { grid-area: spark; width: 100%; height: 28px; display: block; }
+.meter { grid-area: spark; height: 8px; border-radius: 4px; background: var(--divider); overflow: hidden; margin-top: 4px; }
+.meter > span { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: .8125rem; font-weight: 650; }
+.badge.ok { color: var(--ok); } .badge.warning { color: var(--warning); } .badge.critical { color: var(--critical); } .badge.unavailable { color: var(--unavailable); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.note { margin-top: 32px; padding: 14px 16px; border: 1px dashed var(--control); border-radius: var(--radius); color: var(--muted); font-size: .875rem; }
+.note strong { color: var(--text); }
+.mock-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+@media (max-width: 640px) {
+  h1 { font-size: 1.4rem; }
+  .tools { margin-left: 0; width: 100%; justify-content: space-between; }
+  nav { width: 100%; } nav ul { justify-content: space-between; }
+}
+</style>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12h4l2.5-6 4 12 2.5-6H21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>History Monitor <small>IRIS</small></span>
+    </div>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#overview" aria-current="page">Overview</a></li>
+        <li><a href="#overview">History</a></li>
+        <li><a href="#overview">Processes</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <label class="sr" for="lang">Language</label>
+      <select id="lang"><option>English</option><option>Português (Brasil)</option><option>Español</option></select>
+      <label class="sr" for="appearance">Appearance</label>
+      <select id="appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="overview">
+  <div class="head">
+    <div>
+      <h1>Overview</h1>
+      <p class="instance">Instance IRIS on iris-prod-01 · up 12 days, 4 hours</p>
+    </div>
+    <div class="live pulse" id="live" aria-live="off">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Updated <time id="updated" class="num">14:32:10</time> <span id="zone">BRT</span></span>
+      <button id="pause" type="button" aria-pressed="false">Pause</button>
+    </div>
+  </div>
+
+  <div class="stale" id="stale" role="status" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <p><strong>Figures out of date.</strong> The monitor did not answer since <span class="num">14:32:10</span>. Showing the last values; retrying.</p>
+  </div>
+
+  <div class="summary" aria-label="Status summary" id="summary"></div>
+
+  <section aria-labelledby="att-h">
+    <h2 id="att-h">Needs attention</h2>
+    <div class="attention" id="attention"></div>
+  </section>
+
+  <section aria-labelledby="ok-h">
+    <h2 id="ok-h">Healthy</h2>
+    <div class="groups" id="groups"></div>
+  </section>
+
+  <div class="note">
+    <strong>Mock-up for review (spec 002, task T016).</strong> Example figures, not your instance. Use these to see the other states:
+    <div class="mock-controls">
+      <button type="button" id="toggle-stale">Show the out-of-date state</button>
+      <button type="button" id="toggle-calm">Show an all-healthy instance</button>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const ICON = {
+    ok: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    warning: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.5h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    critical: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.4"/><path d="m8.5 8.5 7 7m0-7-7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    unavailable: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.4" stroke-dasharray="3 3"/></svg>',
+  };
+  const LABEL = { ok: 'OK', warning: 'Warning', critical: 'Critical', unavailable: 'Unavailable' };
+  const ORDER = { critical: 0, unavailable: 1, warning: 2, ok: 3 };
+
+  // The 18 overview metrics of the API, with example values (spec 001 data-model).
+  const base = [
+    { name: 'systemUpTime', label: 'System up time', group: 'System', value: '12d 4h 18m', unit: '', status: 'ok' },
+    { name: 'lastBackup', label: 'Last backup', group: 'System', value: null, unit: '', status: 'warning', reason: 'No backup has ever run on this instance.' },
+    { name: 'lockTable', label: 'Lock table', group: 'System', value: 'Normal', unit: '', status: 'ok' },
+    { name: 'journalSpace', label: 'Journal space', group: 'Journal', value: 'Troubled', unit: '', status: 'critical', reason: 'The journal directory is nearly full.' },
+    { name: 'journalStatus', label: 'Journal status', group: 'Journal', value: 'Normal', unit: '', status: 'ok' },
+    { name: 'ecpAppServer', label: 'ECP application server', group: 'ECP', value: 'OK', unit: '', status: 'ok' },
+    { name: 'ecpDataServer', label: 'ECP data server', group: 'ECP', value: null, unit: '', status: 'unavailable', reason: 'Not reported by the dashboard sample.' },
+    { name: 'writeDaemon', label: 'Write daemon', group: 'System', value: 'Normal', unit: '', status: 'ok' },
+    { name: 'licenseCurrent', label: 'Licenses in use', group: 'Licenses', value: 5, unit: 'of 8', status: 'ok', spark: true },
+    { name: 'licenseCurrentPct', label: 'License use', group: 'Licenses', value: 63, unit: '%', status: 'ok', meter: true },
+    { name: 'licenseHigh', label: 'Highest in use', group: 'Licenses', value: 7, unit: '', status: 'ok' },
+    { name: 'licenseHighPct', label: 'Highest use', group: 'Licenses', value: 88, unit: '%', status: 'warning', reason: 'Peak license use reached 88% (warning from 80%).' },
+    { name: 'licenseLimit', label: 'License limit', group: 'Licenses', value: 8, unit: '', status: 'ok' },
+    { name: 'applicationErrors', label: 'Application errors', group: 'Activity', value: 0, unit: '', status: 'ok', spark: true },
+    { name: 'cspSessions', label: 'CSP sessions', group: 'Activity', value: 42, unit: '', status: 'ok', spark: true },
+    { name: 'cacheEfficiency', label: 'Cache efficiency', group: 'Activity', value: 221.85, unit: 'ratio', status: 'ok', spark: true },
+    { name: 'processes', label: 'Processes', group: 'Activity', value: 87, unit: '', status: 'ok', spark: true },
+    { name: 'seriousAlerts', label: 'Serious alerts', group: 'Activity', value: 1, unit: 'since start', status: 'warning', reason: '1 serious alert in messages.log since the instance started.' },
+  ];
+  const calm = base.map((m) => m.status === 'ok' ? m : { ...m, status: 'ok', value: m.name === 'lastBackup' ? '2026-10-08 23:00' : m.name === 'journalSpace' ? 'Normal' : m.name === 'ecpDataServer' ? 'OK' : m.name === 'licenseHighPct' ? 71 : m.name === 'seriousAlerts' ? 0 : m.value, reason: undefined });
+
+  let metrics = base;
+  // A trend per numeric metric since the page opened (in memory only, research R7).
+  const trend = {};
+  let seed = 7;
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (const m of base) if (m.spark) trend[m.name] = Array.from({ length: 40 }, (_, i) => m.value * (0.8 + 0.4 * rand()) * (0.9 + i / 400));
+
+  const fmt = (v, digits) => typeof v === 'number' ? v.toLocaleString('en', { maximumFractionDigits: digits ?? 2 }) : v;
+
+  function spark(name) {
+    const pts = trend[name];
+    if (!pts) return '';
+    const w = 300, h = 28, min = Math.min(...pts), max = Math.max(...pts), span = max - min || 1;
+    const xy = pts.map((v, i) => [ (i / (pts.length - 1)) * (w - 4) + 2, h - 3 - ((v - min) / span) * (h - 8) ]);
+    const line = xy.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+    const area = `${line} L${xy.at(-1)[0].toFixed(1)} ${h} L${xy[0][0].toFixed(1)} ${h} Z`;
+    const [ex, ey] = xy.at(-1);
+    const desc = `Trend over the last ${Math.round(pts.length * 10 / 60)} minutes: from ${fmt(pts[0], 0)} to ${fmt(pts.at(-1), 0)}`;
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${desc}">
+      <path d="${area}" fill="var(--accent)" fill-opacity=".10"/>
+      <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+      <circle cx="${ex}" cy="${ey}" r="2.6" fill="var(--accent)"/></svg>`;
+  }
+
+  function badge(s) { return `<span class="badge ${s}">${ICON[s]}${LABEL[s]}</span>`; }
+
+  function render() {
+    const bad = metrics.filter((m) => m.status !== 'ok').sort((a, b) => ORDER[a.status] - ORDER[b.status]);
+    const counts = { critical: 0, unavailable: 0, warning: 0, ok: 0 };
+    metrics.forEach((m) => counts[m.status]++);
+    document.getElementById('summary').innerHTML = ['critical', 'unavailable', 'warning', 'ok']
+      .filter((s) => counts[s]).map((s) => `<span class="chip ${s}">${ICON[s]}${counts[s]} ${LABEL[s].toLowerCase()}</span>`).join('');
+
+    const att = document.getElementById('attention');
+    att.parentElement.hidden = bad.length === 0;
+    att.innerHTML = bad.map((m) => `<article class="alert ${m.status}" aria-label="${m.label}: ${LABEL[m.status]}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="name">${m.label}</span>${badge(m.status)}</div>
+      <div class="value num">${m.value === null ? (m.name === 'lastBackup' ? 'Never' : '—') : fmt(m.value)}${m.unit ? ` <span class="unit">${m.unit}</span>` : ''}</div>
+      <p class="reason">${m.reason ?? ''}</p></article>`).join('');
+
+    const groups = {};
+    metrics.filter((m) => m.status === 'ok').forEach((m) => (groups[m.group] ??= []).push(m));
+    document.getElementById('groups').innerHTML = Object.entries(groups).map(([g, list]) => `<div class="group"><h3>${g}</h3>${
+      list.map((m) => `<div class="row"><span class="label">${m.label}</span><span class="value num">${fmt(m.value)}${m.unit ? `<span class="unit">${m.unit}</span>` : ''}</span>${
+        m.meter ? `<div class="meter" role="meter" aria-label="${m.label}" aria-valuenow="${m.value}" aria-valuemin="0" aria-valuemax="100"><span style="width:${m.value}%"></span></div>` : spark(m.name)}</div>`).join('')
+    }</div>`).join('');
+  }
+
+  // Simulated refresh every 10 s (FR-005).
+  let paused = false;
+  const live = document.getElementById('live');
+  const pad = (n) => String(n).padStart(2, '0');
+  function tick() {
+    if (paused || !document.getElementById('stale').hidden) return;
+    const d = new Date();
+    document.getElementById('updated').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    for (const [k, pts] of Object.entries(trend)) { pts.push(pts.at(-1) * (0.94 + 0.12 * Math.random())); if (pts.length > 60) pts.shift(); }
+    render();
+    live.classList.remove('pulse'); void live.offsetWidth; live.classList.add('pulse');
+  }
+  setInterval(tick, 10000);
+  try { document.getElementById('zone').textContent = new Intl.DateTimeFormat('en', { timeZoneName: 'short' }).formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value ?? ''; } catch {}
+
+  document.getElementById('pause').addEventListener('click', (e) => {
+    paused = !paused;
+    e.currentTarget.textContent = paused ? 'Resume' : 'Pause';
+    e.currentTarget.setAttribute('aria-pressed', String(paused));
+    live.classList.toggle('paused', paused);
+  });
+  document.getElementById('toggle-stale').addEventListener('click', (e) => {
+    const s = document.getElementById('stale');
+    s.hidden = !s.hidden;
+    e.currentTarget.textContent = s.hidden ? 'Show the out-of-date state' : 'Hide the out-of-date state';
+  });
+  document.getElementById('toggle-calm').addEventListener('click', (e) => {
+    metrics = metrics === base ? calm : base;
+    e.currentTarget.textContent = metrics === base ? 'Show an all-healthy instance' : 'Show the example with problems';
+    render();
+  });
+  const appearance = document.getElementById('appearance');
+  appearance.addEventListener('change', () => {
+    if (appearance.value === 'system') delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = appearance.value;
+  });
+  render();
+})();
+</script>
