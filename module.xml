@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.9.1</Version>
+      <Version>1.9.2</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
@@ -28,32 +28,33 @@
           <Arg>/historymonitor/index.html</Arg>
         </Invoke>
       </Invokes>
-      <CSPApplication
+      <!-- Web applications are <WebApplication> (IPM deprecates <CSPApplication>). It only writes the
+           Security.Applications properties, so the page files are copied by <FileCopy> and Path points at
+           where they land. -->
+      <FileCopy Name="src/csp/" Target="${cspdir}irismonitor/"/>
+      <FileCopy Name="src/web/historymonitor/" Target="${cspdir}historymonitor/"/>
+      <WebApplication
         Url="/csp/irismonitor"
-        Path="/src/csp"
+        Path="${cspdir}irismonitor/"
         AutoCompile="0"
-        Directory="{$cspdir}/irismonitor"
         ServeFiles="1"
         Recurse="1"
-        CookiePath="/csp/irismonitor"
+        CookiePath="/csp/irismonitor/"
         UseCookies="2"
         MatchRoles=":%DB_${Namespace}"
-        PasswordAuthEnabled="1"
-        UnauthenticatedEnabled="0"
+        AutheEnabled="32"
        />
       <!-- The new interface (spec 002) and the API share the prefix /historymonitor/ and its session
            cookie, so one sign-in covers both and no other application sees the session (research R3). -->
-      <CSPApplication
+      <WebApplication
         Url="/historymonitor"
-        Path="/src/web/historymonitor"
-        Directory="{$cspdir}/historymonitor"
+        Path="${cspdir}historymonitor/"
         ServeFiles="1"
         Recurse="1"
         CookiePath="/historymonitor/"
         UseCookies="2"
         MatchRoles=":%DB_${Namespace}"
-        PasswordAuthEnabled="1"
-        UnauthenticatedEnabled="0"
+        AutheEnabled="32"
        />
       <WebApplication
         Url="/historymonitor/api/v1"
