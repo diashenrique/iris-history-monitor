@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -34,5 +34,5 @@
 - Iteration 1: FR-025 presumed one answer to its own question (reworded neutrally); an assumption named an internal
   global (reworded). The monitor API v1 and CSV are named on purpose: the API is the feature's declared data source
   and dependency, and CSV is the user-facing export format.
-- Open: FR-024 (fate of the old pages) and FR-025 (how the sign-in is shared). Resolve with `/speckit-clarify`
-  or the answers below before `/speckit-plan`.
+- Iteration 2 (2026-10-09): owner answered FR-024 (old pages obsolete, off the menu, reachable by address) and
+  FR-025 (common address prefix, session limited to it). All items pass.

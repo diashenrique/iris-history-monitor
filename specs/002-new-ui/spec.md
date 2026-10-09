@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-09
 
-**Status**: Draft
+**Status**: Clarified
 
 **Input**: User description: "Spec 002, interface nova (Fase 4): uma interface web nova, com o novo design, reformulado para o que existe hoje de mais moderno e dinâmico, pois precisa ser atraente e informativo, que substitui as páginas antigas e usa a API v1 (/api/historymonitor/v1) como única fonte de dados. Primeira entrega: a tela de Overview, liberada por uma flag, seguida de Histórico (licença, sessões CSP, tamanho de banco) e Processos. A constitution define que a interface é servida como arquivos estáticos pela aplicação web do IRIS, segue WCAG 2.2 AA e suporta en, pt-BR e es. O login precisa ser compartilhado com a API, como medido na research.md R12."
 
@@ -104,6 +104,13 @@ A user switches the interface between English, Brazilian Portuguese and Spanish,
 - The user opens two screens in two browser tabs: both work with the same sign-in.
 - The new interface is turned off while a user has it open: on the next refresh the user is told it is no longer enabled.
 
+## Clarifications
+
+### Session 2026-10-09
+
+- Q: When the new interface is complete, what happens to the old pages? -> A: They are marked obsolete and removed from the menu, the new interface becomes the default entry point, and the old pages stay reachable by address until a later release (FR-024).
+- Q: How is the sign-in shared with the API (research.md R12 of spec 001)? -> A: The interface and the API are served under one common address prefix with the session limited to that prefix; the API address moves under it (FR-025).
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
@@ -131,8 +138,8 @@ A user switches the interface between English, Brazilian Portuguese and Spanish,
 - **FR-021**: Every screen MUST be usable from a 360-pixel-wide phone screen up to a wide desktop screen.
 - **FR-022**: Error messages MUST be short, in the chosen language, based on the problem returned by the source, and MUST never show stack traces or internal text.
 - **FR-023**: The screens MUST be delivered in this order, each usable on its own: Overview (with sign-in), then History, then Processes.
-- **FR-024**: The existing pages MUST keep working, unchanged, while the new interface is being delivered. [NEEDS CLARIFICATION: When the new interface is complete, are the old pages and their menu entry removed in this feature, or kept installed until a later release?]
-- **FR-025**: The sign-in MUST be shared between the interface and the API, and the choice of how MUST state which other applications on the same server, if any, can see the session. [NEEDS CLARIFICATION: Which option from research.md R12 of spec 001: serve the interface and the API under a common address prefix (the API address changes), or a server-wide session cookie (the API address stays, the session is shared with every application on the server that uses the same cookie path)?]
+- **FR-024**: The existing pages MUST keep working, unchanged, while the new interface is being delivered. When the three screens are complete, the old pages MUST be marked obsolete and removed from the menu, with the new interface as the default entry point; they MUST stay reachable by their address until a later release removes them.
+- **FR-025**: The sign-in MUST be shared between the interface and the API by serving both under one common address prefix, with the session limited to that prefix, so that no other application on the same server sees the session. The API keeps its v1 contract; only its address moves under the prefix.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -165,4 +172,4 @@ A user switches the interface between English, Brazilian Portuguese and Spanish,
 - The interface is turned on and off for the whole instance by an administrator; per-user switching is not needed.
 - Export is CSV of what is currently shown; other formats are out of scope.
 - Supported browsers are the current versions of Chrome, Edge, Firefox and Safari.
-- Retiring the old pages, and the shared temporary data they write, depends on the answer to FR-024.
+- Removing the old pages for good, and the shared temporary data they write, belongs to a later release (FR-024).
