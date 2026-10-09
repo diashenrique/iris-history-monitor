@@ -57,7 +57,7 @@ them pass. Nothing counts as verified until CI is green.
 - [x] T020 [P] Add API fixtures in `web/tests/fixtures/` (overview with every status and an unavailable metric, history with `partial`, `truncated` + `next`, database series, an hourly series that crosses a daylight-saving change, processes pages) and `web/tests/unit/fixtures-contract.test.ts` that validates each fixture against `specs/001-api-v1/contracts/openapi.json` (research R13)
 - [x] T021 [P] Write the address-state helper `web/src/lib/url-state.ts` per `contracts/ui-routes.md` (parse and serialize each route's parameters; invalid values fall back to the defaults with a notice) with tests in `web/tests/unit/url-state.test.ts`
 - [x] T022 Build the shell in `web/src/App.tsx` and `web/src/shell/`: providers (TanStack Query, i18n, theme), hash routes `#/`, `#/history`, `#/processes`, `#/processes/:pid`, layout and navigation, skip link, document title and focus on route change, and the `not-enabled` (from `/settings`, read at load and again every 60 s while the interface is open, so turning it off reaches open screens; with a link to the old pages), `no-access` (naming `HistoryMonitorViewer`) and `error` screens; tests in `web/tests/unit/shell.test.tsx`
-- [ ] T023 Add an `e2e` job to `.github/workflows/ci.yml` and `web/tests/e2e/global-setup.ts`: IRIS container, IPM 0.10.9 install of the repository, `SYS.History.SysData.Demo(90)`, a viewer and a user without the role, `SetInterfaceEnabled(1)`, then `npx playwright test`; plus `web/tests/e2e/not-enabled.spec.ts` for the switch-off page and for switching off while a screen is open (the screen changes to `not-enabled` within 60 s)
+- [x] T023 Add an `e2e` job to `.github/workflows/ci.yml` and `web/tests/e2e/global-setup.ts`: IRIS container, IPM 0.10.9 install of the repository, `SYS.History.SysData.Demo(90)`, a viewer and a user without the role, `SetInterfaceEnabled(1)`, then `npx playwright test`; plus `web/tests/e2e/not-enabled.spec.ts` for the switch-off page and for switching off while a screen is open (the screen changes to `not-enabled` within 60 s)
 
 **Checkpoint**: the shell loads at `/historymonitor/`, one sign-in reaches the API, the switch works, design approved.
 
@@ -162,7 +162,7 @@ them pass. Nothing counts as verified until CI is green.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T058 Point the Management Portal favourite in `module.xml` (`util.Favorite` invoke) to `/historymonitor/` (FR-024, research R14)
+- [ ] T058 Point the Management Portal favourite in `module.xml` (`util.Favorite` invoke) to `/historymonitor/index.html` (IRIS has no default document, research R3) (FR-024, research R14)
 - [ ] T059 [P] Add the obsolete banner with a link to `/historymonitor/` to `src/csp/dashboard.csp`, `dashboardapi.csp`, `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp`, `systemprocesses.csp`; confirm their old URLs still answer
 - [ ] T060 [P] Write the moderated test guide for SC-001 and SC-008 (five operators, tasks, timing, rating question) in `specs/002-new-ui/usability-test.md` for the owner to run
 - [ ] T061 Walk through `quickstart.md` on a fresh IPM-installed container, measure SC-002 in a browser, record results and differences in `specs/002-new-ui/research.md`

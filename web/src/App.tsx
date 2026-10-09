@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HashRouter, Route, Routes, useLocation } from 'react-router';
-import { ApiError, type ApiClient } from './api/client';
+import { ApiError, takeReturnRoute, type ApiClient } from './api/client';
 import { ApiProvider, useApi } from './api/context';
 import { OverviewPage } from './features/overview/OverviewPage';
 import { Header } from './shell/Header';
@@ -82,7 +82,14 @@ function SettingsGate() {
   return <Layout />;
 }
 
+/** After sign-in IRIS lands on the Overview; go back to the screen the user was on (FR-015). */
+function restoreReturnRoute() {
+  const route = takeReturnRoute();
+  if (route && (window.location.hash === '' || window.location.hash === '#/')) window.location.hash = route;
+}
+
 export function App({ client, queryClient }: { client?: ApiClient; queryClient?: QueryClient }) {
+  useState(restoreReturnRoute);
   const [qc] = useState(() => queryClient ?? new QueryClient({ defaultOptions: { queries: { retry: 1 } } }));
   return (
     <QueryClientProvider client={qc}>

@@ -10,7 +10,7 @@ end-to-end suite (research R13). Replace host and credentials.
 - Some history: on a test instance, `do ##class(SYS.History.SysData).Demo(90)` in `%SYS`.
 
 ## Steps
-1. **Switch off by default** (FR-002): open `http://host:52773/historymonitor/` and sign in as the viewer.
+1. **Switch off by default** (FR-002): open `http://host:52773/historymonitor/index.html` and sign in as the viewer.
    Expect the "not enabled" page with a link to the old pages.
 2. **Turn it on**: as the administrator, `do ##class(diashenrique.historymonitor.util.Settings).SetInterfaceEnabled(1)`.
    As the viewer, `do ##class(...).SetInterfaceEnabled(1)` must fail. Reload: the Overview appears.
@@ -27,5 +27,5 @@ end-to-end suite (research R13). Replace host and credentials.
 7. **Language, appearance, size** (US5): switch to pt-BR and es (dates and numbers change too), dark and
    light, keyboard only, and a 360-pixel-wide window.
 8. **One source** (SC-006): in the browser's network panel, every request goes to `/historymonitor/`.
-9. **Old pages** (FR-024, after all screens): the Management Portal favourite opens `/historymonitor/`;
+9. **Old pages** (FR-024, after all screens): the Management Portal favourite opens `/historymonitor/index.html`;
    the old pages show the obsolete banner and still answer at `/csp/irismonitor/...`.

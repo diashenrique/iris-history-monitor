@@ -1,4 +1,4 @@
-import { ApiError, createClient, loginUrl } from '../../src/api/client';
+import { ApiError, createClient, loginUrl, RETURN_KEY, takeReturnRoute } from '../../src/api/client';
 
 function respond(status: number, body?: unknown) {
   return vi.fn(async (_url: string, _init?: RequestInit) =>
@@ -55,5 +55,15 @@ describe('API client', () => {
       './diashenrique.historymonitor.web.Login.cls?return=%23%2Fhistory%3Fmetric%3Dlicense',
     );
     expect(loginUrl('')).toBe('./diashenrique.historymonitor.web.Login.cls?return=%23%2F');
+  });
+
+  it('keeps the route to come back to once, and only an interface route (FR-015)', () => {
+    sessionStorage.setItem(RETURN_KEY, '#/history?metric=license');
+    expect(takeReturnRoute()).toBe('#/history?metric=license');
+    expect(takeReturnRoute()).toBe('');
+    for (const bad of ['https://evil.example/', '#/<script>', 'javascript:alert(1)']) {
+      sessionStorage.setItem(RETURN_KEY, bad);
+      expect(takeReturnRoute()).toBe('');
+    }
   });
 });

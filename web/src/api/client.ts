@@ -33,8 +33,31 @@ export function loginUrl(hash: string): string {
   return `${LOGIN_PAGE}?return=${encodeURIComponent(hash || '#/')}`;
 }
 
+/** Session storage key of the route to come back to after sign-in. */
+export const RETURN_KEY = 'hm.return';
+
+/**
+ * Sends the browser to the login page. The IRIS login form posts without the query string, so the
+ * route is also kept in session storage and restored by the shell after sign-in (FR-015).
+ */
 export function goToLogin(): void {
+  try {
+    sessionStorage.setItem(RETURN_KEY, window.location.hash);
+  } catch {
+    // Without storage the user comes back to the Overview.
+  }
   window.location.assign(loginUrl(window.location.hash));
+}
+
+/** The route saved before sign-in, once; '' when there is none or it is not an interface route. */
+export function takeReturnRoute(storage: Pick<Storage, 'getItem' | 'removeItem'> = sessionStorage): string {
+  try {
+    const value = storage.getItem(RETURN_KEY) ?? '';
+    storage.removeItem(RETURN_KEY);
+    return /^#\/[A-Za-z0-9/_?=&%.,:+~-]*$/.test(value) && value.length <= 2000 ? value : '';
+  } catch {
+    return '';
+  }
 }
 
 function isProblem(body: unknown): body is Problem {

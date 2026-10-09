@@ -39,6 +39,9 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   cookie with path `/historymonitor/...` (not `/`), and the API accepts that cookie (200), while a client
   without it gets 401. The interface therefore signs in through `web.Login` (R5). Serving `index.html`
   without a sign-in exposes no data: every figure comes from the API, which requires the session.
+- **Measured (task T023)**: IRIS web applications have no default document, so `/historymonitor/` answers
+  404; only named files are served. The entry address is therefore `/historymonitor/index.html` (the login
+  page already returns there, and the Management Portal favourite of T058 points there).
   The old address `/api/historymonitor/v1` is removed: nothing has been released with it (spec 001 lives
   in unmerged pull requests), and keeping two addresses would keep two sessions.
 - **Rationale**: owner's answer to FR-025; the session is visible only to these two applications.
