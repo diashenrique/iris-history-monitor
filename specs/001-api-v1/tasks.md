@@ -37,8 +37,8 @@ Nothing counts as verified until the CI run is green (T001).
 ## Phase 5: User Story 3 - Processes (P2)
 
 - [x] T018 [P] [US3] Contract tests for `GET /processes`: filter, sort allow-list, paging, total, ended-process page, empty fields omitted in `test/api/ProcessesTest.cls`
-- [ ] T019 [US3] Implement `service/Processes.cls` over `%SYS.ProcessQuery` `CONTROLPANEL`
-- [ ] T020 [US3] Add the `/processes` route in `api/Dispatch.cls`
+- [x] T019 [US3] Implement `service/Processes.cls` over `%SYS.ProcessQuery` `CONTROLPANEL`
+- [x] T020 [US3] Add the `/processes` route in `api/Dispatch.cls`
 
 ## Phase 6: User Story 4 - Errors and access (P2)
 

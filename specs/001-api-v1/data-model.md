@@ -71,6 +71,7 @@ are not returned.
 
 Filters: `namespace`, `user`, `state` from the observed values; `q` is a text match. Sort keys are an
 allow-list of the returned fields.
+Field names and the filter, sort and paging rules are in research.md R10.
 
 ## Problem
 `type` (relative URI), `title`, `status` (HTTP), `detail`, optional `errors` list of
