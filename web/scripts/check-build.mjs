@@ -22,6 +22,7 @@ try {
   const vite = fileURLToPath(new URL('../node_modules/vite/bin/vite.js', import.meta.url));
   execFileSync(process.execPath, [vite, 'build', '--outDir', fresh, '--emptyOutDir', '--logLevel', 'warn'], {
     stdio: 'inherit',
+    cwd: fileURLToPath(new URL('..', import.meta.url)),
   });
   const a = new Map(list(committed).map((p) => [relative(committed, p).split(sep).join('/'), p]));
   const b = new Map(list(fresh).map((p) => [relative(fresh, p).split(sep).join('/'), p]));
