@@ -142,8 +142,8 @@ them pass. Nothing counts as verified until CI is green.
 **Goal**: one sign-in for every screen, clean expiry and a clear no-access screen (the mechanics landed in T014, T019, T022).
 **Independent Test**: spec US4 scenarios on the three screens.
 
-- [ ] T053 [P] [US4] End-to-end `web/tests/e2e/session.spec.ts`: move across all screens without a credentials prompt; end the session (IRIS logout parameter) and act: sign-in page, then back to the same address; two tabs share the sign-in; the user without the role sees `no-access` naming `HistoryMonitorViewer` and no data
-- [ ] T054 [US4] Fix any gap T053 finds in `web/src/api/client.ts` or `web/src/shell/`; record the IRIS login page gap (research R5) in the pull request
+- [x] T053 [P] [US4] End-to-end `web/tests/e2e/session.spec.ts`: move across all screens without a credentials prompt; end the session (IRIS logout parameter) and act: sign-in page, then back to the same address; two tabs share the sign-in; the user without the role sees `no-access` naming `HistoryMonitorViewer` and no data
+- [x] T054 [US4] Fix any gap T053 finds in `web/src/api/client.ts` or `web/src/shell/`; record the IRIS login page gap (research R5) in the pull request
 
 **Checkpoint**: US1 to US4 complete.
 
@@ -154,19 +154,19 @@ them pass. Nothing counts as verified until CI is green.
 **Goal**: en, pt-BR, es; light and dark; keyboard and screen reader; 360 px.
 **Independent Test**: every screen in each language and theme, keyboard only, screen reader, phone width, audit.
 
-- [ ] T055 [P] [US5] End-to-end `web/tests/e2e/a11y-i18n.spec.ts`: each screen in the three languages (numbers, dates and zone names change without reload, the choice survives a reload), keyboard-only main task per screen with visible focus, axe with no critical or serious issue in both themes (SC-004), no page-level horizontal scroll at 360 px (SC-007)
-- [ ] T056 [US5] Add the language and appearance switchers to the shell header in `web/src/shell/Header.tsx` (appearance `system`, `light`, `dark`; stored per browser)
-- [ ] T057 [US5] Fix the issues T055 reports in the affected components; rebuild and commit; quickstart step 7
+- [x] T055 [P] [US5] End-to-end `web/tests/e2e/a11y-i18n.spec.ts`: each screen in the three languages (numbers, dates and zone names change without reload, the choice survives a reload), keyboard-only main task per screen with visible focus, axe with no critical or serious issue in both themes (SC-004), no page-level horizontal scroll at 360 px (SC-007)
+- [x] T056 [US5] Add the language and appearance switchers to the shell header in `web/src/shell/Header.tsx` (appearance `system`, `light`, `dark`; stored per browser)
+- [x] T057 [US5] Fix the issues T055 reports in the affected components; rebuild and commit; quickstart step 7
 
 ---
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T058 Point the Management Portal favourite in `module.xml` (`util.Favorite` invoke) to `/historymonitor/index.html` (IRIS has no default document, research R3) (FR-024, research R14)
-- [ ] T059 [P] Add the obsolete banner with a link to `/historymonitor/` to `src/csp/dashboard.csp`, `dashboardapi.csp`, `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp`, `systemprocesses.csp`; confirm their old URLs still answer
-- [ ] T060 [P] Write the moderated test guide for SC-001 and SC-008 (five operators, tasks, timing, rating question) in `specs/002-new-ui/usability-test.md` for the owner to run
-- [ ] T061 Walk through `quickstart.md` on a fresh IPM-installed container, measure SC-002 in a browser, record results and differences in `specs/002-new-ui/research.md`
-- [ ] T062 Update `CLAUDE.md` (Phase 4 status, `web/` workflow), `module.xml` version, and open the pull request stating what was and was not verified (including SC-001 and SC-008 as owner-run)
+- [x] T058 Point the Management Portal favourite in `module.xml` (`util.Favorite` invoke) to `/historymonitor/index.html` (IRIS has no default document, research R3) (FR-024, research R14)
+- [x] T059 [P] Add the obsolete banner with a link to `/historymonitor/` to `src/csp/dashboard.csp`, `dashboardapi.csp`, `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp`, `systemprocesses.csp`; confirm their old URLs still answer
+- [x] T060 [P] Write the moderated test guide for SC-001 and SC-008 (five operators, tasks, timing, rating question) in `specs/002-new-ui/usability-test.md` for the owner to run
+- [x] T061 Walk through `quickstart.md` on a fresh IPM-installed container, measure SC-002 in a browser, record results and differences in `specs/002-new-ui/research.md`
+- [x] T062 Update `CLAUDE.md` (Phase 4 status, `web/` workflow), `module.xml` version, and open the pull request stating what was and was not verified (including SC-001 and SC-008 as owner-run)
 
 ---
 
