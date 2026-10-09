@@ -18,12 +18,15 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); routes and access done (T011-T022); next is US5, the pages read the API (T023).
-  The role is checked in `Dispatch.OnPreDispatch` (403); the web application has no resource on purpose (research.md R11).
+- Open specs: none. `specs/001-api-v1` (Phase 2) is complete: `GET /overview`, `/history/{metric}`, `/processes`
+  under `/api/historymonitor/v1`. User story 5 (old pages read the API) was withdrawn: the old pages will not be used.
   History rows are keyed in UTC (`ZDATE`/`ZTIME`); never format a UTC value with `$ZDateTime(..., 7)`.
+  The role is checked in `Dispatch.OnPreDispatch` (403); the web application has no resource on purpose (research.md R11).
 
 ## Phase backlog
 - [x] Phase 0: tests + CI
 - [x] Phase 1: remove `Xecute`, parameterize SQL, SSRF guard on `readMetrics`
-- [ ] Phase 2: versioned REST API (`%CSP.REST`, `/api/v1`), service layer, replace `^IRISMonitor` scratch globals
-- [ ] Phase 3+: see the phased plan doc
+- [x] Phase 2: versioned REST API (`%CSP.REST`, `/api/historymonitor/v1`), service layer; the new code writes no scratch
+  globals (the old pages still use `^IRISMonitor` until they are retired)
+- [ ] Phase 3+: see the phased plan doc. Phase 4 (new interface) is the first API client; research.md R12 covers sharing
+  its login with the API

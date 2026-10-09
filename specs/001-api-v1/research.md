@@ -77,7 +77,7 @@
   sensors are not read separately: `util.customSensors` publishes the same dashboard properties, and
   reading `/api/monitor/metrics` would be an outbound HTTP call the plan rules out.
 - **Statuses**: the rules are listed in data-model.md. The license thresholds (80 and 95 percent) and
-  "serious alerts above 0 is a warning" are product choices made here, because neither dashboard colors
+  "serious alerts above 0 is a warning" are product choices made here and accepted by the owner on 2026-10-09, because neither dashboard colors
   these values today. They are constants in `service.Overview` and are easy to change.
 - **Observed on a fresh IRIS Community 2026.1 container** (2026-10-09): `LastBackup` is empty (so the
   overview reports a warning), `SeriousAlerts` is 1, the state texts are `Normal` and `OK`, and
@@ -131,10 +131,9 @@
   namespaces shown as `^^`, mirror daemons named by location, TCP and TNT devices shown with the client
   name, elapsed time from `ElapsedTime(StartTimeUTC)`. A test compares the result with `CONTROLPANEL`
   for long-lived system daemons (the tests run as a superuser, who may call it).
-- **Access decision to review**: a user holding `HistoryMonitorViewer` can list every process (user
+- **Access decision** (accepted by the owner on 2026-10-09): a user holding `HistoryMonitorViewer` can list every process (user
   names, routines, client addresses) without `%Admin_Manage`. That is what the processes page shows, and
   the API is gated by its own resource, but it is a wider grant than the Management Portal makes.
-  Restricting it (for example, a second resource for the process list) is a product decision.
 - **Names**: the query's column names have spaces and `#` (`Job#`, `Client Name`, `EXE Name`), so the API
   uses camelCase names: job, pid, displayPid, username, device, namespace, routine, commands, globals,
   state, clientName, exeName, ipAddress, privateGlobalBlocks, osUsername, cpuTime, parentPid,
@@ -159,7 +158,7 @@
   before login, as `CSPSystem` with no roles. Overriding `Login` moved that code into the namespace
   database, which that context cannot read: the request failed with `#5916 Illegal Web Request` and came
   back as 404. The only way to send a problem body would be to allow unauthenticated access, which the
-  owner ruled out. So 401 is IRIS's own answer: status 401 and an empty body (no `WWW-Authenticate`
+  owner ruled out. So 401 is IRIS's own answer (accepted by the owner on 2026-10-09): status 401 and an empty body (no `WWW-Authenticate`
   header was observed behind Apache). The contract now describes 401 that way, without a problem body.
 - **Shapes**: 200 responses match their schemas over HTTP; 400, 403, 404 and 405 are problem+json.
 - **Coverage**: `test.api.ContractCoverageTest` fails when a contract operation has no route, a route is
@@ -167,3 +166,33 @@
   only to the UrlMap was caught in a trial run.
 - **Runner**: a test case whose `OnBeforeAllTests` fails runs no method and was invisible in the totals
   (the HTTP test was silently skipped once). The Runner now reports it as `FAILED_CASE` and counts it.
+
+## R12. Sharing a login between the old pages and the API (for Phase 4)
+User story 5 was withdrawn, but what was learned on 2026-10-09 matters for the new interface:
+- A browser logged into `/csp/irismonitor` gets 401 from `/api/historymonitor/v1`: each web application's
+  session cookie is scoped to its own cookie path, so the API never receives it.
+- `GroupById` alone did not help (measured: 401). Giving both applications the same cookie path did:
+  with `CookiePath="/"` on both, a login on a page made the API answer 200 with only the session cookie,
+  and a client without the cookie still got 401. The session cookie name derives from the cookie path,
+  so equal paths mean one shared session.
+- Cookie path `/` sends the session to every application on the server and shares it with any other IRIS
+  application that also uses `/`. The narrower option is to serve the new interface and the API under a
+  common prefix with that prefix as the cookie path. Decide this when the Phase 4 interface is planned.
+
+## R13. Quickstart on a fresh instance and SC-002 (tasks T027, T028)
+Run on 2026-10-09 on a fresh `intersystemsdc/iris-community:latest` (2026.1) container: IPM 0.10.9
+installed, the module loaded with `load` (all phases SUCCESS), a user given `HistoryMonitorViewer`, and
+90 days of history generated with `SYS.History.SysData.Demo(90)` (25,920 five-minute rows). Requests over
+HTTP from inside the container:
+- Step 2: 200 with 18 metrics; `lastBackup` and `seriousAlerts` warnings, the rest ok.
+- Step 3: 90-day daily license: 200, coverage 2026-07-11 to 2026-10-08, not partial, Avg and Max with 90
+  points. Three points (days 1, 11 and 41) equal `SYS_History.Daily_Sys`.
+- Step 4: 200, 13 `%SYS` processes with total 13.
+- Step 5: reversed range 400 problem+json; no credentials 401 with an empty body; no role 403 problem+json.
+- Old URL (`dashboard.cls?method=getMetrics`): 200.
+- **SC-002**: 20 calls each, `limit=5000`: 90-day daily (90 timestamps) p95 **7 ms**; 90-day hourly
+  (2160 timestamps) p95 **34 ms**. Well under the 2 s target, on demo data in a local container (not the
+  2020.2 image the plan names, which does not start on current kernels).
+- **Differences from quickstart.md** (now corrected there): 90 days hourly exceed the default limit of
+  1000 timestamps, so it needs `limit` or paging; 401 has no problem body; the pages step was removed.
+- Still not measured: retention on a long-running real instance (R2).
