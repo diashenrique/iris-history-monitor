@@ -124,6 +124,67 @@ ClassMethod History(metric As %String, ByRef q, Output clean) As %DynamicArray
 	Quit errs
 }
 
+/// Optional free text: 1 to max characters, none of them a control character. Compared in
+/// ObjectScript only, never placed in SQL.
+ClassMethod Text(value As %String, max As %Integer) As %String
+{
+	Set v = $Get(value)
+	Set msg = "must be 1 to "_max_" characters without control characters"
+	If ($Length(v) < 1) || ($Length(v) > max) Quit msg
+	If $Length($ZStrip(v, "*C")) '= $Length(v) Quit msg
+	Quit ""
+}
+
+/// Absent means default; otherwise digits only, from 1 to max.
+ClassMethod Positive(value As %String, max As %Integer, default As %Integer, Output n As %Integer) As %String
+{
+	Set n = ""
+	Set v = $Get(value)
+	If v = "" {
+		Set n = default
+		Quit ""
+	}
+	Set msg = "must be an integer from 1 to "_max
+	If v '? 1.9N Quit msg
+	If (+v < 1) || (+v > max) Quit msg
+	Set n = +v
+	Quit ""
+}
+
+/// Validates a whole GET /processes request and returns a %DynamicArray of {parameter, message};
+/// empty means valid. clean receives namespace, user, state, q, sortField, sortDesc, page, pageSize.
+ClassMethod Processes(ByRef q, Output clean) As %DynamicArray
+{
+	Kill clean
+	Set errs = []
+	For p = "namespace", "user", "state" {
+		If $Get(q(p)) '= "" {
+			Set err = ..Text(q(p), 128)
+			If err '= "" { Do ..Add(errs, p, err) } Else { Set clean(p) = q(p) }
+		}
+	}
+	If $Get(q("q")) '= "" {
+		Set err = ..Text(q("q"), 100)
+		If err '= "" { Do ..Add(errs, "q", err) } Else { Set clean("q") = q("q") }
+	}
+	Set clean("sortField") = "job", clean("sortDesc") = 0
+	If $Get(q("sort")) '= "" {
+		Set desc = ($Extract(q("sort")) = "-")
+		Set field = $Select(desc: $Extract(q("sort"), 2, *), 1: q("sort"))
+		Set fields = ##class(diashenrique.historymonitor.service.Processes).Fields()
+		If (field = "") || '$ListFind(fields, field) {
+			Do ..Add(errs, "sort", "must be a returned field, optionally prefixed with '-': "_$ListToString(fields, ", "))
+		} Else {
+			Set clean("sortField") = field, clean("sortDesc") = desc
+		}
+	}
+	Set err = ..Positive($Get(q("page")), 999999, 1, .page)
+	If err '= "" { Do ..Add(errs, "page", err) } Else { Set clean("page") = page }
+	Set err = ..Positive($Get(q("pageSize")), 500, 100, .size)
+	If err '= "" { Do ..Add(errs, "pageSize", err) } Else { Set clean("pageSize") = size }
+	Quit errs
+}
+
 ClassMethod Add(errs As %DynamicArray, parameter As %String, message As %String) [ Private ]
 {
 	Set e = {}
