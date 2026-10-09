@@ -75,7 +75,7 @@ Method TestOverlappingRequestsKeepTheirOwnData()
 	}
 	Do $$$AssertEquals($Get(^UnitTest.HMConc("a", "json")), expectA, "worker a got only its own range")
 	Do $$$AssertEquals($Get(^UnitTest.HMConc("b", "json")), expectB, "worker b got only its own range")
-	Do $$$AssertEquals($Get(^UnitTest.HMConc("main", "diff")), 0, "the main process was not disturbed either")
+	Do $$$AssertEquals($Get(^UnitTest.HMConc("main", "diff"), 0), 0, "the main process was not disturbed either")
 }
 
 }
