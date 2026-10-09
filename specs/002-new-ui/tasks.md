@@ -22,13 +22,13 @@ them pass. Nothing counts as verified until CI is green.
 
 **Purpose**: the `web/` project, its tooling and its CI job.
 
-- [ ] T001 Scaffold the Vite + React + TypeScript project in `web/` (`web/package.json`, `web/vite.config.ts` with `base: './'`, `web/tsconfig.json` with `strict: true`, `web/index.html`, `web/src/main.tsx`), Node 24 in `web/.nvmrc`, and add `web/node_modules/` to `.gitignore`
-- [ ] T002 [P] Add ESLint (with `eslint-plugin-jsx-a11y`) and Prettier with `lint`, `format` and `typecheck` scripts in `web/eslint.config.js` and `web/package.json`
-- [ ] T003 [P] Configure Vitest with jsdom, Testing Library and `vitest-axe` in `web/vitest.config.ts` and `web/tests/setup.ts`
-- [ ] T004 [P] Configure Playwright with `@axe-core/playwright`, base URL from `HM_BASE_URL`, desktop and 360 px projects, light and dark color schemes in `web/playwright.config.ts`
-- [ ] T005 Set the Vite build output to `src/web/historymonitor/` (emptied on build, hashed asset names) and write `web/scripts/check-build.mjs` that rebuilds into a temp folder and fails when it differs from the committed `src/web/historymonitor/` (research R12)
-- [ ] T006 [P] Write `web/scripts/check-size.mjs` that fails when the JavaScript loaded by the first screen exceeds 200 KB gzipped (research R11)
-- [ ] T007 Add a `web` job to `.github/workflows/ci.yml`: Node 24, `npm ci`, lint, typecheck, unit tests, `check-build.mjs`, `check-size.mjs`
+- [x] T001 Scaffold the Vite + React + TypeScript project in `web/` (`web/package.json`, `web/vite.config.ts` with `base: './'`, `web/tsconfig.json` with `strict: true`, `web/index.html`, `web/src/main.tsx`), Node 24 in `web/.nvmrc`, and add `web/node_modules/` to `.gitignore`
+- [x] T002 [P] Add ESLint (with `eslint-plugin-jsx-a11y`) and Prettier with `lint`, `format` and `typecheck` scripts in `web/eslint.config.js` and `web/package.json`
+- [x] T003 [P] Configure Vitest with jsdom, Testing Library and `vitest-axe` in `web/vitest.config.ts` and `web/tests/setup.ts`
+- [x] T004 [P] Configure Playwright with `@axe-core/playwright`, base URL from `HM_BASE_URL`, desktop and 360 px projects, light and dark color schemes in `web/playwright.config.ts`
+- [x] T005 Set the Vite build output to `src/web/historymonitor/` (emptied on build, hashed asset names) and write `web/scripts/check-build.mjs` that rebuilds into a temp folder and fails when it differs from the committed `src/web/historymonitor/` (research R12)
+- [x] T006 [P] Write `web/scripts/check-size.mjs` that fails when the JavaScript loaded by the first screen exceeds 200 KB gzipped (research R11)
+- [x] T007 Add a `web` job to `.github/workflows/ci.yml`: Node 24, `npm ci`, lint, typecheck, unit tests, `check-build.mjs`, `check-size.mjs`
 
 ---
 

@@ -108,3 +108,34 @@ jobs:
           cat summary.txt
           echo "::notice title=ipm install check::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' summary.txt)"
           grep -q '^INSTALL_CHECK=OK' summary.txt
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint and types
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Committed build equals a fresh build
+        run: npm run check:build
+
+      - name: First screen size budget
+        run: npm run check:size
