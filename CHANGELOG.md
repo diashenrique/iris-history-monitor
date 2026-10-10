@@ -2,7 +2,10 @@
 
 Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`.
 
-## 2.1.0 (unreleased)
+## 2.1.0 (2026-10-10)
+
+The first release since 1.2.4. It includes everything listed under 2.0.0 and 1.9.3 below; those
+versions were steps on the way and were never published on their own.
 
 History collection health (spec 004). On a standard IRIS install the System Monitor records no history,
 and the History page used to stay empty with no reason given.
@@ -29,7 +32,7 @@ and the History page used to stay empty with no reason given.
 - No own copies of history. The instance keeps 5-minute detail for 7 days and hourly summaries for 60
   days, and never purges daily summaries, which is enough.
 
-## 2.0.0 (unreleased)
+## 2.0.0 (not released separately; part of 2.1.0)
 
 Major version: the old pages are gone, and addresses that served them in 1.x now forward (spec 003).
 
@@ -62,9 +65,9 @@ Major version: the old pages are gone, and addresses that served them in 1.x now
   the `${cspdir}irismonitor/` folder, `^IRISMonitor` and the switch value. Uninstalling removes them too.
   No namespace or database is deleted.
 
-## 1.9.3 (unreleased)
+## 1.9.3 (not released separately; part of 2.1.0)
 
-The first release since 1.2.4. Everything below 1.9.3 was built in that cycle and is released together.
+Everything below 1.9.3 was built in the same cycle and is released together in 2.1.0.
 
 ### New
 - **New monitor** at `/historymonitor/index.html`: Overview (live, metrics that need attention first),

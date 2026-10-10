@@ -4,7 +4,7 @@ Prerequisites: Docker, the repository, `gh`.
 
 1. **Upgrade from 1.9.x** (the main path, US2):
    - Start IRIS 2026.1 with IPM 0.10.9 and the repository mounted at `/home/irisowner/repo`. Check out
-     `chore/csp-release` (1.9.3; tag `v1.9.3` once released) and `load` it.
+     commit `900a421` (1.9.3, on master; never released on its own) and `load` it.
    - Open `/csp/irismonitor/historylicense.csp` once, so `^IRISMonitor` exists.
    - Check out `003-retire-old-pages` and `load` again.
    - Expect: `ci.InstallCheck` prints `INSTALL_CHECK=OK`. That covers no old classes, no compiled
