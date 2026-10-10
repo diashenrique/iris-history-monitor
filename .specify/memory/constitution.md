@@ -4,10 +4,11 @@
 
 ### I. Secure by Default
 Request data is never executed, concatenated into SQL, or trusted as a network target.
-- `Xecute` / `$Xecute` with request data is forbidden. Requests route through
-  `util.Dispatcher.Run(class, method, allowList)`; new REST routes use `%CSP.REST` URL maps.
+- `Xecute` / `$Xecute` with request data is forbidden. Web requests are handled by `%CSP.REST`
+  classes with explicit URL maps; a request never selects which code runs.
 - SQL uses parameters (`?` plus `%Execute(args)`). Never build SQL from request values.
-- A server-side HTTP call to a host derived from a request must pass `metrics.IsAllowedTarget`.
+- A server-side HTTP call never goes to a host taken from a request; outbound calls use fixed,
+  configured addresses.
 - Anything that reads `%SYS` does so through the service layer, never from a page class.
 
 ### II. Tests Gate Every Merge (NON-NEGOTIABLE)
@@ -31,7 +32,7 @@ The UI talks to one versioned REST API. The contract is written before the imple
 
 ### V. Small, Reversible Increments
 Ship in phases that each deliver value alone: security, then API, then history model, then UI.
-- Prefer a flag over a long-lived branch for large work (the new UI ships Overview first).
+- Prefer a flag over a long-lived branch for large work (the new UI shipped Overview first behind one).
 - Do not add a dependency, framework or abstraction a spec does not require.
 
 ## Technical Constraints
@@ -60,4 +61,4 @@ that changes this file, explains the reason, and updates `CLAUDE.md` if a code r
 Versions follow SemVer: MAJOR removes or redefines a principle, MINOR adds one or widens a
 rule, PATCH clarifies wording.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-07 | **Last Amended**: 2026-10-07
+**Version**: 1.1.0 | **Ratified**: 2026-10-07 | **Last Amended**: 2026-10-09
