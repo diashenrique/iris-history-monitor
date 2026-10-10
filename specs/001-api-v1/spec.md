@@ -72,7 +72,9 @@ Every failure returns the same error shape, and only accounts holding a dedicate
 
 ---
 
-### User Story 5 - Current screens read from the API (Priority: P3)
+### User Story 5 - Current screens read from the API (Priority: P3) - DEFERRED to Phase 4
+
+> Removed from this feature on 2026-10-09 by the owner: the old pages will not be used; the new interface (Phase 4) is the first client of the API. Kept below for history.
 
 Until the new interface exists, the existing pages keep rendering and read their data from the API instead of running their own queries.
 
@@ -108,7 +110,7 @@ Until the new interface exists, the existing pages keep rendering and read their
 - **FR-008**: Access MUST require a dedicated resource, separate from general administrative rights, and the install package MUST create the role that holds it.
 - **FR-009**: The API MUST NOT write shared per-request state, so concurrent requests cannot affect each other.
 - **FR-010**: The contract MUST be published as a machine-readable document kept in the repository, and every route MUST have a test that fails when its response shape drifts.
-- **FR-011**: The existing pages MUST read their data from the API, and their old class URLs MUST keep responding until the new interface replaces them.
+- **FR-011** (withdrawn 2026-10-09, see Clarifications): ~~The existing pages MUST read their data from the API~~. The old class URLs keep responding, unchanged, until the new interface replaces them.
 - **FR-013**: A history request MUST support windows up to 90 days at daily and hourly granularity, and MUST report the coverage actually available (first and last timestamp) when the System Monitor holds less than the window asked for.
 - **FR-012**: The API MUST honour the project constitution: no dynamic code execution from request data, parameterized SQL, host validation for any outbound call.
 
@@ -144,3 +146,10 @@ Until the new interface exists, the existing pages keep rendering and read their
 - Q: How far back must history reach? -> A: 90 days. A 90-day window must be answerable at daily and hourly granularity. When the System Monitor holds less than the requested window at a granularity, the response returns what exists and reports the real coverage, instead of failing.
 - Q: Should the old pages move to the API in this feature? -> A: Yes. The existing pages read from the API in this feature; their old class URLs keep responding but no page uses them.
 - Q: Which authentication does the API accept? -> The same authentication the IRIS web application already provides (password login, session cookie or HTTP basic), no tokens in v1. Anonymous access stays disabled. Confirmed by the owner on 2026-10-07.
+
+### Session 2026-10-09
+
+- Q: Should the old pages still move to the API (user story 5)? -> A: No. The old pages will not be used; work goes to the new interface in Phase 4. US5 and FR-011 are withdrawn from this feature. Replaces the 2026-10-07 answer.
+- Q: May a viewer list every process without `%Admin_Manage`? -> A: Yes, accepted as designed (research.md R10).
+- Q: Is a 401 with an empty body, instead of a problem, acceptable? -> A: Yes; anonymous access stays disabled (research.md R11).
+- Q: Overview status thresholds (license 80/95 percent, serious alerts above 0)? -> A: Accepted (research.md R8).

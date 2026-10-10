@@ -45,21 +45,23 @@ Nothing counts as verified until the CI run is green (T001).
 - [x] T021 [US4] Run `AuthTest` and `ProblemTest` against every route and fix gaps in `api/Dispatch.cls` (done over real HTTP in `test/api/HttpAuthTest.cls`; research.md R11)
 - [x] T022 [P] [US4] Check that no route response differs from `contracts/openapi.yaml` and no route lacks a test
 
-## Phase 7: User Story 5 - Existing pages read the API (P3)
+## Phase 7: User Story 5 - Existing pages read the API (P3) - DEFERRED to Phase 4
 
-- [ ] T023 [P] [US5] Write the `api.js` helper with the response mappers for each page shape in `src/csp/resources/js/api.js`
-- [ ] T024 [P] [US5] Record before-and-after figures of the six pages for comparison in `specs/001-api-v1/page-comparison.md`
-- [ ] T025 [US5] Switch the request calls in `src/csp/dashboard.csp`, `dashboardapi.csp`, `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp`, `systemprocesses.csp` to `api.js`
-- [ ] T026 [US5] Mark the old `dashboard/` and `util/metrics` classes deprecated in their class comments and confirm their URLs still respond
+Withdrawn on 2026-10-09 (spec Clarifications): the old pages will not be used. Not done here; the findings on sharing a login between the pages and the API are in research.md R12.
+
+- [-] T023 (deferred) [P] [US5] Write the `api.js` helper with the response mappers for each page shape in `src/csp/resources/js/api.js`
+- [-] T024 (deferred) [P] [US5] Record before-and-after figures of the six pages for comparison in `specs/001-api-v1/page-comparison.md`
+- [-] T025 (deferred) [US5] Switch the request calls in `src/csp/dashboard.csp`, `dashboardapi.csp`, `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp`, `systemprocesses.csp` to `api.js`
+- [-] T026 (deferred) [US5] Mark the old `dashboard/` and `util/metrics` classes deprecated in their class comments and confirm their URLs still respond
 
 ## Phase 8: Polish
 
-- [ ] T027 [P] Re-run the Phase 1 security tests and the whole suite; confirm green CI
-- [ ] T028 [P] Walk through `quickstart.md` on a fresh instance and note any difference
-- [ ] T029 Update `CLAUDE.md` phase backlog and `module.xml` version, and open the pull request describing what was and was not verified
+- [x] T027 [P] Re-run the Phase 1 security tests and the whole suite; confirm green CI
+- [x] T028 [P] Walk through `quickstart.md` on a fresh instance and note any difference (research.md R13)
+- [x] T029 Update `CLAUDE.md` phase backlog and `module.xml` version, and open the pull request describing what was and was not verified
 
 ## Dependencies
 
 - T001 gates every claim of "verified". Phase 2 blocks all stories. US1, US2 and US3 can proceed in parallel after Phase 2.
-- US4 needs at least one route. US5 needs US1 to US3.
+- US4 needs at least one route. US5 (deferred) needed US1 to US3.
 - Inside each story: test, then service, then route.
