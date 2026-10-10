@@ -1,5 +1,6 @@
 /// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
-/// Routes: GET /overview (T013), GET /history/:metric (T017), GET /processes (T020).
+/// Routes: GET /overview (T013), GET /history/:metric (T017), GET /processes (T020) of spec 001;
+/// GET /settings (task T011 of spec 002).
 ///
 /// Access: the web application (module.xml) requires password authentication and allows no
 /// unauthenticated access. A request without valid credentials is answered by %CSP.REST.Login with 401
@@ -19,10 +20,26 @@ Parameter CHARSET = "utf-8";
 XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
+<Route Url="/settings" Method="GET" Call="Settings"/>
 <Route Url="/overview" Method="GET" Call="Overview"/>
 <Route Url="/history/:metric" Method="GET" Call="History"/>
 <Route Url="/processes" Method="GET" Call="Processes"/>
 </Routes>
+}
+
+/// GET /settings: the interface switch, readable by any monitor viewer (spec 002 FR-002).
+ClassMethod Settings() As %Status
+{
+	Write ..SettingsResponse().%ToJSON()
+	Quit $$$OK
+}
+
+/// The body of GET /settings without the HTTP write.
+ClassMethod SettingsResponse() As %DynamicObject
+{
+	Set body = {}
+	Do body.%Set("interfaceEnabled", ##class(diashenrique.historymonitor.util.Settings).InterfaceEnabled(), "boolean")
+	Quit body
 }
 
 /// GET /overview: the current snapshot (user story 1). An unavailable source is reported per metric,

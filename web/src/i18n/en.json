@@ -1,0 +1,118 @@
+{
+  "app": {
+    "name": "History Monitor",
+    "product": "IRIS",
+    "title": "{{screen}} · IRIS History Monitor"
+  },
+  "nav": {
+    "main": "Main",
+    "overview": "Overview",
+    "history": "History",
+    "processes": "Processes"
+  },
+  "skip": "Skip to content",
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "pt-BR": "Português (Brasil)",
+    "es": "Español"
+  },
+  "appearance": {
+    "label": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "status": {
+    "ok": "OK",
+    "warning": "Warning",
+    "critical": "Critical",
+    "unavailable": "Unavailable"
+  },
+  "summary": {
+    "label": "Status summary",
+    "critical_one": "{{count}} critical",
+    "critical_other": "{{count}} critical",
+    "unavailable_one": "{{count}} unavailable",
+    "unavailable_other": "{{count}} unavailable",
+    "warning_one": "{{count}} warning",
+    "warning_other": "{{count}} warnings",
+    "ok_one": "{{count}} ok",
+    "ok_other": "{{count}} ok"
+  },
+  "overview": {
+    "title": "Overview",
+    "loading": "Loading the overview…",
+    "attention": "Needs attention",
+    "healthy": "Healthy",
+    "allHealthy": "Every metric is healthy.",
+    "updated": "Updated",
+    "pause": "Pause",
+    "resume": "Resume",
+    "pausedNote": "Updates paused",
+    "staleTitle": "Figures out of date.",
+    "staleBody": "The monitor has not answered since {{time}}. Showing the last values; retrying.",
+    "never": "Never",
+    "noValue": "No value",
+    "trend": "Trend over the last {{minutes}} min: from {{from}} to {{to}}",
+    "statusChanged": "{{metric}} is now {{status}}",
+    "groups": {
+      "System": "System",
+      "Journal": "Journal",
+      "ECP": "ECP",
+      "Licenses": "Licenses",
+      "Activity": "Activity"
+    },
+    "units": {
+      "percent": "%",
+      "ratio": "ratio",
+      "count": "",
+      "text": ""
+    },
+    "metrics": {
+      "systemUpTime": "System up time",
+      "lastBackup": "Last backup",
+      "lockTable": "Lock table",
+      "journalSpace": "Journal space",
+      "journalStatus": "Journal status",
+      "ecpAppServer": "ECP application server",
+      "ecpDataServer": "ECP data server",
+      "writeDaemon": "Write daemon",
+      "licenseCurrent": "Licenses in use",
+      "licenseCurrentPct": "License use",
+      "licenseHigh": "Highest in use",
+      "licenseHighPct": "Highest license use",
+      "licenseLimit": "License limit",
+      "applicationErrors": "Application errors",
+      "cspSessions": "CSP sessions",
+      "cacheEfficiency": "Cache efficiency",
+      "processes": "Processes",
+      "seriousAlerts": "Serious alerts"
+    }
+  },
+  "notEnabled": {
+    "title": "The new monitor is not turned on",
+    "body": "An administrator can turn it on for this instance. Until then, use the existing pages.",
+    "link": "Open the existing pages"
+  },
+  "noAccess": {
+    "title": "You do not have access to the monitor",
+    "body": "Ask an administrator to give your account the {{role}} role."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "retry": "Try again",
+    "network": "The monitor did not answer."
+  },
+  "soon": {
+    "title": "Not available yet",
+    "body": "This screen is part of a later delivery."
+  },
+  "common": {
+    "close": "Close",
+    "loading": "Loading…"
+  },
+  "shell": {
+    "checking": "Checking the monitor…"
+  }
+}

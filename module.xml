@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.7.0</Version>
+      <Version>1.8.0</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
@@ -11,6 +11,7 @@
       <Resource Name="diashenrique.historymonitor.util.PKG"/>
       <Resource Name="diashenrique.historymonitor.api.PKG"/>
       <Resource Name="diashenrique.historymonitor.service.PKG"/>
+      <Resource Name="diashenrique.historymonitor.web.PKG"/>
       <Invokes>
         <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
@@ -31,12 +32,26 @@
         PasswordAuthEnabled="1"
         UnauthenticatedEnabled="0"
        />
+      <!-- The new interface (spec 002) and the API share the prefix /historymonitor/ and its session
+           cookie, so one sign-in covers both and no other application sees the session (research R3). -->
+      <CSPApplication
+        Url="/historymonitor"
+        Path="/src/web/historymonitor"
+        Directory="{$cspdir}/historymonitor"
+        ServeFiles="1"
+        Recurse="1"
+        CookiePath="/historymonitor/"
+        UseCookies="2"
+        MatchRoles=":%DB_${Namespace}"
+        PasswordAuthEnabled="1"
+        UnauthenticatedEnabled="0"
+       />
       <WebApplication
-        Url="/api/historymonitor/v1"
+        Url="/historymonitor/api/v1"
         DispatchClass="diashenrique.historymonitor.api.Dispatch"
         MatchRoles=":%DB_${Namespace}"
         AutheEnabled="32"
-        CookiePath="/api/historymonitor/v1"
+        CookiePath="/historymonitor/"
         UseCookies="2"
        />
     </Module>

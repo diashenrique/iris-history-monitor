@@ -1,0 +1,122 @@
+{
+  "app": {
+    "name": "History Monitor",
+    "product": "IRIS",
+    "title": "{{screen}} · IRIS History Monitor"
+  },
+  "nav": {
+    "main": "Principal",
+    "overview": "Resumen",
+    "history": "Historial",
+    "processes": "Procesos"
+  },
+  "skip": "Saltar al contenido",
+  "language": {
+    "label": "Idioma",
+    "en": "English",
+    "pt-BR": "Português (Brasil)",
+    "es": "Español"
+  },
+  "appearance": {
+    "label": "Apariencia",
+    "system": "Sistema",
+    "light": "Clara",
+    "dark": "Oscura"
+  },
+  "status": {
+    "ok": "OK",
+    "warning": "Advertencia",
+    "critical": "Crítico",
+    "unavailable": "No disponible"
+  },
+  "summary": {
+    "label": "Resumen de estado",
+    "critical_one": "{{count}} crítico",
+    "critical_many": "{{count}} críticos",
+    "critical_other": "{{count}} críticos",
+    "unavailable_one": "{{count}} no disponible",
+    "unavailable_many": "{{count}} no disponibles",
+    "unavailable_other": "{{count}} no disponibles",
+    "warning_one": "{{count}} advertencia",
+    "warning_many": "{{count}} advertencias",
+    "warning_other": "{{count}} advertencias",
+    "ok_one": "{{count}} ok",
+    "ok_many": "{{count}} ok",
+    "ok_other": "{{count}} ok"
+  },
+  "overview": {
+    "title": "Resumen",
+    "loading": "Cargando el resumen…",
+    "attention": "Requiere atención",
+    "healthy": "En buen estado",
+    "allHealthy": "Todas las métricas están en buen estado.",
+    "updated": "Actualizado",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "pausedNote": "Actualización en pausa",
+    "staleTitle": "Valores desactualizados.",
+    "staleBody": "El monitor no responde desde las {{time}}. Se muestran los últimos valores; reintentando.",
+    "never": "Nunca",
+    "noValue": "Sin valor",
+    "trend": "Tendencia en los últimos {{minutes}} min: de {{from}} a {{to}}",
+    "statusChanged": "{{metric}} ahora está {{status}}",
+    "groups": {
+      "System": "Sistema",
+      "Journal": "Journal",
+      "ECP": "ECP",
+      "Licenses": "Licencias",
+      "Activity": "Actividad"
+    },
+    "units": {
+      "percent": "%",
+      "ratio": "razón",
+      "count": "",
+      "text": ""
+    },
+    "metrics": {
+      "systemUpTime": "Tiempo en marcha",
+      "lastBackup": "Última copia de seguridad",
+      "lockTable": "Tabla de bloqueos",
+      "journalSpace": "Espacio del journal",
+      "journalStatus": "Estado del journal",
+      "ecpAppServer": "Servidor de aplicaciones ECP",
+      "ecpDataServer": "Servidor de datos ECP",
+      "writeDaemon": "Write daemon",
+      "licenseCurrent": "Licencias en uso",
+      "licenseCurrentPct": "Uso de licencias",
+      "licenseHigh": "Máximo en uso",
+      "licenseHighPct": "Uso máximo de licencias",
+      "licenseLimit": "Límite de licencias",
+      "applicationErrors": "Errores de aplicación",
+      "cspSessions": "Sesiones CSP",
+      "cacheEfficiency": "Eficiencia de la caché",
+      "processes": "Procesos",
+      "seriousAlerts": "Alertas graves"
+    }
+  },
+  "notEnabled": {
+    "title": "El nuevo monitor no está activado",
+    "body": "Un administrador puede activarlo en esta instancia. Mientras tanto, use las páginas existentes.",
+    "link": "Abrir las páginas existentes"
+  },
+  "noAccess": {
+    "title": "No tiene acceso al monitor",
+    "body": "Pida a un administrador que asigne a su cuenta el rol {{role}}."
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "retry": "Reintentar",
+    "network": "El monitor no respondió."
+  },
+  "soon": {
+    "title": "Aún no disponible",
+    "body": "Esta pantalla forma parte de una entrega posterior."
+  },
+  "common": {
+    "close": "Cerrar",
+    "loading": "Cargando…"
+  },
+  "shell": {
+    "checking": "Comprobando el monitor…"
+  }
+}

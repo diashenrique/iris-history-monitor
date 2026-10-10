@@ -108,3 +108,92 @@ jobs:
           cat summary.txt
           echo "::notice title=ipm install check::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' summary.txt)"
           grep -q '^INSTALL_CHECK=OK' summary.txt
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint and types
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Committed build equals a fresh build
+        run: npm run check:build
+
+      - name: First screen size budget
+        run: npm run check:size
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start IRIS Community
+        run: |
+          set +e
+          docker run -d --name iris -p 52773:52773 -e TZ=America/Sao_Paulo --entrypoint /tini \
+            -v "$PWD":/home/irisowner/repo intersystemsdc/iris-community:latest -- /iris-main
+          for i in $(seq 1 90); do
+            if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
+              echo "IRIS container exited" >&2; exit 1
+            fi
+            out=$(docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' 2>&1)
+            if [ -z "$out" ] || ! echo "$out" | grep -qi "inhibited\|not running\|error"; then
+              docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' >/dev/null 2>&1 && exit 0
+            fi
+            sleep 2
+          done
+          echo "IRIS did not become ready in 180 s" >&2
+          exit 1
+
+      - name: Test passwords for this run
+        run: |
+          echo "HM_VIEWER_PASSWORD=V-$(openssl rand -hex 12)" >> "$GITHUB_ENV"
+          echo "HM_NOROLE_PASSWORD=N-$(openssl rand -hex 12)" >> "$GITHUB_ENV"
+
+      - name: Install the module with IPM, demo history, users, switch on
+        run: sh .github/ci/e2e-setup.sh iris
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        working-directory: web
+        env:
+          HM_BASE_URL: http://localhost:52773/historymonitor/
+          HM_IRIS_CONTAINER: iris
+        run: npx playwright test
+
+      - name: Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: web/playwright-report
+          retention-days: 7

@@ -2,12 +2,12 @@
   "openapi": "3.0.3",
   "info": {
     "title": "IRIS History Monitor API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Read-only API for the overview, history series and process list."
   },
   "servers": [
     {
-      "url": "/api/historymonitor/v1"
+      "url": "/historymonitor/api/v1"
     }
   ],
   "security": [
@@ -19,6 +19,30 @@
     }
   ],
   "paths": {
+    "/settings": {
+      "get": {
+        "operationId": "getSettings",
+        "summary": "Interface settings any monitor viewer may read",
+        "responses": {
+          "200": {
+            "description": "Settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
     "/overview": {
       "get": {
         "operationId": "getOverview",
@@ -256,6 +280,17 @@
       }
     },
     "schemas": {
+      "Settings": {
+        "type": "object",
+        "required": [
+          "interfaceEnabled"
+        ],
+        "properties": {
+          "interfaceEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
       "Problem": {
         "type": "object",
         "required": [
