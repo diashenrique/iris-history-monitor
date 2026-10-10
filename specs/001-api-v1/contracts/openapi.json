@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "IRIS History Monitor API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Read-only API for the overview, history series and process list."
   },
   "servers": [
@@ -30,6 +30,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        }
+      }
+    },
+    "/history-collection": {
+      "get": {
+        "operationId": "getHistoryCollection",
+        "summary": "Whether the instance is recording history, and how long it keeps each granularity (spec 004)",
+        "responses": {
+          "200": {
+            "description": "History collection state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryCollection"
                 }
               }
             }
@@ -290,6 +314,79 @@
             "type": "boolean",
             "deprecated": true,
             "description": "Always true since 2.0.0; the switch was removed (spec 003)."
+          }
+        }
+      },
+      "HistoryCollection": {
+        "type": "object",
+        "required": [
+          "state",
+          "running",
+          "lastSample",
+          "intervalSeconds",
+          "retention"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "recording",
+              "stale",
+              "off"
+            ]
+          },
+          "running": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "lastSample": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "intervalSeconds": {
+            "type": "integer",
+            "nullable": true
+          },
+          "retention": {
+            "type": "object",
+            "required": [
+              "5min",
+              "hourly",
+              "daily"
+            ],
+            "properties": {
+              "5min": {
+                "$ref": "#/components/schemas/Retention"
+              },
+              "hourly": {
+                "$ref": "#/components/schemas/Retention"
+              },
+              "daily": {
+                "$ref": "#/components/schemas/Retention"
+              }
+            }
+          }
+        }
+      },
+      "Retention": {
+        "type": "object",
+        "required": [
+          "kind",
+          "days"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "days",
+              "indefinite",
+              "unknown"
+            ]
+          },
+          "days": {
+            "type": "integer",
+            "nullable": true
           }
         }
       },

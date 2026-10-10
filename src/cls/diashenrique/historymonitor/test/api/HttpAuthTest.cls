@@ -25,7 +25,7 @@ Property Password As %String;
 /// The routes, each with valid query values.
 ClassMethod Routes() As %List
 {
-	Quit $ListBuild("/settings", "/overview", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02", "/processes?pageSize=1")
+	Quit $ListBuild("/settings", "/history-collection", "/overview", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02", "/processes?pageSize=1")
 }
 
 Method OnBeforeAllTests() As %Status
@@ -170,9 +170,25 @@ Method TestViewerGetsJson()
 	}
 }
 
+/// Spec 004 research R3: the viewer's role can read every part of the collection state; nothing falls back
+/// to unknown or null because of permissions. Compared with the same read done by the superuser test process.
+Method TestViewerReadsTheCollectionState()
+{
+	Set body = ""
+	Try { Set body = {}.%FromJSON($List(..Call("/history-collection", ..#VIEWER, ..Password), 3)) } Catch {}
+	Do $$$AssertTrue($IsObject(body), "viewer got a JSON body")
+	Quit:'$IsObject(body)
+	Set own = ##class(diashenrique.historymonitor.service.Collection).Response()
+	Do $$$AssertEquals(body.state, own.state, "state as the viewer")
+	Do $$$AssertEquals(body.running, own.running, "running as the viewer")
+	Do $$$AssertEquals(body.intervalSeconds, own.intervalSeconds, "interval as the viewer")
+	Do $$$AssertEquals(body.retention."5min".kind, "days", "5-minute retention readable as the viewer")
+	Do $$$AssertEquals(body.retention.hourly.kind, "days", "hourly retention readable as the viewer")
+}
+
 Method TestViewerResponsesMatchTheContract()
 {
-	For pair = "/settings:Settings", "/overview:OverviewSnapshot", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02:HistorySeries", "/processes?pageSize=5:ProcessPage" {
+	For pair = "/settings:Settings", "/history-collection:HistoryCollection", "/overview:OverviewSnapshot", "/history/license?granularity=daily&from=2001-02-01&to=2001-02-02:HistorySeries", "/processes?pageSize=5:ProcessPage" {
 		Set path = $Piece(pair, ":", 1), schema = $Piece(pair, ":", 2)
 		Set body = ""
 		Try { Set body = {}.%FromJSON($List(..Call(path, ..#VIEWER, ..Password), 3)) } Catch {}

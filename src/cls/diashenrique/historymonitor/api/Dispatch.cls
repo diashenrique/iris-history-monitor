@@ -1,6 +1,6 @@
 /// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
 /// Routes: GET /overview (T013), GET /history/:metric (T017), GET /processes (T020) of spec 001;
-/// GET /settings (task T011 of spec 002).
+/// GET /settings (task T011 of spec 002); GET /history-collection (spec 004).
 ///
 /// Access: the web application (module.xml) requires password authentication and allows no
 /// unauthenticated access. A request without valid credentials is answered by %CSP.REST.Login with 401
@@ -21,6 +21,7 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
 <Route Url="/settings" Method="GET" Call="Settings"/>
+<Route Url="/history-collection" Method="GET" Call="HistoryCollection"/>
 <Route Url="/overview" Method="GET" Call="Overview"/>
 <Route Url="/history/:metric" Method="GET" Call="History"/>
 <Route Url="/processes" Method="GET" Call="Processes"/>
@@ -41,6 +42,14 @@ ClassMethod SettingsResponse() As %DynamicObject
 	Set body = {}
 	Do body.%Set("interfaceEnabled", 1, "boolean")
 	Quit body
+}
+
+/// GET /history-collection: whether the instance records history and how long it keeps each granularity
+/// (spec 004). Read only; the module never turns collection on (owner's option A).
+ClassMethod HistoryCollection() As %Status
+{
+	Write ##class(diashenrique.historymonitor.service.Collection).Response().%ToJSON()
+	Quit $$$OK
 }
 
 /// GET /overview: the current snapshot (user story 1). An unavailable source is reported per metric,
