@@ -273,9 +273,9 @@ jobs:
           curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/settings | grep -q '"interfaceEnabled":true'
           curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/overview | grep -q '"metrics"'
           # The old address forwards to the new monitor (spec 003); no old page is served.
-          curl -s -o /dev/null -w '%{http_code} %{redirect_url}
-' http://localhost:52773/csp/irismonitor/historylicense.csp             | grep -qx '302 http://localhost:52773/historymonitor/index.html#/history?metric=license'
-          echo "image serves the interface, the API and the old pages"
+          curl -s -o /dev/null -w '%{http_code} %{redirect_url}' http://localhost:52773/csp/irismonitor/historylicense.csp \
+            | grep -qx '302 http://localhost:52773/historymonitor/index.html#/history?metric=license'
+          echo "image serves the interface and the API, and forwards the old addresses"
 
       - name: Container log
         if: failure()
