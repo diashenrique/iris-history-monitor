@@ -199,3 +199,10 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   locks the page scroll (`html:has(dialog[open])`), and the component gives focus back to the opener.
 - **Not covered**: the IRIS sign-in page (`web.Login.cls`) uses inline script and style, so the policy
   is set on `index.html` and `assets/` only. This replaces the "Security headers" note in R15.
+
+## R17. SC-008 withdrawn (spec 003, 2.0.0)
+- **Decision**: SC-008 (participants rate the new interface clearer than the old pages) is withdrawn.
+  The usability test keeps SC-001 and the History and Processes tasks.
+- **Why**: spec 003 removes the old pages, so there is nothing to compare against. A comparison from
+  participants' memory of 1.x would not be a fair measure. SC-001 (every problem found within 5 seconds)
+  still measures the clarity the new interface was built for.

@@ -2,6 +2,39 @@
 
 Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`.
 
+## 2.0.0 (unreleased)
+
+Major version: the old pages are gone, and addresses that served them in 1.x now forward (spec 003).
+
+### Removed
+- The old pages (`/csp/irismonitor/*.csp`), their static files (including the DevExtreme 18.2.3 grid
+  library) and the classes only they used: `diashenrique.historymonitor.dashboard.*`, `util.metrics`
+  (with its server-side metrics proxy) and `util.Dispatcher`.
+- The switch that turned the new monitor on (`util.Settings`, `SetInterfaceEnabled`). The monitor is on for
+  everyone with the `HistoryMonitorViewer` role.
+- The old pages' scratch data `^IRISMonitor`: no code writes shared per-request data any more.
+
+### Changed
+- Every address under `/csp/irismonitor/` forwards (302) to the new monitor, and does so for all of 2.x:
+
+  | Old address | New screen |
+  | --- | --- |
+  | `dashboard.csp` | Overview |
+  | `historylicense.csp` | History, license use |
+  | `historycspsessions.csp` | History, CSP sessions |
+  | `historydatabase.csp` | History, database size |
+  | `systemprocesses.csp` | Processes |
+  | anything else | Overview |
+
+- API v1: `GET /settings` stays; `interfaceEnabled` is always `true` and marked deprecated.
+- Constitution 1.1.0: requests go through `%CSP.REST` URL maps, and no server-side call goes to a host
+  taken from a request.
+
+### Upgrade
+- Installing 2.0.0 over 1.x removes, in the module's namespace, the old classes, the six compiled pages,
+  the `${cspdir}irismonitor/` folder, `^IRISMonitor` and the switch value. Uninstalling removes them too.
+  No namespace or database is deleted.
+
 ## 1.9.3 (unreleased)
 
 The first release since 1.2.4. Everything below 1.9.3 was built in that cycle and is released together.

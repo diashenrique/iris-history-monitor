@@ -24,8 +24,14 @@
   granted, the test must prove that UnknownUser can run it (see T-task "forward as UnknownUser"). If it
   cannot, the fallback is `MatchRoles=":%DB_${Namespace}"`, which is scoped to this application, and the
   change is recorded here.
+- **Result (T007, measured on IRIS 2026.1)**: with no role, the unauthenticated user got `403` before the
+  class ran, because it may not run code from the module's database. With `MatchRoles=":%DB_${Namespace}"`
+  the same request gets the `302`. The fallback is used. The role applies only to requests of this
+  application, whose dispatch class answers every request with a fixed redirect (OnPreDispatch,
+  `pContinue = 0`; `DispatchRequest` is final in `%CSP.REST`), so no other code runs with it.
 - **Alternatives**: keep password authentication (double sign-in); forward without a session at all
-  through the web server (R1 alternative).
+  through the web server (R1 alternative); a dedicated role with Read only on the database (one more role
+  to create and remove, for a class that already runs nothing else).
 
 ## R3. Removing what 1.x left on an upgrade
 - **Decision**: a new class `util.Retire` with one idempotent method `Run()`, called by `<Invoke>` after
@@ -81,3 +87,23 @@
   (FR-006). It no longer calls the switch. The comments drop "where the old pages keep their scratch data".
 - **Rationale**: a dedicated namespace keeps the module apart from `USER`; nothing in 2.0.0 needs it to
   go away.
+
+## R8. Delivery results (T019)
+- **ObjectScript suite** on IRIS 2026.1 with IPM 0.10.9: 133 methods, 0 failed. Removed `SecurityTest`
+  (5 methods, tested only the deleted classes) and the switch methods of `SettingsTest`; added
+  `RetireTest` (4) and `ForwardTest` (4, including hostile paths and GET/HEAD/POST over HTTP without
+  credentials).
+- **Upgrade 1.9.3 → 2.0.0** on a container that had used the old pages: `Retire` removed 17 items (5
+  `dashboard` classes, `util.metrics`, `util.Dispatcher`, `util.Settings`, 6 compiled pages, the page
+  folder, `^IRISMonitor`, the switch value). `InstallCheck` printed `INSTALL_CHECK=OK`, and the old
+  addresses answer 302 to the contract targets. The new CI job `ipm-upgrade` repeats this on every PR.
+- **Uninstall**: the `Unconfigure`/`Before` invoke runs on IPM 0.10.9 (R4 confirmed). No module class, web
+  application or interface file is left.
+- **Interface**: `npm test` 148 passed. Lint has the one existing warning (TanStack Table and the React
+  Compiler). Build matches, first screen 131.6 KB gzipped. E2E 69 passed and 24 skipped by design. That
+  includes the new forwarding tests (six old addresses, a signed-out sign-in that lands on History/license,
+  and no link to old pages on any screen) and the CSP test.
+- **Docker image**: builds without the switch call; `/settings` answers `{"interfaceEnabled":true}`, and
+  `/csp/irismonitor/historylicense.csp` answers 302 to History on license.
+- **Found while building**: `DispatchRequest` is final in `%CSP.REST` on 2026.1, so the forwarding uses
+  `OnPreDispatch`. The unauthenticated user needed the database role to run the class (R2 result).
