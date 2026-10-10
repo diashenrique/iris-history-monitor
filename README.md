@@ -49,8 +49,9 @@ cd iris-history-monitor
 docker compose up -d --build
 ```
 
-The image installs the module with IPM in its own namespace, `IRISMONITOR`. Ports come from `.env`
-(`IRIS_PORT=52773`, `IRIS_SUPERSERVER_PORT=1972`).
+The image installs the module with IPM in its own namespace, `IRISMONITOR`, and turns history
+collection on for itself (the steps in [Turning on history collection](#turning-on-history-collection)).
+Ports come from `.env` (`IRIS_PORT=52773`, `IRIS_SUPERSERVER_PORT=1972`).
 
 ## Use
 
@@ -61,7 +62,49 @@ Management Portal also gets a favourite, *History Monitor*, that opens the same 
 To let someone use the monitor without being an administrator, give them the role
 `HistoryMonitorViewer` (created by the install). It allows reading the monitor and nothing else.
 
-A new instance has little history. To see the History page with data, load demo history in `%SYS`:
+### Turning on history collection
+
+History shows what the instance's own System Monitor records. **On a standard IRIS install it records
+nothing** until an administrator turns it on, and the History page says so. The module never turns it on
+by itself.
+
+1. As an administrator, in a terminal (`iris session IRIS -U %SYS`):
+
+   ```objectscript
+   do ##class(%Monitor.Manager).Activate("%Monitor.System.HistoryPerf")
+   do ##class(%Monitor.Manager).Activate("%Monitor.System.HistorySys")
+   do ##class(%Monitor.Manager).StartApp()
+   ```
+
+   The first sample arrives within about 5 minutes.
+
+2. Keep it running after a restart. IRIS does not start the Application Monitor again when the instance
+   starts, even with the classes active (measured on IRIS 2026.1). Add a `SYSTEM` entry to the `%ZSTART`
+   routine in `%SYS`:
+
+   ```objectscript
+   %ZSTART ; startup hooks
+       quit
+   SYSTEM ; runs when the instance starts
+       try { do ##class(%Monitor.Manager).StartApp() } catch {}
+       quit
+   ```
+
+   If the instance already has a `%ZSTART`, add the `StartApp()` line to its `SYSTEM` entry instead of
+   replacing the routine.
+
+3. Check. `GET /historymonitor/api/v1/history-collection` answers `"state":"recording"`, and the notice on
+   the History page goes away.
+
+How long the instance keeps each granularity (the History page shows it next to the granularity):
+
+| Granularity | Default | Change it (in `%SYS`) |
+| --- | --- | --- |
+| 5 minutes | 7 days | `do ##class(SYS.History.PerfData).SetPurge(days)` |
+| Hourly | 60 days | `do ##class(SYS.History.Hourly).SetPurge(days)` |
+| Daily | kept indefinitely | `do ##class(SYS.History.Daily).Purge("YYYY-MM-DD")` removes older days |
+
+To try the History page before real data builds up, load demo history in `%SYS`:
 
 ```objectscript
 zn "%SYS"
