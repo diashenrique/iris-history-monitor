@@ -115,7 +115,8 @@ jobs:
 
   ipm-upgrade:
     # Spec 003 US2, SC-002: an instance that ran 1.9.3 and used its old pages, upgraded to this commit,
-    # keeps nothing of the old pages. 1.9.3 is pinned by commit (use the v1.9.3 tag once it exists).
+    # keeps nothing of the old pages. 1.9.3 was never released on its own (it is part of 2.1.0), so it is
+    # pinned by commit; the commit is on master.
     runs-on: ubuntu-latest
     env:
       FROM_COMMIT: 900a4217a5aae4d4fff19a7731d73003a794ef81

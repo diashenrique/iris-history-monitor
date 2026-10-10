@@ -9,9 +9,9 @@ package in the community IPM registry.
 3. **Tag and GitHub release** (from `master`):
 
    ```shell
-   git tag -a v2.0.0 -m "IRIS History Monitor 2.0.0"
-   git push origin v2.0.0
-   gh release create v2.0.0 --title "2.0.0" --notes "<the CHANGELOG section>"
+   git tag -a vX.Y.Z -m "IRIS History Monitor X.Y.Z"
+   git push origin vX.Y.Z
+   gh release create vX.Y.Z --title "X.Y.Z" --notes "<the CHANGELOG section>"
    ```
 
 4. **Community registry (IPM).** Packages reach `pm.community.intersystems.com` through the app's page on
