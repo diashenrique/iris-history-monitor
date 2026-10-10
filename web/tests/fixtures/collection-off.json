@@ -1,0 +1,11 @@
+{
+  "state": "off",
+  "running": false,
+  "lastSample": null,
+  "intervalSeconds": 300,
+  "retention": {
+    "5min": { "kind": "days", "days": 7 },
+    "hourly": { "kind": "days", "days": 60 },
+    "daily": { "kind": "indefinite", "days": null }
+  }
+}

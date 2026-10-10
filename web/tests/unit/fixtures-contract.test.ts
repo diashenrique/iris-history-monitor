@@ -32,6 +32,7 @@ const schemaFor: [prefix: string, schema: string][] = [
   ['history', 'HistorySeries'],
   ['processes', 'ProcessPage'],
   ['problem', 'Problem'],
+  ['collection', 'HistoryCollection'],
 ];
 
 const fixtures = readdirSync(fixturesDir).filter((f) => f.endsWith('.json'));

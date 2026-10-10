@@ -25,7 +25,7 @@ test.describe('signed in', () => {
       await page.goto(from);
       await expect(page).toHaveURL(/\/historymonitor\/index\.html#\//);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
-      if (metric) await expect(page.getByLabel('Metric')).toHaveValue(metric);
+      if (metric) await expect(page.getByLabel('Metric', { exact: true })).toHaveValue(metric);
     });
   }
 
@@ -57,6 +57,6 @@ test.describe('signed out', () => {
     await page.locator('input[name="IRISPassword"]').fill(env.viewer.password);
     await page.locator('input[name="IRISLogin"]').click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('History');
-    await expect(page.getByLabel('Metric')).toHaveValue('license');
+    await expect(page.getByLabel('Metric', { exact: true })).toHaveValue('license');
   });
 });

@@ -101,8 +101,10 @@ jobs:
           docker cp zpm.xml iris:/tmp/zpm.xml
           {
             docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/tmp/zpm.xml","c")'
-            docker exec iris iris session IRIS -U USER '##class(%IPM.Main).Shell("load /home/irisowner/repo")'
+            # Spec 004 FR-006: record the history collector settings before the module is installed.
             docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/home/irisowner/repo/.github/ci/InstallCheck.cls","ck")'
+            docker exec iris iris session IRIS -U %SYS '##class(ci.InstallCheck).Snapshot()'
+            docker exec iris iris session IRIS -U USER '##class(%IPM.Main).Shell("load /home/irisowner/repo")'
             docker exec iris iris session IRIS -U %SYS '##class(ci.InstallCheck).Run()'
           } > ipm.txt 2>&1
           # keep only printable text; the raw IPM output carries control characters that break annotations
@@ -276,6 +278,14 @@ jobs:
           curl -s -o /dev/null -w '%{http_code} %{redirect_url}' http://localhost:52773/csp/irismonitor/historylicense.csp \
             | grep -qx '302 http://localhost:52773/historymonitor/index.html#/history?metric=license'
           echo "image serves the interface and the API, and forwards the old addresses"
+          # Spec 004 FR-010: the image records history (first sample within 10 minutes).
+          for i in $(seq 1 40); do
+            state=$(curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/history-collection | sed -E 's/.*"state":"([a-z]+)".*/\1/')
+            echo "history collection: $state"
+            [ "$state" = recording ] && break
+            sleep 15
+          done
+          [ "$state" = recording ]
 
       - name: Container log
         if: failure()

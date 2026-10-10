@@ -149,7 +149,27 @@
     "next": "Next rows",
     "rows": "Rows {{from}}–{{to}} of {{total}}",
     "chartLabel": "{{metric}}, {{granularity}}, {{from}} to {{to}}",
-    "tableCaption": "{{metric}} values"
+    "tableCaption": "{{metric}} values",
+    "collection": {
+      "offTitle": "History is not being recorded on this instance.",
+      "noneYetTitle": "History collection is turned on, but nothing has been recorded yet.",
+      "stoppedTitle": "History recording has stopped.",
+      "lastSample": "Last sample: {{time}}.",
+      "notRunning": "The history collector is not running, for example after a restart.",
+      "forAdmins": "An administrator can turn history collection on.",
+      "link": "How to turn on history collection (administrator steps)"
+    },
+    "kept": {
+      "days_one": "Kept: last {{count}} day",
+      "days_other": "Kept: last {{count}} days",
+      "indefinite": "Kept: indefinitely"
+    },
+    "retentionNames": {
+      "5min": "5-minute detail",
+      "hourly": "hourly summaries",
+      "daily": "daily summaries"
+    },
+    "partialRetention": "This instance keeps {{granularity}} for {{days}} days."
   },
   "processes": {
     "title": "Processes",

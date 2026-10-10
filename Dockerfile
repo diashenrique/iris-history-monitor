@@ -29,6 +29,20 @@ RUN \
     do ##class(%IPM.Main).Shell("load /opt/irisapp") \
     set sc = ##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor.api.Dispatch")
 
+# The image's own setup, not the module's (spec 004 FR-010): a demonstration instance should record
+# history, so it runs the README steps "Turning on history collection". Turn on the two System Monitor
+# history classes, and add a %ZSTART SYSTEM entry that starts the Application Monitor at every start
+# (IRIS does not restart it by itself; research R4). The module never does this on an install (FR-006).
+RUN \
+    do ##class(%Monitor.Manager).Activate("%Monitor.System.HistoryPerf") \
+    do ##class(%Monitor.Manager).Activate("%Monitor.System.HistorySys") \
+    set r = ##class(%Routine).%New("%ZSTART.mac") \
+    do r.WriteLine("%ZSTART ; startup hooks of this image"), r.WriteLine("    quit") \
+    do r.WriteLine("SYSTEM ; start the Application Monitor so history is recorded (README)") \
+    do r.WriteLine("    try { do ##class(%Monitor.Manager).StartApp() } catch {}"), r.WriteLine("    quit") \
+    set sc = r.%Save() \
+    if sc set sc = r.Compile()
+
 SHELL ["/bin/bash", "-c"]
 # The image's own entrypoint runs an after-start script that fails on 2026.1 and stops IRIS; start IRIS
 # directly instead (the CI does the same).

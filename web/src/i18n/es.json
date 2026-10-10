@@ -153,7 +153,27 @@
     "next": "Filas siguientes",
     "rows": "Filas {{from}}–{{to}} de {{total}}",
     "chartLabel": "{{metric}}, {{granularity}}, desde {{from}} hasta {{to}}",
-    "tableCaption": "Valores de {{metric}}"
+    "tableCaption": "Valores de {{metric}}",
+    "collection": {
+      "offTitle": "El historial no se está grabando en esta instancia.",
+      "noneYetTitle": "La recopilación del historial está activada, pero todavía no se grabó nada.",
+      "stoppedTitle": "La grabación del historial se detuvo.",
+      "lastSample": "Última muestra: {{time}}.",
+      "notRunning": "El recopilador del historial no se está ejecutando, por ejemplo después de un reinicio.",
+      "forAdmins": "Un administrador puede activar la recopilación del historial.",
+      "link": "Cómo activar la recopilación del historial (pasos para administradores)"
+    },
+    "kept": {
+      "days_one": "Se guarda: último {{count}} día",
+      "days_other": "Se guarda: últimos {{count}} días",
+      "indefinite": "Se guarda: sin límite"
+    },
+    "retentionNames": {
+      "5min": "el detalle de 5 minutos",
+      "hourly": "los resúmenes por hora",
+      "daily": "los resúmenes diarios"
+    },
+    "partialRetention": "Esta instancia guarda {{granularity}} durante {{days}} días."
   },
   "processes": {
     "title": "Procesos",

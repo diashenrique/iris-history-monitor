@@ -18,6 +18,7 @@ export function fakeApi(overrides: Partial<Record<keyof ApiClient, ReturnType<ty
     overview: vi.fn(async () => fixture('overview')),
     history: vi.fn(async () => fixture('history-database')),
     processes: vi.fn(async () => fixture('processes-page1')),
+    historyCollection: vi.fn(async () => fixture('collection-recording')),
     ...overrides,
   };
   return api as unknown as ApiClient & typeof api;

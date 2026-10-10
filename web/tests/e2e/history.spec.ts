@@ -61,3 +61,24 @@ test('no page-level horizontal scroll', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+// Spec 004 user story 1 (FR-004, SC-001): the notice matches what the instance reports. CI has collection
+// off with demo data; a developer's instance may have it on, so the state is read, not assumed.
+test('the collection notice matches the reported state', async ({ page }) => {
+  await signIn(page, env.viewer, '#/');
+  const collection = await (await page.request.get('./api/v1/history-collection')).json();
+  await page.goto('./index.html#/history?metric=license&granularity=daily&preset=30d');
+  await expect(page.locator('#main h1')).toHaveText('History');
+  const notice = page.getByRole('status', { name: /not being recorded|recording has stopped|nothing has been recorded yet/i });
+  if (collection.state === 'recording') {
+    await expect(page.locator('[data-chart] canvas, [data-chart] svg').first()).toBeVisible();
+    await expect(notice).toHaveCount(0);
+  } else {
+    await expect(notice).toBeVisible();
+    await expect(notice.getByRole('link', { name: /turn on history collection/i })).toHaveAttribute('href', /#turning-on-history-collection$/);
+  }
+  const daily = collection.retention.daily.kind === 'indefinite' ? 'Kept: indefinitely' : '';
+  if (daily) await expect(page.getByText(daily)).toBeVisible();
+  const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+  expect(axe.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
+});

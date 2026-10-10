@@ -2,6 +2,33 @@
 
 Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`.
 
+## 2.1.0 (unreleased)
+
+History collection health (spec 004). On a standard IRIS install the System Monitor records no history,
+and the History page used to stay empty with no reason given.
+
+### New
+- API v1 `GET /history-collection` reports:
+  - whether the instance is recording history (`recording`, `stale` or `off`);
+  - the last sample;
+  - whether the collector is running;
+  - how many days each granularity is kept.
+
+  The change is additive, and the contract goes to 1.2.0.
+- History shows a notice when nothing is being recorded or recording stopped, with the time of the last
+  sample and a link to the administrator steps. It also shows how long the chosen granularity is kept,
+  and the partial-period notice names the retention limit when that is the reason.
+- README: "Turning on history collection". It covers turning collection on, keeping it on after a
+  restart through `%ZSTART` (IRIS does not restart the Application Monitor by itself), and changing
+  retention.
+- The container image turns history collection on for itself.
+
+### Unchanged on purpose
+- The module never changes the instance's history collection or retention settings. CI checks that an
+  install leaves them as they were.
+- No own copies of history. The instance keeps 5-minute detail for 7 days and hourly summaries for 60
+  days, and never purges daily summaries, which is enough.
+
 ## 2.0.0 (unreleased)
 
 Major version: the old pages are gone, and addresses that served them in 1.x now forward (spec 003).

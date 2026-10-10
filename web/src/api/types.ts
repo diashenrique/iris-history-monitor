@@ -63,3 +63,19 @@ export interface Problem {
   detail: string;
   errors?: { parameter: string; message: string }[];
 }
+
+// GET /history-collection (spec 004): whether the instance records history, and how long it keeps it.
+export type CollectionState = 'recording' | 'stale' | 'off';
+
+export interface Retention {
+  kind: 'days' | 'indefinite' | 'unknown';
+  days: number | null;
+}
+
+export interface HistoryCollection {
+  state: CollectionState;
+  running: boolean | null;
+  lastSample: string | null;
+  intervalSeconds: number | null;
+  retention: Record<Granularity, Retention>;
+}

@@ -3,6 +3,32 @@
 Class ci.InstallCheck
 {
 
+/// Spec 004 FR-006: the history collector settings, recorded before the module is installed (CI only).
+ClassMethod Snapshot()
+{
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Kill ^ci.InstallCheck
+	Do ..Collector(.s)
+	Merge ^ci.InstallCheck("before") = s
+	Write "SNAPSHOT taken", !
+}
+
+/// The settings the module must never change: activation and interval of the two history classes, the
+/// two purge settings, and whether %ZSTART exists.
+ClassMethod Collector(Output s)
+{
+	Kill s
+	For c = "%Monitor.System.HistorySys", "%Monitor.System.HistoryPerf" {
+		Set g = ##class(%Monitor.ItemGroup).%OpenId("%Monitor||"_c)
+		Set s(c_" Activated") = $Select($IsObject(g): g.Activated, 1: "<none>")
+		Set s(c_" SampInterval") = $Select($IsObject(g): g.SampInterval, 1: "<none>")
+	}
+	Set s("detail purge") = ##class(SYS.History.PerfData).SetPurge("")
+	Set s("hourly purge") = ##class(SYS.History.Hourly).SetPurge("")
+	Set s("%ZSTART exists") = ##class(%Routine).Exists("%ZSTART.mac") || ##class(%Routine).Exists("%ZSTART.int")
+}
+
 ClassMethod Run()
 {
 	New $Namespace
@@ -40,6 +66,17 @@ ClassMethod Run()
 		Set n = n + $SYSTEM.SQL.Security.CheckPrivilege("HistoryMonitorViewer", 1, "SYS_History."_t, "s", "%SYS")
 	}
 	Do ..Check(n = 8, "role may SELECT the 8 history tables (got "_n_")", .bad)
+	// Spec 004 FR-006, SC-004: installing the module changed none of the history collector settings.
+	If $Data(^ci.InstallCheck("before")) {
+		Merge before = ^ci.InstallCheck("before")
+		Do ..Collector(.after)
+		Set key = ""
+		For {
+			Set key = $Order(before(key))
+			Quit:key=""
+			Do ..Check($Get(after(key)) = before(key), "install left "_key_" unchanged ("_before(key)_" -> "_$Get(after(key))_")", .bad)
+		}
+	}
 	Set $Namespace = "USER"
 	// Spec 003 FR-001, FR-004, FR-005: nothing of the old pages or the switch is left.
 	For c = "diashenrique.historymonitor.dashboard.dashboard", "diashenrique.historymonitor.dashboard.license", "diashenrique.historymonitor.util.metrics", "diashenrique.historymonitor.util.Dispatcher", "diashenrique.historymonitor.util.Settings", "csp.dashboard", "csp.dashboardapi", "csp.historycspsessions", "csp.historydatabase", "csp.historylicense", "csp.systemprocesses" {
