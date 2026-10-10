@@ -19,7 +19,7 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/OverviewSnapshot' }
-        '401': { $ref: '#/components/responses/Problem' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Problem' }
   /history/{metric}:
     get:
@@ -40,7 +40,7 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/HistorySeries' }
         '400': { $ref: '#/components/responses/Problem' }
-        '401': { $ref: '#/components/responses/Problem' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Problem' }
   /processes:
     get:
@@ -61,13 +61,17 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ProcessPage' }
         '400': { $ref: '#/components/responses/Problem' }
-        '401': { $ref: '#/components/responses/Problem' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
         '403': { $ref: '#/components/responses/Problem' }
 components:
   securitySchemes:
     basicAuth: { type: http, scheme: basic }
     sessionCookie: { type: apiKey, in: cookie, name: CSPSESSIONID }
   responses:
+    Unauthorized:
+      description: >-
+        No or wrong credentials. Answered by IRIS before the API code runs, with an empty body and no
+        problem object (anonymous access is disabled, so no API code can run for such a request).
     Problem:
       description: Error
       content:

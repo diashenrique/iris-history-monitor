@@ -1,10 +1,14 @@
 /// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
 /// Routes: GET /overview (T013), GET /history/:metric (T017), GET /processes (T020).
 ///
-/// Access has two layers. The web application (module.xml) requires password authentication, allows no
-/// unauthenticated access and requires the HistoryMonitorRead resource. This class repeats the check in
-/// OnPreDispatch, so a misconfigured web application cannot open the API. Errors leave as problem+json
-/// and never carry internal error text.
+/// Access: the web application (module.xml) requires password authentication and allows no
+/// unauthenticated access. A request without valid credentials is answered by %CSP.REST.Login with 401
+/// and an empty body, not a problem: that code runs before login, with no roles, and cannot run code
+/// from this namespace's database, so it is not overridden here (research.md R11).
+/// OnPreDispatch then requires Use on the HistoryMonitorRead resource and answers 403 without it.
+/// The web application itself requires no resource: when it did, CSP refused users without the role
+/// before this class ran, with a 401 HTML page instead of a 403 problem (research.md R11).
+/// Errors leave as problem+json and never carry internal error text.
 Class diashenrique.historymonitor.api.Dispatch Extends %CSP.REST
 {
 

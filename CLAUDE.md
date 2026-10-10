@@ -18,7 +18,8 @@ Code lives in `src/cls/diashenrique/historymonitor/{dashboard,util}`; pages in `
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); US1 overview, US2 history and US3 processes routes done (T011-T020); next is US4 errors and access (T021).
+- Open specs: `specs/001-api-v1` (Phase 2): foundation T001-T010 done (Problem, Validate, Dispatch, Security, contract helper, `ipm-install` CI); routes and access done (T011-T022); next is US5, the pages read the API (T023).
+  The role is checked in `Dispatch.OnPreDispatch` (403); the web application has no resource on purpose (research.md R11).
   History rows are keyed in UTC (`ZDATE`/`ZTIME`); never format a UTC value with `$ZDateTime(..., 7)`.
 
 ## Phase backlog

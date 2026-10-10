@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.6.0</Version>
+      <Version>1.7.0</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
@@ -34,7 +34,6 @@
       <WebApplication
         Url="/api/historymonitor/v1"
         DispatchClass="diashenrique.historymonitor.api.Dispatch"
-        Resource="HistoryMonitorRead"
         MatchRoles=":%DB_${Namespace}"
         AutheEnabled="32"
         CookiePath="/api/historymonitor/v1"

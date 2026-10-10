@@ -35,7 +35,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Problem"
+            "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/Problem"
@@ -134,7 +134,7 @@
             "$ref": "#/components/responses/Problem"
           },
           "401": {
-            "$ref": "#/components/responses/Problem"
+            "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/Problem"
@@ -219,7 +219,7 @@
             "$ref": "#/components/responses/Problem"
           },
           "401": {
-            "$ref": "#/components/responses/Problem"
+            "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/Problem"
@@ -241,6 +241,9 @@
       }
     },
     "responses": {
+      "Unauthorized": {
+        "description": "No or wrong credentials. Answered by IRIS before the API code runs, with an empty body and no problem object (anonymous access is disabled, so no API code can run for such a request)."
+      },
       "Problem": {
         "description": "Error",
         "content": {
