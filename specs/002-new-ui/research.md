@@ -151,3 +151,38 @@ stays light (R11). Fonts and icons are bundled; nothing is loaded from a CDN (SC
   to `/historymonitor/` instead of the old dashboard, each old page shows a banner "This page is obsolete;
   use the new monitor" with a link, and the old pages stay installed and reachable by address.
 - **Rationale**: owner's answer to FR-024.
+
+## R15. Delivery results and findings (tasks T053 to T061)
+- **Sign-in (US4)**: the end-to-end tests passed on first run, because the mechanics landed in the
+  foundation (T014, T019, T022): one sign-in covers the three screens and two tabs; after the IRIS session
+  is ended (`IRISLogout=end`), the next refresh leads to the IRIS login and back to the same route
+  (`#/processes?namespace=%25SYS`); an account without the role sees no-access naming
+  `HistoryMonitorViewer`. No gap to fix (T054).
+- **Languages, keyboard, focus (US5)**: pt-BR and es on every screen with local numbers and the choice
+  kept across a reload; the main task of each screen done by keyboard with a visible focus outline; the
+  skip link moves focus to the content. axe runs on every screen in light, dark and 360 px in the other
+  specs. The only issue found during the screens was the table scroll region at 360 px (fixed in T044).
+- **Management Portal favourite (T058)**: version 1.x stored the favourite as an object of
+  `util.Favorite`, a class that does not exist in `%SYS`, so the Management Portal could not open, change
+  or delete it (SQLCODE -415 on delete). `%AddFavorite` now writes plain `%SYS.Portal.Users` rows and
+  replaces the 1.x rows, pointing to `/historymonitor/index.html`; `FavoriteTest` covers creation, the
+  upgrade of a 1.x row and idempotence.
+- **Old pages (T059)**: each shows an "obsolete" banner linking to the new monitor. Found: IRIS compiles a
+  `.csp` page on its first request, and that fails with 404 for a user without development rights, so a
+  viewer could not open an old page until an administrator had. The install now compiles them
+  (`%SYSTEM.CSP.LoadPageDir`), and the install check asserts it.
+- **CI holes closed**: a class that does not compile never ran, and the unit-test job only checked the
+  totals; it now fails on any `ERROR` line of the load. (Found when a new test did not compile.)
+- **IRIS Community licences**: every fresh sign-in holds a licence unit for a while. The e2e suite signs
+  the viewer in once (R13 note in global-setup), and the tests that need their own sign-in run in one
+  project and end their session afterwards. A long local session still exhausted the licences once;
+  restarting the container frees them.
+- **Quickstart (T061)**: the CI e2e job is the quickstart on a fresh container installed by IPM 0.10.9
+  with 90 days of demo history, and it passes; locally the same suite (67 tests) passes against a
+  container installed the same way. Measured in the browser: the complete Overview in about 0.6 s, a
+  90-day hourly history view in about 0.7 s (SC-002: 2 s and 3 s). First screen 143.7 KB gzipped; the
+  chart (190 KB) loads only with History.
+- **Security headers (analysis finding S1)**: IRIS static web applications cannot set response headers
+  such as `Content-Security-Policy` per application; that is web-server configuration. Not set here.
+  React escapes output and the interface loads nothing from other hosts, which keeps the risk low.
+- **Not done here**: SC-001 and SC-008 need operators (`usability-test.md`, for the owner to run).

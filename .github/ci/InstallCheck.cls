@@ -39,6 +39,7 @@ ClassMethod Run()
 	}
 	Do ..Check(n = 8, "role may SELECT the 8 history tables (got "_n_")", .bad)
 	Set $Namespace = "USER"
+	Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("csp.dashboard"), "old pages compiled at install (csp.dashboard)", .bad)
 	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Settings", "web.Login" {
 		Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor."_c), "class "_c_" compiled", .bad)
 	}

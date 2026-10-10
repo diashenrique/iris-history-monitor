@@ -35,6 +35,11 @@
 </head>
 
 <body>
+	<!-- Spec 002 FR-024: the old pages stay reachable but point users to the new interface. -->
+	<div role="note" style="background:#fef3c7;color:#854d0e;padding:10px 16px;text-align:center;font-weight:600;font-family:system-ui,sans-serif;">
+		This page is obsolete. Use the new History Monitor:
+		<a href="/historymonitor/index.html" style="color:#4338ca;text-decoration:underline;">open the new monitor</a>.
+	</div>
 	<div class="wrapper overlay-sidebar">
 		<div class="main-header">
 			<!-- Logo Header -->
