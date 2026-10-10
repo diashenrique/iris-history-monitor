@@ -19,7 +19,11 @@ its build in `src/web/historymonitor/`. The old CSP pages were removed in 2.0.0 
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: none awaiting code. `specs/003-retire-old-pages` (2.0.0) is implemented: the old pages, their classes,
+- Open specs: none awaiting code. `specs/004-history-collection-health` (2.1.0) is implemented:
+  `GET /history-collection` (`service.Collection`, read only), History notice and retention labels, README
+  "Turning on history collection". Option A: the module never changes collector or retention settings
+  (InstallCheck compares them before/after `load`); only the Docker image turns collection on for itself.
+- `specs/003-retire-old-pages` (2.0.0) is implemented: the old pages, their classes,
   `^IRISMonitor` and the monitor switch are gone; `/csp/irismonitor/*` forwards (302) through `web.Forward`;
   `util.Retire` cleans up 1.x leftovers on install, upgrade and uninstall; CI `ipm-upgrade` checks 1.9.3 -> this.
 - `specs/002-new-ui` (Phase 4, new interface) is implemented: Overview, History,
@@ -37,5 +41,7 @@ its build in `src/web/historymonitor/`. The old CSP pages were removed in 2.0.0 
 - [x] Phase 1: remove `Xecute`, parameterize SQL, SSRF guard on `readMetrics`
 - [x] Phase 2: versioned REST API (`%CSP.REST`, now at `/historymonitor/api/v1`), service layer; no code writes scratch
   globals (`^IRISMonitor` removed with the old pages in 2.0.0)
-- [ ] Phase 3+: see the phased plan doc. Phase 4 (new interface, spec 002) is implemented, and the old pages are removed
+- [x] Phase 3: history model, settled by spec 004: retention measured as enough (detail 7 d, hourly 60 d, daily kept),
+  so no own rollups; the monitor reports collection health instead
+- [ ] Phase 4+: see the phased plan doc. Phase 4 (new interface, spec 002) is implemented, and the old pages are removed
   (spec 003, 2.0.0)

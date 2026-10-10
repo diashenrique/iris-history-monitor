@@ -40,6 +40,11 @@ Measured on IRIS 2026.1 Community (`intersystemsdc/iris-community:2026.1`) with 
   `HttpAuthTest`-style test must prove, as the viewer, that the route answers 200 with every field. If
   `SetPurge("")` or the object open is refused, that field is reported `unknown`/null (spec edge case),
   and the result is recorded here.
+- **Result (T005, measured)**: as the viewer over HTTP, the route answers 200, matches the contract, and
+  gives the same state, interval and retention as the superuser. The one difference was `running`.
+  `SELECT ... FROM %SYS.ProcessQuery WHERE Routine = '%MONAPP'` found nothing for the viewer. Walking
+  `^$JOB` and opening each `%SYS.ProcessQuery`, as `service.Processes` does, finds it. The service uses
+  that. `HttpAuthTest.TestViewerReadsTheCollectionState` holds this.
 - **Note**: a terminal session as the viewer is refused ("Access Denied", no console service), so it
   cannot stand in for the API test.
 
@@ -71,3 +76,27 @@ Measured on IRIS 2026.1 Community (`intersystemsdc/iris-community:2026.1`) with 
   metric and answer 400, and `/settings` is about the interface. The schema is `HistoryCollection`
   (see [contracts/history-collection.md](contracts/history-collection.md)). Contract version 1.1.0 →
   1.2.0 (additive). Module 2.0.0 → 2.1.0 (new feature).
+
+## R7. README steps, timed on a fresh instance (T012, SC-003)
+- Container `intersystemsdc/iris-community:2026.1`, never configured (`IsActive()` = 0, no samples).
+- Steps 1 (Activate both classes, `StartApp()`) → first `SysData` sample after **308 s**.
+- Step 2 (`%ZSTART` `SYSTEM` entry), then `docker restart` → a newer sample after **310 s**, one interval
+  after the previous one. The Application Monitor came back on its own (R4 fix confirmed).
+- This repository's image (Dockerfile runs the same steps) → `/history-collection` reported `recording`
+  **308 s** after start. The CI `docker` job now waits for this (up to 10 minutes).
+- A first timing run reported "3 s after restart". The check took an empty answer during startup for a
+  new sample. The script now requires a strictly newer sample key; the numbers above are from the
+  corrected run.
+
+## R8. Delivery results (T015)
+- ObjectScript suite: 141 methods, 0 failed. New: `CollectionTest` (7), with every state checked against
+  the contract, because an unquoted `off` in YAML had become the boolean `false`. Also new:
+  `HttpAuthTest.TestViewerReadsTheCollectionState`.
+- `InstallCheck` with `Snapshot()` before `load`: all seven collector settings unchanged (FR-006,
+  SC-004).
+- Interface: `npm test` 159 passed. Lint has the one existing warning. The build matches, and the first
+  screen is 132.8 KB gzipped.
+- E2E: 71 passed and 24 skipped by design. The new collection notice test reads the state instead of
+  assuming it. One forwarding test was fixed to use an exact `Metric` label, because the database check
+  box `IRISMETRICS` also matched.
+- Docker image: builds, and reaches `recording` in 308 s (R7).
