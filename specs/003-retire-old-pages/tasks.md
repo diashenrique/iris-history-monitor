@@ -18,22 +18,22 @@ Paths: `HM` = `src/cls/diashenrique/historymonitor`.
 
 ## Phase 2: Foundational
 
-- [ ] T003 Write `HM/test/api/RetireTest.cls` (fails first). It seeds every leftover in the [data-model.md](data-model.md) table:
-  - a stub class in `diashenrique.historymonitor.dashboard`;
-  - stub `util.metrics`, `util.Dispatcher` and `util.Settings`;
-  - the six `csp.*` page classes;
-  - a test-only folder standing in for `${cspdir}irismonitor/` (through a class parameter override);
-  - `^IRISMonitor` and `^diashenrique.historymonitor.Settings`;
-  - plus one unrelated class `csp.KeepMe` and a global `^HMRetireKeep`.
+- [ ] T003 Write `HM/test/api/RetireTest.cls` (fails first). The targets of `util.Retire` are class parameters (packages, classes, folder, globals). The test uses a subclass `HM/test/api/RetireFixture.cls` that points them at test-only names, so it never touches the real classes while they still exist (analysis F2). The real target names are checked by `InstallCheck` (T012) and the upgrade job (T013). It seeds every kind of leftover in the [data-model.md](data-model.md) table under test names:
+  - a stub class in a test package standing in for `diashenrique.historymonitor.dashboard`;
+  - stub classes standing in for `util.metrics`, `util.Dispatcher` and `util.Settings`;
+  - stub classes standing in for the six `csp.*` pages;
+  - a test-only folder standing in for `${cspdir}irismonitor/`;
+  - test globals standing in for `^IRISMonitor` and `^diashenrique.historymonitor.Settings`;
+  - plus one unrelated class and one unrelated global that must survive.
 
   Then it asserts that `util.Retire.Run()` removes the leftovers and keeps `csp.KeepMe`, `^HMRetireKeep`, `HistoryMonitorViewer` and the namespace, that a second `Run()` removes nothing, and that it returns `$$$OK`.
 - [ ] T004 Implement `HM/util/Retire.cls`: `Run()` deletes, if present and only in the current namespace:
   - the classes `diashenrique.historymonitor.dashboard.*`, `util.metrics`, `util.Dispatcher` and `util.Settings`;
   - the six compiled page classes `csp.dashboard`, `csp.dashboardapi`, `csp.historycspsessions`, `csp.historydatabase`, `csp.historylicense` and `csp.systemprocesses`;
-  - the folder `$SYSTEM.Util.InstallDirectory()_"csp/irismonitor/"` (resolved from the instance's CSP folder; overridable for T003);
+  - the folder `$SYSTEM.Util.InstallDirectory()_"csp/irismonitor/"` (check on `iris-hm` that it is the folder IPM's `${cspdir}irismonitor/` resolves to; analysis L1);
   - `^IRISMonitor` and `^diashenrique.historymonitor.Settings`.
 
-  It writes one line per removal and touches no namespace or database (R3, FR-005, FR-006). T003 must pass.
+  All targets are class parameters (T003). It writes one line per removal and touches no namespace or database (R3, FR-005, FR-006). T003 must pass.
 
 **Checkpoint**: the cleanup exists and is proven on seeded leftovers.
 
@@ -46,14 +46,16 @@ Paths: `HM` = `src/cls/diashenrique/historymonitor`.
 - [ ] T005 [P] [US1] Write `HM/test/api/ForwardTest.cls` (fails first):
   - `Target(path)` returns the contract target for each of the five named pages, matching case-insensitively and ignoring the query string;
   - `dashboardapi.csp`, `/`, `resources/x.css`, `diashenrique.historymonitor.dashboard.license.cls`, a path with `../`, and a value with `#`, CR/LF or `javascript:` all map to `/historymonitor/index.html#/`;
-  - every result is one of the six fixed strings.
+  - every result is one of the six fixed strings. This is the regression test for the amended Principle I rule "a request never selects which code runs" (analysis C2).
 
   Over HTTP, a test copy of the forwarding app under `/csp/irismonitor-test` built from `module.xml` (like HttpAuthTest) is checked for each row, with no credentials, for GET, HEAD and POST. It must answer `302`, the exact `Location`, `Cache-Control: no-store`, and no set-cookie of `/historymonitor/` (R2: UnknownUser can run it).
 - [ ] T006 [US1] Implement `HM/web/Forward.cls` (`%CSP.REST`): override `DispatchRequest` so every method and path answers per the contract through `ClassMethod Target(path As %String) As %String`, with a fixed map from the lowercased last path segment and the Overview by default. Set `%response.Status = "302 Found"`, `Location` and `Cache-Control: no-store`, and write no body. T005 must pass.
 - [ ] T007 [US1] In `module.xml`:
   - replace the old-pages `<WebApplication Url="/csp/irismonitor" ...>` with `Url="/csp/irismonitor" DispatchClass="diashenrique.historymonitor.web.Forward" AutheEnabled="64" MatchRoles="" CookiePath="/csp/irismonitor/"`, and set `ServeFiles` and `AutoCompile` to 0;
   - drop the `<FileCopy Name="src/csp/" ...>`, the `LoadPageDir` invoke and the `dashboard.PKG` resource;
-  - add the `web.Forward` class to the `web` package (already a resource).
+  - add the `web.Forward` class to the `web` package (already a resource);
+  - add a comment that the forwarding stays for all of 2.x (FR-003);
+  - make `HttpAuthTest.ReadWebApplication` in `HM/test/api/HttpAuthTest.cls` pick the element with `Url="/historymonitor/api/v1"`, not the first one with a `DispatchClass`, because the forwarding app now has one and comes first (analysis F1).
 
   If the T005 HTTP check shows that UnknownUser cannot run the class, use `MatchRoles=":%DB_${Namespace}"` instead and record it in research R2.
 - [ ] T008 [P] [US1] Write `web/tests/e2e/forwarding.spec.ts`. Signed in (saved session), opening each of the five old page addresses lands on the matching screen: the Overview heading, History with the metric select on license, CSP sessions or database size, and the Processes heading. An unknown old address lands on the Overview. Signed out (fresh context), `/csp/irismonitor/historylicense.csp` shows the sign-in form, and after sign-in History is on license. Replaces `web/tests/e2e/old-pages.spec.ts` (delete it).
@@ -121,8 +123,9 @@ Paths: `HM` = `src/cls/diashenrique/historymonitor`.
   - in `.github/workflows/ci.yml` (`docker` job), replace the banner check with `curl -si /csp/irismonitor/dashboard.csp` → `302` and `Location: /historymonitor/index.html#/`, and drop the `/settings` interfaceEnabled check or expect `true`.
 - [ ] T018 [P] [US3] Docs:
   - in `README.md`, drop "The old pages", the switch step and the DevExtreme note, and add "Upgrading from 1.x" (old addresses forward, what the upgrade removes, major version);
-  - in `CHANGELOG.md`, fill 2.0.0: removed, forwarding table, cleanup, switch removed, `interfaceEnabled` deprecated (FR-009);
-  - in `docs/releasing.md` and `specs/002-new-ui/usability-test.md`, drop the switch step and task 4 (old pages comparison), keeping SC-008 as a comparison with the participants' memory of 1.x, or mark SC-008 withdrawn with the reason.
+  - in `CHANGELOG.md`, fill 2.0.0: removed, forwarding table and that it stays for all of 2.x (FR-003), cleanup, switch removed, `interfaceEnabled` deprecated (FR-009);
+  - in `docs/releasing.md`, drop the switch step;
+  - in `specs/002-new-ui/usability-test.md`, drop the switch step, task 4 (old pages comparison) and the SC-008 question, and mark SC-008 withdrawn in `specs/002-new-ui/spec.md`. Add a research entry in `specs/002-new-ui/research.md` giving the reason: the old pages no longer exist to compare against (analysis A1).
 
 ## Phase 6: Polish & Cross-Cutting
 

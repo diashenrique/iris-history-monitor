@@ -106,7 +106,8 @@ new monitor in every state it can be in.
   lands on the matching screen; the old parameters do not have to be carried over.
 - An old address with an unknown page name or a deep path: lands on the Overview (User Story 1,
   scenario 5).
-- The upgrade runs while someone has an old page open: their next action leads to the new monitor.
+- The upgrade runs while someone has an old page open: the open page stops updating (its background
+  requests now get the forwarding answer); when they reload or follow a link they land on the new monitor.
 - Scratch data was written in more than one namespace (the old pages ran wherever the module was
   installed): cleanup covers the namespace the module is installed in.
 - An upgrade from a version older than 1.9.x (for example 1.2.4): the result is the same as a fresh 2.0.0
