@@ -1,2 +1,4 @@
 # The committed interface build must stay byte-identical to a fresh build (web/scripts/check-build.mjs).
 src/web/historymonitor/** -text
+# Shell scripts run inside Linux containers and CI: always LF.
+*.sh text eol=lf

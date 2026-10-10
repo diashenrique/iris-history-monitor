@@ -36,6 +36,12 @@ html {
   outline-offset: 2px;
 }
 
+/* Headings and regions that receive focus only from code (route changes, skip link) are not
+   controls: no ring there, or every screen change would frame its title. */
+[tabindex='-1']:focus-visible {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

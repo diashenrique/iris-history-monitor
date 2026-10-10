@@ -3,7 +3,7 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.9.0</Version>
+      <Version>1.9.1</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
@@ -16,8 +16,10 @@
         <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
         <!-- Compile the old pages at install: IRIS otherwise compiles a .csp page on its first request, which
-             fails with 404 for a user without development rights (spec 002 FR-024: they stay reachable). -->
-        <Invoke Class="%SYSTEM.CSP" Method="LoadPageDir">
+             fails with 404 for a user without development rights (spec 002 FR-024: they stay reachable).
+             After Activate, because the page files are copied in that phase. AutoCompile is off on the
+             application, so a request never tries to recompile a page (that failed with PROTECT, then 404). -->
+        <Invoke Class="%SYSTEM.CSP" Method="LoadPageDir" Phase="Activate" When="After">
           <Arg>/csp/irismonitor/</Arg>
           <Arg>ck</Arg>
         </Invoke>
@@ -29,6 +31,7 @@
       <CSPApplication
         Url="/csp/irismonitor"
         Path="/src/csp"
+        AutoCompile="0"
         Directory="{$cspdir}/irismonitor"
         ServeFiles="1"
         Recurse="1"

@@ -199,3 +199,29 @@ jobs:
           name: playwright-report
           path: web/playwright-report
           retention-days: 7
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the image
+        run: docker build -t iris-history-monitor:ci .
+
+      - name: Run it and check what a user gets
+        run: |
+          docker run -d --name hm -p 52773:52773 iris-history-monitor:ci
+          for i in $(seq 1 90); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:52773/historymonitor/index.html)" = 200 ] && break
+            sleep 2
+          done
+          set -e
+          curl -sf -o /dev/null http://localhost:52773/historymonitor/index.html
+          curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/settings | grep -q '"interfaceEnabled":true'
+          curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/overview | grep -q '"metrics"'
+          curl -sf -u _SYSTEM:SYS http://localhost:52773/csp/irismonitor/dashboard.csp | grep -q 'This page is obsolete'
+          echo "image serves the interface, the API and the old pages"
+
+      - name: Container log
+        if: failure()
+        run: docker logs --tail 80 hm
