@@ -120,3 +120,28 @@
 - **Test data**: the tests write real `SYS.History` rows in February 2001 and delete them afterwards
   (`test.api.HistoryFixture`). On a developer instance this touches the system history tables for the
   length of the test run.
+
+## R10. Processes: source, names and the access decision (tasks T018 to T020)
+- **Source**: the values of the `CONTROLPANEL` query of `%SYS.ProcessQuery`, the query the processes page
+  uses today. `CONTROLPANEL` refuses to run without `%Admin_Manage:USE` (its Execute method checks it;
+  a real HTTP call by the viewer got `SQLCODE -400`, "Operation requires %Admin_Manage:USE privilege",
+  after `SQLCODE -99` for the missing EXECUTE grant). The service instead walks `^$JOB` and opens each
+  process as a `%SYS.ProcessQuery` object, which needs only the `%DB_IRISSYS:R` the role already has,
+  and applies the same adjustments the query makes in `JOBEXAMFetch`: parent pid 0 left out, `@@`
+  namespaces shown as `^^`, mirror daemons named by location, TCP and TNT devices shown with the client
+  name, elapsed time from `ElapsedTime(StartTimeUTC)`. A test compares the result with `CONTROLPANEL`
+  for long-lived system daemons (the tests run as a superuser, who may call it).
+- **Access decision to review**: a user holding `HistoryMonitorViewer` can list every process (user
+  names, routines, client addresses) without `%Admin_Manage`. That is what the processes page shows, and
+  the API is gated by its own resource, but it is a wider grant than the Management Portal makes.
+  Restricting it (for example, a second resource for the process list) is a product decision.
+- **Names**: the query's column names have spaces and `#` (`Job#`, `Client Name`, `EXE Name`), so the API
+  uses camelCase names: job, pid, displayPid, username, device, namespace, routine, commands, globals,
+  state, clientName, exeName, ipAddress, privateGlobalBlocks, osUsername, cpuTime, parentPid,
+  elapsedTime. The four capability flags are not returned. The legacy page skipped columns 14 to 18,
+  which also dropped `PrvGblBlkCnt`; the API keeps it as `privateGlobalBlocks`.
+- **Filters and sort**: `namespace`, `user` and `state` are exact matches (an unknown value matches
+  nothing); `q` is a case-insensitive substring of pid and the text fields. `sort` is any returned field,
+  `-` for descending; a process without the field sorts last either way; ties go by job number.
+  Default order is job number. `next` is the following page number; a page past the end is empty, not an
+  error, which covers processes ending between requests.

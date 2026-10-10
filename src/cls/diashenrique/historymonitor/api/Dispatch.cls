@@ -1,5 +1,5 @@
 /// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
-/// Routes: GET /overview (T013), GET /history/:metric (T017). Processes are added by task T020.
+/// Routes: GET /overview (T013), GET /history/:metric (T017), GET /processes (T020).
 ///
 /// Access has two layers. The web application (module.xml) requires password authentication, allows no
 /// unauthenticated access and requires the HistoryMonitorRead resource. This class repeats the check in
@@ -17,6 +17,7 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 <Routes>
 <Route Url="/overview" Method="GET" Call="Overview"/>
 <Route Url="/history/:metric" Method="GET" Call="History"/>
+<Route Url="/processes" Method="GET" Call="Processes"/>
 </Routes>
 }
 
@@ -59,6 +60,38 @@ ClassMethod HistoryResponse(metric As %String, ByRef q, Output code As %Integer)
 	}
 	Set code = 200
 	Quit ##class(diashenrique.historymonitor.service.History).Series(.clean)
+}
+
+/// Query parameters GET /processes reads.
+Parameter PROCESSPARAMS = "namespace,user,state,q,sort,page,pageSize";
+
+/// GET /processes: one page of the process list (user story 3). Invalid input is a 400 problem.
+ClassMethod Processes() As %Status
+{
+	Set names = ..#PROCESSPARAMS
+	For i = 1:1:$Length(names, ",") {
+		Set p = $Piece(names, ",", i)
+		If $Data(%request.Data(p, 1)) Set q(p) = %request.Data(p, 1)
+	}
+	Set body = ..ProcessesResponse(.q, .code)
+	If code '= 200 {
+		Set %response.ContentType = ##class(diashenrique.historymonitor.api.Problem).ContentType()
+		Set %response.Status = ##class(diashenrique.historymonitor.api.Problem).StatusLine(code)
+	}
+	Write body.%ToJSON()
+	Quit $$$OK
+}
+
+/// The body of GET /processes without the HTTP write. code receives 200 or 400.
+ClassMethod ProcessesResponse(ByRef q, Output code As %Integer) As %DynamicObject
+{
+	Set errs = ##class(diashenrique.historymonitor.service.Validate).Processes(.q, .clean)
+	If errs.%Size() > 0 {
+		Set code = 400
+		Quit ##class(diashenrique.historymonitor.api.Problem).Body(400, "invalid-parameter", "One or more parameters are not valid.", errs)
+	}
+	Set code = 200
+	Quit ##class(diashenrique.historymonitor.service.Processes).Page(.clean)
 }
 
 /// The resource a caller must hold Use on. One definition, shared with util.Security.
