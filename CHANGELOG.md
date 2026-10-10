@@ -1,6 +1,7 @@
 # Changelog
 
-Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`.
+Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`. Every push to `master`
+publishes a patch version automatically (`docs/releasing.md`); minor and major versions have a section here.
 
 ## 2.1.0 (2026-10-10)
 

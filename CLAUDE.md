@@ -11,7 +11,9 @@ its build in `src/web/historymonitor/`. The old CSP pages were removed in 2.0.0 
 - No server-side HTTP call to a host taken from a request; outbound calls use fixed, configured addresses.
 - Tests live in `src/cls/diashenrique/historymonitor/test` (not shipped in `module.xml`).
   Run: `do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete")`.
-- Keep the IPM version in `module.xml` in step with behavior changes (SemVer).
+- `module.xml` `<Version>`: CI (`versionbump`) raises the patch on every push to master and Open Exchange publishes it to
+  IPM, so do not edit it for a fix. Raise the minor (feature) or major (breaking) by hand in the PR; CI then keeps it
+  (`docs/releasing.md`).
 - `module.xml` changes are checked by the `ipm-install` CI job. `<WebApplication>` needs an explicit
   `AutheEnabled`; `PasswordAuthEnabled`/`UnauthenticatedEnabled` belong to `<CSPApplication>` only.
 
