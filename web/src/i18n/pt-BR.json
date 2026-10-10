@@ -153,7 +153,27 @@
     "next": "Próximas linhas",
     "rows": "Linhas {{from}}–{{to}} de {{total}}",
     "chartLabel": "{{metric}}, {{granularity}}, de {{from}} a {{to}}",
-    "tableCaption": "Valores de {{metric}}"
+    "tableCaption": "Valores de {{metric}}",
+    "collection": {
+      "offTitle": "O histórico não está sendo gravado nesta instância.",
+      "noneYetTitle": "A coleta do histórico está ligada, mas nada foi gravado ainda.",
+      "stoppedTitle": "A gravação do histórico parou.",
+      "lastSample": "Última amostra: {{time}}.",
+      "notRunning": "O coletor do histórico não está rodando, por exemplo depois de um reinício.",
+      "forAdmins": "Um administrador pode ligar a coleta do histórico.",
+      "link": "Como ligar a coleta do histórico (passos para administradores)"
+    },
+    "kept": {
+      "days_one": "Guardado: último {{count}} dia",
+      "days_other": "Guardado: últimos {{count}} dias",
+      "indefinite": "Guardado: sem prazo"
+    },
+    "retentionNames": {
+      "5min": "o detalhe de 5 minutos",
+      "hourly": "os resumos por hora",
+      "daily": "os resumos diários"
+    },
+    "partialRetention": "Esta instância guarda {{granularity}} por {{days}} dias."
   },
   "processes": {
     "title": "Processos",

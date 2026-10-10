@@ -1,4 +1,4 @@
-import type { HistorySeries, OverviewSnapshot, Problem, ProcessPage, Settings } from './types';
+import type { HistoryCollection, HistorySeries, OverviewSnapshot, Problem, ProcessPage, Settings } from './types';
 
 // The only source of data of the interface (FR-001): the API under the same prefix, ./api/v1.
 export const API_BASE = './api/v1';
@@ -104,6 +104,7 @@ export function createClient(options: ClientOptions = {}) {
     history: (metric: string, params: Record<string, string | number | undefined>) =>
       get<HistorySeries>(`/history/${encodeURIComponent(metric)}`, params),
     processes: (params: Record<string, string | number | undefined>) => get<ProcessPage>('/processes', params),
+    historyCollection: () => get<HistoryCollection>('/history-collection'),
   };
 }
 

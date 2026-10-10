@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
@@ -5,7 +6,9 @@ import { Button, StatusIcon } from '../../design/components';
 import { formatDateTime } from '../../i18n/format';
 import { download, historyCsv } from '../../lib/csv';
 import { parseHistory, presetRange, serializeHistory, type HistoryQuery } from '../../lib/url-state';
+import { useApi } from '../../api/context';
 import { ErrorScreen } from '../../shell/screens';
+import { CollectionNotice, needsNotice, startsBeforeRetention } from './CollectionNotice';
 import { HistoryForm } from './HistoryForm';
 import { HistoryTable } from './HistoryTable';
 import { useHistory } from './useHistory';
@@ -28,6 +31,11 @@ export function HistoryPage() {
     [query.preset, query.from, query.to, query.metric, query.granularity],
   );
   const { result, isPending, error, retry, loadMore, loadingMore } = useHistory(query.metric, query.granularity, range);
+  // Spec 004: whether history is being recorded, re-read every minute so the notice goes when it resumes.
+  const api = useApi();
+  const collection = useQuery({ queryKey: ['history-collection'], queryFn: () => api.historyCollection(), refetchInterval: 60_000 }).data;
+  const retention = collection?.retention[query.granularity];
+  const beforeRetention = useMemo(() => startsBeforeRetention(range.from, retention), [range.from, retention]);
 
   function change(next: HistoryQuery) {
     setParams(serializeHistory(next), { replace: false });
@@ -66,7 +74,9 @@ export function HistoryPage() {
         </p>
       )}
 
-      <HistoryForm query={query} range={range} onChange={change} />
+      <HistoryForm query={query} range={range} onChange={change} retention={retention} />
+
+      {collection && <CollectionNotice collection={collection} />}
 
       {query.metric === 'database-size' && allNames.length > 0 && (
         <fieldset role="group" aria-label={t('history.databases')} className="m-0 flex flex-wrap gap-x-4 gap-y-2 border-0 p-0">
@@ -97,17 +107,28 @@ export function HistoryPage() {
           {result.partial && result.coverage && (
             <p role="status" className="m-0 flex items-start gap-2 rounded-[10px] bg-warning-soft px-3.5 py-2.5 text-warning">
               <StatusIcon status="warning" size={18} />
-              {t('history.partial', {
-                first: formatDateTime(new Date(result.coverage.first), lang),
-                last: formatDateTime(new Date(result.coverage.last), lang),
-              })}
+              <span>
+                {t('history.partial', {
+                  first: formatDateTime(new Date(result.coverage.first), lang),
+                  last: formatDateTime(new Date(result.coverage.last), lang),
+                })}
+                {beforeRetention && (
+                  <>
+                    {' '}
+                    {t('history.partialRetention', { granularity: t(`history.retentionNames.${query.granularity}`), days: retention!.days })}
+                  </>
+                )}
+              </span>
             </p>
           )}
 
           {shown.length === 0 ? (
-            <p role="status" className="m-0 text-muted">
-              {t('history.noData')}
-            </p>
+            // When the instance has never recorded anything, the notice above replaces "no data" (FR-004).
+            !(needsNotice(collection) && collection?.lastSample === null) && (
+              <p role="status" className="m-0 text-muted">
+                {t('history.noData')}
+              </p>
+            )
           ) : (
             <>
               <div

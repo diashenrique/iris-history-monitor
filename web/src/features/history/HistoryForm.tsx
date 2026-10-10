@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Granularity, HistoryMetric } from '../../api/types';
+import type { Granularity, HistoryMetric, Retention } from '../../api/types';
 import { Select } from '../../design/components';
 import { PRESETS, type HistoryQuery, type Preset } from '../../lib/url-state';
 
@@ -28,12 +28,22 @@ export function HistoryForm({
   query,
   range,
   onChange,
+  retention,
 }: {
   query: HistoryQuery;
   range: { from: string; to: string };
   onChange: (q: HistoryQuery) => void;
+  /** How long the instance keeps the chosen granularity (spec 004 FR-005); undefined until known. */
+  retention?: Retention;
 }) {
   const { t } = useTranslation();
+  const keptId = useId();
+  const kept =
+    retention?.kind === 'days'
+      ? t('history.kept.days', { count: retention.days ?? 0 })
+      : retention?.kind === 'indefinite'
+        ? t('history.kept.indefinite')
+        : '';
   const fromId = useId();
   const toId = useId();
   const custom = query.preset === null;
@@ -61,13 +71,23 @@ export function HistoryForm({
           </option>
         ))}
       </Select>
-      <Select label={t('history.granularity')} value={query.granularity} onChange={(e) => onChange({ ...query, granularity: e.target.value as Granularity })}>
-        {GRANULARITIES.map((g) => (
-          <option key={g} value={g}>
-            {t(`history.granularities.${g}`)}
-          </option>
-        ))}
-      </Select>
+      <span className="inline-flex flex-col gap-1">
+        <Select
+          label={t('history.granularity')}
+          value={query.granularity}
+          aria-describedby={keptId}
+          onChange={(e) => onChange({ ...query, granularity: e.target.value as Granularity })}
+        >
+          {GRANULARITIES.map((g) => (
+            <option key={g} value={g}>
+              {t(`history.granularities.${g}`)}
+            </option>
+          ))}
+        </Select>
+        <span id={keptId} className="text-xs text-muted">
+          {kept}
+        </span>
+      </span>
       <Select label={t('history.period')} value={custom ? 'custom' : query.preset!} onChange={(e) => setPeriod(e.target.value)}>
         {PRESETS.map((p) => (
           <option key={p} value={p}>

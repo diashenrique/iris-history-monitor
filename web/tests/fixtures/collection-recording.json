@@ -1,0 +1,11 @@
+{
+  "state": "recording",
+  "running": true,
+  "lastSample": "2026-10-10T02:51:23Z",
+  "intervalSeconds": 300,
+  "retention": {
+    "5min": { "kind": "days", "days": 7 },
+    "hourly": { "kind": "days", "days": 60 },
+    "daily": { "kind": "indefinite", "days": null }
+  }
+}

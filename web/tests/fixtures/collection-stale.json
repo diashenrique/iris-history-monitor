@@ -1,0 +1,11 @@
+{
+  "state": "stale",
+  "running": false,
+  "lastSample": "2026-10-08T23:55:00Z",
+  "intervalSeconds": 300,
+  "retention": {
+    "5min": { "kind": "days", "days": 7 },
+    "hourly": { "kind": "unknown", "days": null },
+    "daily": { "kind": "indefinite", "days": null }
+  }
+}
