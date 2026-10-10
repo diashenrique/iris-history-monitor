@@ -11,13 +11,18 @@ All entities are transient response shapes. Nothing is stored.
 ### Metric
 | Field | Type | Rule |
 | --- | --- | --- |
-| name | string | one of the fixed names: systemUpTime, lastBackup, locktable, journalSpace, journalStatus, ecpAppServer, ecpDataServer, writeDaemon, licenseCurrent, licenseCurrentPct, licenseHigh, licenseHighPct, licenseLimit, applicationErrors, cspSessions, cacheEfficiency, processes, seriousAlerts |
+| name | string | one of the fixed names: systemUpTime, lastBackup, lockTable, journalSpace, journalStatus, ecpAppServer, ecpDataServer, writeDaemon, licenseCurrent, licenseCurrentPct, licenseHigh, licenseHighPct, licenseLimit, applicationErrors, cspSessions, cacheEfficiency, processes, seriousAlerts |
 | value | string or number or null | null when unavailable |
 | unit | string | for example `percent`, `count`, `bytes`, `seconds`, `text` |
 | status | enum | `ok`, `warning`, `critical`, `unavailable` |
 | reason | string, optional | present only when status is `unavailable` |
 
-State rule: a backup that never ran has status `warning`.
+State rules (implemented in `service.Overview`, decisions in research.md R8):
+- a backup that never ran has status `warning` and a null value;
+- state texts: `Normal` and `OK` are `ok`, `Warning` is `warning`, `Troubled` is `critical`, any other text is `warning`;
+- `licenseCurrentPct` and `licenseHighPct`: `warning` from 80, `critical` from 95;
+- `seriousAlerts` above 0 is `warning`;
+- an empty, missing or non-numeric value is `unavailable` with a reason.
 
 ## HistorySeries
 | Field | Type | Rule |

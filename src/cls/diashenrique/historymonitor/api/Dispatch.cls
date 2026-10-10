@@ -1,5 +1,5 @@
 /// REST dispatch class for the History Monitor API v1 (spec 001-api-v1).
-/// Routes are added by tasks T013, T017 and T020.
+/// Routes: GET /overview (T013). History and processes are added by tasks T017 and T020.
 ///
 /// Access has two layers. The web application (module.xml) requires password authentication, allows no
 /// unauthenticated access and requires the HistoryMonitorRead resource. This class repeats the check in
@@ -15,7 +15,16 @@ Parameter CHARSET = "utf-8";
 XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
+<Route Url="/overview" Method="GET" Call="Overview"/>
 </Routes>
+}
+
+/// GET /overview: the current snapshot (user story 1). An unavailable source is reported per metric,
+/// so this route answers 200 even when the dashboard sample cannot be read.
+ClassMethod Overview() As %Status
+{
+	Write ##class(diashenrique.historymonitor.service.Overview).Snapshot().%ToJSON()
+	Quit $$$OK
 }
 
 /// The resource a caller must hold Use on. One definition, shared with util.Security.

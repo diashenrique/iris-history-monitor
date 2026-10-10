@@ -23,9 +23,9 @@ Nothing counts as verified until the CI run is green (T001).
 
 ## Phase 3: User Story 1 - Overview (P1)
 
-- [ ] T011 [P] [US1] Contract test for `GET /overview` including the unavailable-metric and never-backed-up cases in `test/api/OverviewTest.cls`
-- [ ] T012 [US1] Implement `service/Overview.cls` from `SYS.Stats.Dashboard.Sample()` and the SAM sensors; set `status` per metric
-- [ ] T013 [US1] Add the `/overview` route in `api/Dispatch.cls`
+- [x] T011 [P] [US1] Contract test for `GET /overview` including the unavailable-metric and never-backed-up cases in `test/api/OverviewTest.cls`
+- [x] T012 [US1] Implement `service/Overview.cls` from `SYS.Stats.Dashboard.Sample()` and the SAM sensors; set `status` per metric
+- [x] T013 [US1] Add the `/overview` route in `api/Dispatch.cls`
 
 ## Phase 4: User Story 2 - History (P1)
 
@@ -42,7 +42,7 @@ Nothing counts as verified until the CI run is green (T001).
 
 ## Phase 6: User Story 4 - Errors and access (P2)
 
-- [ ] T021 [US4] Run `AuthTest` and `ProblemTest` against every route and fix gaps in `api/Dispatch.cls`
+- [ ] T021 [US4] Run `AuthTest` and `ProblemTest` against every route and fix gaps in `api/Dispatch.cls` (open gap: no role gives 401 HTML instead of 403 problem+json over HTTP, research.md R8)
 - [ ] T022 [P] [US4] Check that no route response differs from `contracts/openapi.yaml` and no route lacks a test
 
 ## Phase 7: User Story 5 - Existing pages read the API (P3)
