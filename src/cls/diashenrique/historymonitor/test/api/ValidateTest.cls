@@ -166,6 +166,22 @@ Method TestHistoryRejectsReversedRange()
 	Do $$$AssertEquals(errs.%Get(0).parameter, "from", "reversed range is reported on from")
 }
 
+Method TestHistoryCursorIsAUtcTimestamp()
+{
+	Set q("granularity") = "5min", q("from") = "2026-01-01", q("to") = "2026-03-01", q("cursor") = "2026-01-02T10:05:00Z"
+	Set errs = $ClassMethod(..#V, "History", "license", .q, .clean)
+	Do $$$AssertEquals(errs.%Size(), 0, "a cursor returned by the API is accepted")
+	Do $$$AssertEquals($Get(clean("cursor")), "2026-01-02 10:05:00", "cursor normalized like from and to")
+	Kill clean
+	For bad = "abc", "2026-01-02 10:05:00; DROP TABLE x", "1; Kill ^IRISMonitor" {
+		Set q("cursor") = bad
+		Set errs = $ClassMethod(..#V, "History", "license", .q, .clean)
+		Do $$$AssertEquals(errs.%Size(), 1, "rejected: "_bad)
+		Do $$$AssertEquals(errs.%Get(0).parameter, "cursor", "names the cursor parameter")
+		Do $$$AssertEquals($Data(clean("cursor")), 0, "no cursor value on failure")
+	}
+}
+
 Method TestDatabaseOnlyValidForDatabaseSize()
 {
 	Set q("granularity") = "daily", q("from") = "2026-01-01", q("to") = "2026-03-01", q("database") = "USER"

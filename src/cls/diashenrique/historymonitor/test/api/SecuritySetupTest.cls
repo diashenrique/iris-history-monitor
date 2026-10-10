@@ -2,6 +2,8 @@
 /// touches the real ones on a developer instance.
 /// The role also needs Read on the IRISSYS database: service.Overview switches to %SYS to read the
 /// dashboard sample, and without it a real HTTP call returned every metric unavailable (task T012).
+/// It also needs SELECT on the System Monitor history tables: without it a real HTTP call to
+/// /history failed with SQLCODE -99 (task T016).
 Class diashenrique.historymonitor.test.api.SecuritySetupTest Extends %UnitTest.TestCase
 {
 
@@ -84,6 +86,24 @@ ClassMethod Holds(list As %String, name As %String, perm As %String) As %Boolean
 		If ($Piece(item, ":", 1) = name) && ($Piece(item, ":", 2) [ perm) Return 1
 	}
 	Quit 0
+}
+
+Method TestRoleCanSelectTheHistoryTables()
+{
+	Do ##class(diashenrique.historymonitor.util.Security).Setup(..#RES, ..#ROLE)
+	For t = "SysData", "SysData_DB", "Hourly", "Hourly_Sys", "Hourly_DB", "Daily", "Daily_Sys", "Daily_DB" {
+		Do $$$AssertEquals(..Can(t, "s"), 1, "SELECT on SYS_History."_t)
+		Do $$$AssertEquals(..Can(t, "i") + ..Can(t, "u") + ..Can(t, "d"), 0, "no INSERT, UPDATE or DELETE on SYS_History."_t)
+	}
+	Do $$$AssertEquals(..Can("PerfData", "s"), 0, "no SELECT on a history table the API does not read")
+}
+
+/// Whether the test role holds the SQL privilege (s, i, u, d) on SYS_History.<table>.
+ClassMethod Can(table As %String, action As %String) As %Boolean
+{
+	New $Namespace
+	Set $Namespace = "%SYS"
+	Quit +$SYSTEM.SQL.Security.CheckPrivilege(..#ROLE, 1, "SYS_History."_table, action, "%SYS")
 }
 
 Method TestSetupIsIdempotent()
