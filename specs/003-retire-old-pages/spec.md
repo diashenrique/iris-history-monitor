@@ -6,6 +6,12 @@
 
 **Status**: Draft
 
+## Clarifications
+
+### Session 2026-10-09
+- Q: With the old pages gone, what happens to the switch that turns the new monitor on? → A: It is
+  removed; the monitor is always on once the module is installed (FR-007).
+
 **Input**: User description: "Spec 003, retire the old pages (release 2.0.0): remove the obsolete CSP pages (/csp/irismonitor/*.csp: dashboard, dashboardapi, history pages, systemprocesses) with their static resources and the old ObjectScript code they use (package diashenrique.historymonitor.dashboard and the util classes only they need), the /csp/irismonitor web application, and the ^IRISMonitor scratch globals they write. The new monitor at /historymonitor/ (spec 002) and the API v1 (spec 001) are the only interface. Anyone who opens an old address must still be sent to the new monitor, not get a bare error. An upgrade from 1.9.x must clean up what the old version left (web application, files, globals, the IRISMONITOR namespace created by the Docker image if it is no longer needed). This finishes Phase 2 ("replace ^IRISMonitor scratch globals") and is a breaking change (major version)."
 
 ## Context
@@ -86,8 +92,8 @@ new monitor in every state it can be in.
 
 **Acceptance Scenarios**:
 
-1. **Given** 2.0.0, **When** a viewer meets any screen of the new monitor (including the not-available
-   state), **Then** no screen links to or names the old pages.
+1. **Given** 2.0.0, **When** a viewer meets any screen of the new monitor, **Then** no screen links to
+   or names the old pages, and no screen says the monitor is not turned on.
 2. **Given** the documentation and release notes of 2.0.0, **When** an administrator reads them,
    **Then** they learn that the old pages are gone, where each old address now leads, and that this is a
    major version.
@@ -106,8 +112,8 @@ new monitor in every state it can be in.
 - An upgrade from a version older than 1.9.x (for example 1.2.4): the result is the same as a fresh 2.0.0
   install, with the old parts removed.
 - The old metrics proxy is called with parameters naming another host: no request leaves the server.
-- The new monitor is switched off when a person follows an old address: they see the new monitor's
-  not-available state (FR-007), never an old page.
+- An instance upgraded from 1.x had the new monitor switched off: after the upgrade the monitor is on
+  (FR-007), and old addresses lead to it.
 
 ## Requirements *(mandatory)*
 
@@ -135,11 +141,11 @@ new monitor in every state it can be in.
   It MUST leave alone anything the module did not create.
 - **FR-006**: An upgrade and an uninstall MUST NOT delete a namespace or a database. A namespace created
   for the module by the container image stays where it is; the image keeps installing the module there.
-- **FR-007**: Nothing in the new monitor may point to the old pages, including the screen shown when the
-  monitor is not available. Whether an administrator can still switch the monitor off, and what a viewer
-  then sees: [NEEDS CLARIFICATION: with the old pages gone, should the switch that turns the new monitor
-  on stay (off after a fresh install, as today), stay but be on after install and upgrade, or be
-  removed so the monitor is always on when installed?]
+- **FR-007**: Nothing in the new monitor may point to the old pages. The switch that turned the new
+  monitor on is removed: once the module is installed, the monitor is on for everyone who holds the viewer
+  role, after a fresh install and after an upgrade. The "not turned on" state and the setting behind it
+  no longer exist. An administrator who wants to keep people out removes the viewer role from them or
+  disables the web application, as for any IRIS application.
 - **FR-008**: The version MUST be 2.0.0, a major version, because addresses that worked in 1.x stop
   serving their pages.
 - **FR-009**: The release notes MUST list what was removed, where each old address now leads, and what
@@ -155,8 +161,8 @@ new monitor in every state it can be in.
   the new monitor (FR-002).
 - **Old-page scratch data**: per-request data the old pages wrote for their grids and charts. It has no
   value after the request ends and nothing else reads it.
-- **Monitor switch**: the administrator setting that today decides whether the new monitor is shown
-  (FR-007).
+- **Monitor switch** (removed): the administrator setting that decided whether the new monitor was
+  shown. 2.0.0 removes it (FR-007); a value left by 1.x is cleaned up like the other old parts.
 
 ## Success Criteria *(mandatory)*
 

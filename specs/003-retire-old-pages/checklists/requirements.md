@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,7 +31,6 @@
 
 ## Notes
 
-- One open question, FR-007: what happens to the switch that turns the new monitor on, now that it has
-  no old pages to fall back to. It waits for the owner's answer (Q1).
+- FR-007 resolved by the owner (2026-10-09): the switch is removed, the monitor is always on.
 - The spec names product parts by role ("the old metrics proxy", "the monitoring sensors"), not by class
   or file; the description's class names go to the plan.
