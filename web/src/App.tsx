@@ -9,7 +9,7 @@ import { OverviewPage } from './features/overview/OverviewPage';
 import { ProcessesPage } from './features/processes/ProcessesPage';
 import { Header } from './shell/Header';
 import { SCREENS } from './shell/routes';
-import { ErrorScreen, LoadingScreen, NoAccessScreen, NotEnabledScreen } from './shell/screens';
+import { ErrorScreen, LoadingScreen, NoAccessScreen } from './shell/screens';
 
 /** How often the shell re-reads the switch, so turning it off reaches open screens (spec Edge Cases). */
 export const SETTINGS_INTERVAL = 60_000;
@@ -64,7 +64,10 @@ function Layout() {
   );
 }
 
-/** Reads the switch first; shows the screens only when the interface is turned on (FR-002, FR-016). */
+/**
+ * Checks sign-in and role first, and again every minute, so a lost role reaches an open screen (FR-016).
+ * GET /settings is the cheapest call for that; its interfaceEnabled is always true since 2.0.0 (spec 003).
+ */
 function SettingsGate() {
   const api = useApi();
   const { t } = useTranslation();
@@ -80,7 +83,6 @@ function SettingsGate() {
     return <LoadingScreen label={t('shell.checking')} />;
   if (settings.isError && !settings.data)
     return <ErrorScreen message={errorMessage(settings.error, t)} onRetry={() => void settings.refetch()} />;
-  if (!settings.data?.interfaceEnabled) return <NotEnabledScreen />;
   return <Layout />;
 }
 

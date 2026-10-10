@@ -1,27 +1,14 @@
 import { expect, type Page } from '@playwright/test';
-import { execFileSync } from 'node:child_process';
 
 // Environment of the end-to-end run (set by the CI e2e job or by hand; .github/ci/e2e-setup.sh creates
-// the users and turns the interface on).
+// the users).
 /** Session of the viewer, signed in once by global-setup and reused by every test. */
 export const VIEWER_STATE = 'tests/e2e/.auth/viewer.json';
 
 export const env = {
-  container: process.env.HM_IRIS_CONTAINER ?? 'iris',
   viewer: { user: 'e2eviewer', password: process.env.HM_VIEWER_PASSWORD ?? '' },
   noRole: { user: 'e2enorole', password: process.env.HM_NOROLE_PASSWORD ?? '' },
 };
-
-/** Runs one ObjectScript expression as the instance administrator (docker exec into the container). */
-export function iris(expression: string, namespace = 'USER'): string {
-  return execFileSync('docker', ['exec', env.container, 'iris', 'session', 'IRIS', '-U', namespace, expression], {
-    encoding: 'utf8',
-  });
-}
-
-export function setInterfaceEnabled(on: boolean): void {
-  iris(`##class(diashenrique.historymonitor.util.Settings).SetInterfaceEnabled(${on ? 1 : 0})`);
-}
 
 /**
  * Opens the interface at `route`. A page in the viewer's saved session goes straight in; otherwise (or for

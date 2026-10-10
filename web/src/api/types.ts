@@ -4,6 +4,7 @@
 export type Status = 'ok' | 'warning' | 'critical' | 'unavailable';
 
 export interface Settings {
+  /** @deprecated Always true since 2.0.0; the switch was removed (spec 003). */
   interfaceEnabled: boolean;
 }
 

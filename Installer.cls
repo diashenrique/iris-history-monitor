@@ -2,7 +2,7 @@ Include %occInclude
 
 /// Creates the IRISMONITOR namespace and database for the Docker image (Dockerfile). The module itself is
 /// installed by IPM afterwards (module.xml): web applications, security role, favourite and pages.
-/// The old pages keep their scratch data in this namespace, so it must exist for them to work.
+/// The namespace keeps the module apart from USER; upgrades and uninstalls never delete it (spec 003 FR-006).
 Class App.Installer
 {
 

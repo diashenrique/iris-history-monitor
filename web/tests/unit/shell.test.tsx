@@ -11,14 +11,11 @@ function renderApp(api = fakeApi()) {
 }
 
 describe('shell', () => {
-  it('shows the not-enabled screen with a link to the old pages when the switch is off (FR-002)', async () => {
+  it('shows the monitor whatever interfaceEnabled says, and never links to the old pages (spec 003 FR-007)', async () => {
     const { container } = renderApp(fakeApi({ settings: vi.fn(async () => fixture('settings-off')) }));
-    expect(await screen.findByRole('heading', { name: 'The new monitor is not turned on' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Open the existing pages' })).toHaveAttribute(
-      'href',
-      '/csp/irismonitor/dashboard.csp',
-    );
-    await expectNoSeriousAxeIssues(container);
+    expect(await screen.findByRole('navigation', { name: 'Main' })).toBeInTheDocument();
+    expect(screen.queryByText(/not turned on/i)).not.toBeInTheDocument();
+    for (const link of container.querySelectorAll('a')) expect(link.getAttribute('href') ?? '').not.toContain('/csp/irismonitor');
   });
 
   it('shows no-access naming the role on 403 and loads no data (FR-016)', async () => {
@@ -51,16 +48,16 @@ describe('shell', () => {
     await expectNoSeriousAxeIssues(container);
   });
 
-  it('re-reads the switch every 60 s, so turning it off reaches an open screen (spec Edge Cases)', async () => {
+  it('re-checks access every 60 s, so losing the role reaches an open screen', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     try {
-      const settings = vi.fn().mockResolvedValueOnce(fixture('settings-on')).mockResolvedValue(fixture('settings-off'));
+      const settings = vi.fn().mockResolvedValueOnce(fixture('settings-on')).mockRejectedValue(forbidden());
       renderApp(fakeApi({ settings }));
       expect(await screen.findByRole('navigation', { name: 'Main' })).toBeInTheDocument();
       await act(async () => {
         await vi.advanceTimersByTimeAsync(SETTINGS_INTERVAL + 100);
       });
-      expect(await screen.findByRole('heading', { name: 'The new monitor is not turned on' })).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { name: 'You do not have access to the monitor' })).toBeInTheDocument();
     } finally {
       vi.useRealTimers();
     }

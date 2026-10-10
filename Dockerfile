@@ -18,8 +18,8 @@ COPY --chown=${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} module.xml Installe
 COPY --chown=${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} src src
 
 # Runs IRIS during the build and types the lines below into a terminal in %SYS (see irissession.sh):
-# install IPM, create the IRISMONITOR namespace (where the old pages keep their scratch data), load the
-# module with IPM, and turn the new interface on. The build fails if the API class is not there.
+# install IPM, create the IRISMONITOR namespace (the module's own namespace), and load the module with
+# IPM. The build fails if the API class is not there (irissession.sh stops on a false sc).
 SHELL ["/irissession.sh"]
 RUN \
     do $SYSTEM.OBJ.Load("/tmp/zpm.xml", "ck") \
@@ -27,8 +27,7 @@ RUN \
     set sc = ##class(App.Installer).setup() \
     zn "IRISMONITOR" \
     do ##class(%IPM.Main).Shell("load /opt/irisapp") \
-    set sc = ##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor.api.Dispatch") \
-    if sc set sc = ##class(diashenrique.historymonitor.util.Settings).SetInterfaceEnabled(1)
+    set sc = ##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor.api.Dispatch")
 
 SHELL ["/bin/bash", "-c"]
 # The image's own entrypoint runs an after-start script that fails on 2026.1 and stops IRIS; start IRIS
