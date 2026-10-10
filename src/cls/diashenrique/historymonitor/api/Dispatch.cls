@@ -27,7 +27,8 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 </Routes>
 }
 
-/// GET /settings: the interface switch, readable by any monitor viewer (spec 002 FR-002).
+/// GET /settings: kept in API v1 for compatibility. The switch it reported was removed in 2.0.0
+/// (spec 003 FR-007, research R5), so interfaceEnabled is always true.
 ClassMethod Settings() As %Status
 {
 	Write ..SettingsResponse().%ToJSON()
@@ -38,7 +39,7 @@ ClassMethod Settings() As %Status
 ClassMethod SettingsResponse() As %DynamicObject
 {
 	Set body = {}
-	Do body.%Set("interfaceEnabled", ##class(diashenrique.historymonitor.util.Settings).InterfaceEnabled(), "boolean")
+	Do body.%Set("interfaceEnabled", 1, "boolean")
 	Quit body
 }
 

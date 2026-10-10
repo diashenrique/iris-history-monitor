@@ -3,11 +3,10 @@
   <Document name="iris-history-monitor.ZPM">
     <Module>
       <Name>iris-history-monitor</Name>
-      <Version>1.9.3</Version>
+      <Version>2.0.0</Version>
       <Description>IRIS History Monitor is now using the IRIS /api/monitor Service</Description>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
-      <Resource Name="diashenrique.historymonitor.dashboard.PKG"/>
       <Resource Name="diashenrique.historymonitor.util.PKG"/>
       <Resource Name="diashenrique.historymonitor.api.PKG"/>
       <Resource Name="diashenrique.historymonitor.service.PKG"/>
@@ -15,34 +14,32 @@
       <Invokes>
         <Invoke Class="diashenrique.historymonitor.util.Security" Method="Setup" Phase="Compile" When="After"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.customSensors" Method="CustomApplicationMetrics"></Invoke>
-        <!-- Compile the old pages at install: IRIS otherwise compiles a .csp page on its first request, which
-             fails with 404 for a user without development rights (spec 002 FR-024: they stay reachable).
-             After Activate, because the page files are copied in that phase. AutoCompile is off on the
-             application, so a request never tries to recompile a page (that failed with PROTECT, then 404). -->
-        <Invoke Class="%SYSTEM.CSP" Method="LoadPageDir" Phase="Activate" When="After">
-          <Arg>/csp/irismonitor/</Arg>
-          <Arg>ck</Arg>
-        </Invoke>
+        <!-- Removes what the old pages of 1.x left (spec 003 FR-005, research R3, R4): on install and
+             upgrade after Activate, and on uninstall before Unconfigure. Idempotent. -->
+        <Invoke Class="diashenrique.historymonitor.util.Retire" Method="Run" Phase="Activate" When="After"></Invoke>
+        <Invoke Class="diashenrique.historymonitor.util.Retire" Method="Run" Phase="Unconfigure" When="Before"></Invoke>
         <Invoke Class="diashenrique.historymonitor.util.Favorite" Method="%AddFavorite">
           <Arg>HistoryMonitor</Arg>
           <Arg>/historymonitor/index.html</Arg>
         </Invoke>
       </Invokes>
       <!-- Web applications are <WebApplication> (IPM deprecates <CSPApplication>). It only writes the
-           Security.Applications properties, so the page files are copied by <FileCopy> and Path points at
-           where they land. -->
-      <FileCopy Name="src/csp/" Target="${cspdir}irismonitor/"/>
+           Security.Applications properties, so the interface files are copied by <FileCopy> and Path points
+           at where they land. -->
       <FileCopy Name="src/web/historymonitor/" Target="${cspdir}historymonitor/"/>
+      <!-- The old prefix only forwards to the new monitor (spec 003 FR-002, contracts/forwarding.md). No
+           sign-in: the class reads nothing and only redirects; the new monitor asks for sign-in. The database
+           role is matched only so the unauthenticated user can run the forwarding class (research R2).
+           Stays for all of 2.x (FR-003). -->
       <WebApplication
         Url="/csp/irismonitor"
-        Path="${cspdir}irismonitor/"
+        DispatchClass="diashenrique.historymonitor.web.Forward"
+        AutheEnabled="64"
+        MatchRoles=":%DB_${Namespace}"
+        ServeFiles="0"
         AutoCompile="0"
-        ServeFiles="1"
-        Recurse="1"
         CookiePath="/csp/irismonitor/"
         UseCookies="2"
-        MatchRoles=":%DB_${Namespace}"
-        AutheEnabled="32"
        />
       <!-- The new interface (spec 002) and the API share the prefix /historymonitor/ and its session
            cookie, so one sign-in covers both and no other application sees the session (research R3). -->
