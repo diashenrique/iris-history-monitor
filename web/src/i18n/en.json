@@ -114,5 +114,50 @@
   },
   "shell": {
     "checking": "Checking the monitor…"
+  },
+  "history": {
+    "title": "History",
+    "metric": "Metric",
+    "metrics": {
+      "license": "License usage",
+      "csp-sessions": "CSP sessions",
+      "database-size": "Database size"
+    },
+    "granularity": "Granularity",
+    "granularities": {
+      "5min": "5 minutes",
+      "hourly": "Hourly",
+      "daily": "Daily"
+    },
+    "period": "Period",
+    "presets": {
+      "24h": "Last 24 hours",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "90d": "Last 90 days",
+      "custom": "Custom range"
+    },
+    "from": "From",
+    "to": "To",
+    "databases": "Databases",
+    "loading": "Loading the history…",
+    "noData": "No data for this period.",
+    "partial": "This instance keeps data for part of the period only: from {{first}} to {{last}}.",
+    "incomplete": "Showing {{count}} points; the period has more.",
+    "loadMore": "Load more",
+    "export": "Export CSV",
+    "invalid": "Some values in the address were not valid and were replaced by defaults: {{names}}.",
+    "time": "Time ({{zone}})",
+    "series": {
+      "Avg": "Average",
+      "Max": "Maximum",
+      "value": "Value"
+    },
+    "unitMB": "MB",
+    "previous": "Previous rows",
+    "next": "Next rows",
+    "rows": "Rows {{from}}–{{to}} of {{total}}",
+    "chartLabel": "{{metric}}, {{granularity}}, {{from}} to {{to}}",
+    "tableCaption": "{{metric}} values"
   }
 }

@@ -8,6 +8,6 @@ export interface ScreenDef {
 
 export const SCREENS: ScreenDef[] = [
   { path: '/', label: 'nav.overview', available: true },
-  { path: '/history', label: 'nav.history', available: false },
+  { path: '/history', label: 'nav.history', available: true },
   { path: '/processes', label: 'nav.processes', available: false },
 ];

@@ -94,21 +94,21 @@ them pass. Nothing counts as verified until CI is green.
 
 ### Tests (write first, must fail)
 
-- [ ] T033 [P] [US2] Form and address tests in `web/tests/unit/history-form.test.tsx`: presets `24h`, `7d`, `30d`, `90d` and custom range; local times converted to UTC; `databases` only for `database-size`; the address round-trips (FR-013); invalid address values fall back to `metric=license`, `granularity=hourly`, `preset=7d` with a notice
-- [ ] T034 [P] [US2] Paging tests in `web/tests/unit/history-data.test.ts`: `limit=5000`, follows `next` until complete, stops after 20 pages with `complete=false` and a "load more" action (research R8), merges pages in time order, keeps the first page's `coverage` and `partial`
-- [ ] T035 [P] [US2] View tests in `web/tests/unit/history-view.test.tsx`: chart and table show the same points; times in the local zone with its name; across a daylight-saving change the points stay in time order and no time is shown twice or skipped (spec Edge Cases); partial notice states first and last time present; no-data message; database picker; axe passes
-- [ ] T036 [P] [US2] End-to-end `web/tests/e2e/history.spec.ts`: spec US2 scenarios 1 to 6 on demo data, points equal the API, 90-day view within 3 s (SC-002), every request under `/historymonitor/` (SC-006), axe light and dark, 360 px
+- [x] T033 [P] [US2] Form and address tests in `web/tests/unit/history-form.test.tsx`: presets `24h`, `7d`, `30d`, `90d` and custom range; local times converted to UTC; `databases` only for `database-size`; the address round-trips (FR-013); invalid address values fall back to `metric=license`, `granularity=hourly`, `preset=7d` with a notice
+- [x] T034 [P] [US2] Paging tests in `web/tests/unit/history-data.test.ts`: `limit=5000`, follows `next` until complete, stops after 20 pages with `complete=false` and a "load more" action (research R8), merges pages in time order, keeps the first page's `coverage` and `partial`
+- [x] T035 [P] [US2] View tests in `web/tests/unit/history-view.test.tsx`: chart and table show the same points; times in the local zone with its name; across a daylight-saving change the points stay in time order and no time is shown twice or skipped (spec Edge Cases); partial notice states first and last time present; no-data message; database picker; axe passes
+- [x] T036 [P] [US2] End-to-end `web/tests/e2e/history.spec.ts`: spec US2 scenarios 1 to 6 on demo data, points equal the API, 90-day view within 3 s (SC-002), every request under `/historymonitor/` (SC-006), axe light and dark, 360 px
 
 ### Implementation
 
-- [ ] T037 [US2] Implement `web/src/features/history/useHistory.ts` (query from address state, paging per research R8) so T034 passes
-- [ ] T038 [P] [US2] Implement `web/src/features/history/HistoryForm.tsx` (metric, granularity, presets, custom range, database multi-select)
-- [ ] T039 [P] [US2] Implement `web/src/features/history/HistoryChart.tsx` lazily loaded, with modular ECharts (line chart, tooltip, data zoom, legend), light and dark themes, ARIA description enabled, reduced motion respected
-- [ ] T040 [P] [US2] Implement `web/src/features/history/HistoryTable.tsx` and the coverage, partial and no-data notices
-- [ ] T041 [P] [US2] Implement CSV export in `web/src/lib/csv.ts` (UTF-8 with BOM, ISO UTC times plus a local-time column) with tests in `web/tests/unit/csv.test.ts`
-- [ ] T042 [US2] Implement `web/src/features/history/HistoryPage.tsx` wiring form, chart, table and export to the address so T033 and T035 pass
-- [ ] T043 [US2] Add the History strings to the three catalogues in `web/src/i18n/`
-- [ ] T044 [US2] Rebuild, commit `src/web/historymonitor/`, quickstart step 4; T036 green in CI and the first-screen size check still under 200 KB
+- [x] T037 [US2] Implement `web/src/features/history/useHistory.ts` (query from address state, paging per research R8) so T034 passes
+- [x] T038 [P] [US2] Implement `web/src/features/history/HistoryForm.tsx` (metric, granularity, presets, custom range, database multi-select)
+- [x] T039 [P] [US2] Implement `web/src/features/history/HistoryChart.tsx` lazily loaded, with modular ECharts (line chart, tooltip, data zoom, legend), light and dark themes, ARIA description enabled, reduced motion respected
+- [x] T040 [P] [US2] Implement `web/src/features/history/HistoryTable.tsx` and the coverage, partial and no-data notices
+- [x] T041 [P] [US2] Implement CSV export in `web/src/lib/csv.ts` (UTF-8 with BOM, ISO UTC times plus a local-time column) with tests in `web/tests/unit/csv.test.ts`
+- [x] T042 [US2] Implement `web/src/features/history/HistoryPage.tsx` wiring form, chart, table and export to the address so T033 and T035 pass
+- [x] T043 [US2] Add the History strings to the three catalogues in `web/src/i18n/`
+- [x] T044 [US2] Rebuild, commit `src/web/historymonitor/`, quickstart step 4; T036 green in CI and the first-screen size check still under 200 KB
 
 **Checkpoint**: US1 and US2 work independently.
 

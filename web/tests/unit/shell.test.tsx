@@ -41,7 +41,8 @@ describe('shell', () => {
     const { container } = renderApp();
     const nav = await screen.findByRole('navigation', { name: 'Main' });
     expect(nav).toHaveTextContent('Overview');
-    expect(nav).not.toHaveTextContent('History');
+    expect(nav).toHaveTextContent('History');
+    expect(nav).not.toHaveTextContent('Processes');
     await userEvent.tab();
     expect(screen.getByText('Skip to content')).toHaveFocus();
     expect(document.title).toBe('Overview · IRIS History Monitor');
@@ -52,7 +53,7 @@ describe('shell', () => {
 
   it('a later screen addressed directly says it is not available yet', async () => {
     const api = fakeApi();
-    window.location.hash = '#/history?metric=license';
+    window.location.hash = '#/processes?namespace=USER';
     render(<App client={api} queryClient={testQueryClient()} />);
     expect(await screen.findByRole('heading', { name: 'Not available yet' })).toBeInTheDocument();
   });
