@@ -1,0 +1,51 @@
+name: versionbump
+
+# Same release flow as musketeers-br/sentai-task: every push to master bumps the patch of <Version> in
+# module.xml, and Open Exchange, which follows this repository, publishes that version to the community
+# IPM registry. A push that already changed <Version> (a minor or major bump made by hand in the PR,
+# CLAUDE.md SemVer rule) is published as it is. A commit pushed with GITHUB_TOKEN starts no other
+# workflow, so the bot's own commit does not bump again.
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: versionbump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bump the patch version unless this push changed it
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          version() { sed -n '0,/.*<Version>\(.*\)<\/Version>.*/s//\1/p'; }
+          NOW=$(version < module.xml)
+          PREVIOUS=""
+          if git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            PREVIOUS=$(git show "$BEFORE:module.xml" | version)
+          fi
+          if [ -n "$PREVIOUS" ] && [ "$NOW" != "$PREVIOUS" ]; then
+            echo "Version changed in this push ($PREVIOUS -> $NOW); publishing it as is."
+            exit 0
+          fi
+          NEXT=$(echo "$NOW" | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)
+          sed -i "0,/<Version>\(.*\)<\/Version>/s//<Version>$NEXT<\/Version>/" module.xml
+          git config user.name 'ProjectBot'
+          git config user.email 'bot@users.noreply.github.com'
+          git add module.xml
+          git commit -m "auto bump version to $NEXT"
+          git push
+          echo "Bumped $NOW -> $NEXT"
