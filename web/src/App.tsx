@@ -6,9 +6,10 @@ import { ApiError, takeReturnRoute, type ApiClient } from './api/client';
 import { ApiProvider, useApi } from './api/context';
 import { HistoryPage } from './features/history/HistoryPage';
 import { OverviewPage } from './features/overview/OverviewPage';
+import { ProcessesPage } from './features/processes/ProcessesPage';
 import { Header } from './shell/Header';
 import { SCREENS } from './shell/routes';
-import { ErrorScreen, LoadingScreen, NoAccessScreen, NotEnabledScreen, SoonScreen } from './shell/screens';
+import { ErrorScreen, LoadingScreen, NoAccessScreen, NotEnabledScreen } from './shell/screens';
 
 /** How often the shell re-reads the switch, so turning it off reaches open screens (spec Edge Cases). */
 export const SETTINGS_INTERVAL = 60_000;
@@ -54,8 +55,8 @@ function Layout() {
         <Routes>
           <Route path="/" element={<OverviewPage />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/processes" element={<SoonScreen />} />
-          <Route path="/processes/:pid" element={<SoonScreen />} />
+          <Route path="/processes" element={<ProcessesPage />} />
+          <Route path="/processes/:pid" element={<ProcessesPage />} />
           <Route path="*" element={<OverviewPage />} />
         </Routes>
       </main>

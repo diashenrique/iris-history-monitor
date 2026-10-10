@@ -108,10 +108,6 @@
     "retry": "Reintentar",
     "network": "El monitor no respondió."
   },
-  "soon": {
-    "title": "Aún no disponible",
-    "body": "Esta pantalla forma parte de una entrega posterior."
-  },
   "common": {
     "close": "Cerrar",
     "loading": "Cargando…"
@@ -163,5 +159,52 @@
     "rows": "Filas {{from}}–{{to}} de {{total}}",
     "chartLabel": "{{metric}}, {{granularity}}, desde {{from}} hasta {{to}}",
     "tableCaption": "Valores de {{metric}}"
+  },
+  "processes": {
+    "title": "Procesos",
+    "filters": "Filtros",
+    "namespace": "Namespace",
+    "user": "Usuario",
+    "state": "Estado",
+    "search": "Buscar",
+    "apply": "Aplicar filtros",
+    "clear": "Quitar filtros",
+    "total_one": "{{count}} proceso",
+    "total_many": "{{count}} procesos",
+    "total_other": "{{count}} procesos",
+    "rowsPerPage": "Filas por página",
+    "previous": "Página anterior",
+    "next": "Página siguiente",
+    "pageOf": "Página {{page}} de {{pages}}",
+    "pause": "Pausar actualización",
+    "resume": "Reanudar actualización",
+    "export": "Exportar CSV",
+    "details": "Detalles del proceso {{pid}}",
+    "detailTitle": "Proceso {{pid}}",
+    "ended": "Este proceso ya no se está ejecutando.",
+    "none": "Ningún proceso coincide con estos filtros.",
+    "loading": "Cargando los procesos…",
+    "invalid": "Algunos valores de la dirección no eran válidos y se reemplazaron por los predeterminados: {{names}}.",
+    "tableLabel": "Procesos en ejecución",
+    "fields": {
+      "job": "Job",
+      "pid": "PID",
+      "displayPid": "PID mostrado",
+      "username": "Usuario",
+      "device": "Dispositivo",
+      "namespace": "Namespace",
+      "routine": "Rutina",
+      "commands": "Comandos",
+      "globals": "Referencias a globales",
+      "state": "Estado",
+      "clientName": "Cliente",
+      "exeName": "Ejecutable",
+      "ipAddress": "Dirección IP",
+      "privateGlobalBlocks": "Bloques de globales privadas",
+      "osUsername": "Usuario del SO",
+      "cpuTime": "Tiempo de CPU",
+      "parentPid": "PID padre",
+      "elapsedTime": "Tiempo transcurrido"
+    }
   }
 }
