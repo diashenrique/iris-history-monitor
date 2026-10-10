@@ -68,4 +68,24 @@ describe('base components', () => {
     await userEvent.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
+
+  it('Dialog gives focus back to what opened it, and the close button closes it', async () => {
+    function Harness() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button onClick={() => setOpen(true)}>Open</button>
+          <Dialog open={open} onOpenChange={setOpen} title="Process 4285">
+            <p>Details</p>
+          </Dialog>
+        </>
+      );
+    }
+    render(<Harness />);
+    const opener = screen.getByRole('button', { name: 'Open' });
+    await userEvent.click(opener);
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+  });
 });

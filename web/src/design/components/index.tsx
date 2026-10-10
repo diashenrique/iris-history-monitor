@@ -1,11 +1,10 @@
-import * as RadixDialog from '@radix-ui/react-dialog';
 import type { ButtonHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
-import { useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Status } from '../../api/types';
 
 // Base components following the approved mock-up (research R10). Native elements where they are already
-// accessible (button, select); Radix where focus management is hard (dialog).
+// accessible (button, select, dialog).
 
 const control =
   'min-h-9 rounded-lg border border-control bg-surface px-3 text-text hover:border-text disabled:opacity-60';
@@ -102,6 +101,11 @@ export function StatusBadge({ status }: { status: Status }) {
   );
 }
 
+/**
+ * A modal dialog on the native <dialog> element: showModal() makes the rest of the page inert, keeps focus
+ * inside and closes on Escape. No library injects <style> elements, so the interface runs under a strict
+ * Content-Security-Policy (style-src 'self'); index.css locks the page scroll while a dialog is open.
+ */
 export function Dialog({
   open,
   onOpenChange,
@@ -114,24 +118,50 @@ export function Dialog({
   children: ReactNode;
 }) {
   const { t } = useTranslation();
-  const closeLabel = t('common.close');
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!open || !dialog) return;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (!dialog.open) dialog.showModal();
+    return () => {
+      if (dialog.open) dialog.close();
+      // Focus goes back to what opened the dialog, also when React removes the dialog without close().
+      if (opener?.isConnected) opener.focus();
+    };
+  }, [open]);
+
+  if (!open) return null;
   return (
-    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
-      <RadixDialog.Portal>
-        <RadixDialog.Overlay className="fixed inset-0 bg-black/40" />
-        <RadixDialog.Content
-          aria-describedby={undefined}
-          className="fixed inset-x-4 top-[10vh] mx-auto max-h-[80vh] max-w-2xl overflow-auto rounded-xl border border-divider bg-raised p-5 text-text shadow-xl"
-        >
-          <div className="mb-3 flex items-start justify-between gap-4">
-            <RadixDialog.Title className="text-lg font-semibold">{title}</RadixDialog.Title>
-            <RadixDialog.Close className={`${control} cursor-pointer`} aria-label={closeLabel}>
-              ×
-            </RadixDialog.Close>
-          </div>
-          {children}
-        </RadixDialog.Content>
-      </RadixDialog.Portal>
-    </RadixDialog.Root>
+    // The backdrop click is a pointer convenience; from the keyboard, Escape and the close button close it.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+    <dialog
+      ref={ref}
+      aria-labelledby={titleId}
+      onCancel={(event) => {
+        // Escape: React owns the open state, so the dialog closes by being removed.
+        event.preventDefault();
+        onOpenChange(false);
+      }}
+      onClick={(event) => {
+        // A click on the backdrop lands on the <dialog> itself (the content is the inner div).
+        if (event.target === event.currentTarget) onOpenChange(false);
+      }}
+      className="mx-auto mt-[10vh] max-h-[80vh] w-[calc(100%-2rem)] max-w-2xl overflow-auto rounded-xl border border-divider bg-raised p-0 text-text shadow-xl backdrop:bg-black/40"
+    >
+      <div className="p-5">
+        <div className="mb-3 flex items-start justify-between gap-4">
+          <h2 id={titleId} className="m-0 text-lg font-semibold">
+            {title}
+          </h2>
+          <button type="button" className={`${control} cursor-pointer`} aria-label={t('common.close')} onClick={() => onOpenChange(false)}>
+            ×
+          </button>
+        </div>
+        {children}
+      </div>
+    </dialog>
   );
 }
