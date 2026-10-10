@@ -287,7 +287,9 @@
         ],
         "properties": {
           "interfaceEnabled": {
-            "type": "boolean"
+            "type": "boolean",
+            "deprecated": true,
+            "description": "Always true since 2.0.0; the switch was removed (spec 003)."
           }
         }
       },

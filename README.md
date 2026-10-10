@@ -41,12 +41,6 @@ or, from a clone of this repository:
 zpm "load /path/to/iris-history-monitor"
 ```
 
-Then, as an administrator, switch the new interface on (it is off after a first install):
-
-```objectscript
-do ##class(diashenrique.historymonitor.util.Settings).SetInterfaceEnabled(1)
-```
-
 ### With Docker
 
 ```shell
@@ -55,7 +49,7 @@ cd iris-history-monitor
 docker compose up -d --build
 ```
 
-The image installs the module with IPM and turns the interface on. Ports come from `.env`
+The image installs the module with IPM in its own namespace, `IRISMONITOR`. Ports come from `.env`
 (`IRIS_PORT=52773`, `IRIS_SUPERSERVER_PORT=1972`).
 
 ## Use
@@ -74,16 +68,29 @@ zn "%SYS"
 do ##class(SYS.History.SysData).Demo(30)
 ```
 
-### The old pages
+### Upgrading from 1.x
 
-The previous pages (`/csp/irismonitor/dashboard.csp` and the others) still answer, with a banner that
-says they are obsolete and links to the new monitor. They are no longer in the menu and will be removed
-in a later release.
+2.0.0 removes the old pages (`/csp/irismonitor/*.csp`) and the switch that turned the new monitor on.
+Install it over 1.x as usual (`zpm "install iris-history-monitor"` or `load`):
+
+- Old addresses keep working: each one forwards to the matching screen, and they stay that way for all of
+  2.x.
+
+  | Old address | Opens |
+  | --- | --- |
+  | `dashboard.csp` | Overview |
+  | `historylicense.csp`, `historycspsessions.csp`, `historydatabase.csp` | History on that metric |
+  | `systemprocesses.csp` | Processes |
+  | anything else under `/csp/irismonitor/` | Overview |
+
+- The upgrade removes what the old pages left in the module's namespace: their classes and compiled pages,
+  their files, and their scratch data (`^IRISMonitor`). It never deletes a namespace or a database.
+- The monitor is on for everyone with the `HistoryMonitorViewer` role. To keep someone out, remove the
+  role or disable the `/historymonitor` web application.
 
 ## Develop
 
-- ObjectScript lives in `src/cls/diashenrique/historymonitor` (`api`, `service`, `util`, `web`, and the
-  old `dashboard`). Tests are in `.../test`; run them in the module's namespace with
+- ObjectScript lives in `src/cls/diashenrique/historymonitor` (`api`, `service`, `util`, `web`). Tests are in `.../test`; run them in the module's namespace with
   `do ##class(%UnitTest.Manager).RunTest("diashenrique/historymonitor/test","/nodelete")`.
 - The interface lives in `web/` (React, TypeScript, Vite). The built files are committed to
   `src/web/historymonitor/`, so IRIS serves them as static files with no build step on the server.

@@ -111,6 +111,60 @@ jobs:
           echo "::notice title=ipm install check::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' summary.txt)"
           grep -q '^INSTALL_CHECK=OK' summary.txt
 
+  ipm-upgrade:
+    # Spec 003 US2, SC-002: an instance that ran 1.9.3 and used its old pages, upgraded to this commit,
+    # keeps nothing of the old pages. 1.9.3 is pinned by commit (use the v1.9.3 tag once it exists).
+    runs-on: ubuntu-latest
+    env:
+      FROM_COMMIT: 900a4217a5aae4d4fff19a7731d73003a794ef81
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out 1.9.3 next to this commit
+        run: git worktree add .wt/from "$FROM_COMMIT"
+
+      - name: Start IRIS Community
+        run: |
+          set +e
+          docker run -d --name iris --entrypoint /tini -v "$PWD":/home/irisowner/repo \
+            intersystemsdc/iris-community:latest -- /iris-main
+          for i in $(seq 1 90); do
+            if [ "$(docker inspect -f '{{.State.Running}}' iris)" != "true" ]; then
+              echo "IRIS container exited" >&2; exit 1
+            fi
+            out=$(docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' 2>&1)
+            if [ -z "$out" ] || ! echo "$out" | grep -qi "inhibited\|not running\|error"; then
+              docker exec iris iris session IRIS -U USER '##class(%SYSTEM.Version).GetVersion()' >/dev/null 2>&1 && exit 0
+            fi
+            sleep 2
+          done
+          echo "IRIS did not become ready in 180 s" >&2
+          exit 1
+
+      - name: Install 1.9.3, use an old page, upgrade, check
+        run: |
+          set +e
+          curl -sSL -f -o zpm.xml https://pm.community.intersystems.com/packages/zpm/0.10.9/installer || { echo "could not download IPM" >&2; exit 1; }
+          docker cp zpm.xml iris:/tmp/zpm.xml
+          {
+            docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/tmp/zpm.xml","c")'
+            docker exec iris iris session IRIS -U USER '##class(%IPM.Main).Shell("load /home/irisowner/repo/.wt/from")'
+            # An old page as a user would open it, then the scratch data the old pages kept.
+            printf '%s\n' 'set r=##class(%Net.HttpRequest).%New(),r.Server="localhost",r.Port=52773,r.Username="_SYSTEM",r.Password="SYS"' \
+              'do r.Get("/csp/irismonitor/historylicense.csp") write "OLD_PAGE=",r.HttpResponse.StatusCode,!' \
+              'set ^IRISMonitor("ci")=1 write "SEEDED csp.historylicense=",##class(%Dictionary.CompiledClass).%ExistsId("csp.historylicense"),!' 'halt' \
+              | docker exec -i iris iris session IRIS -U USER
+            docker exec iris iris session IRIS -U USER '##class(%IPM.Main).Shell("load /home/irisowner/repo")'
+            docker exec iris iris session IRIS -U %SYS '##class(%SYSTEM.OBJ).Load("/home/irisowner/repo/.github/ci/InstallCheck.cls","ck")'
+            docker exec iris iris session IRIS -U %SYS '##class(ci.InstallCheck).Run()'
+          } > upgrade.txt 2>&1
+          sed -E 's/\x1b\[[0-9;?]*[A-Za-z]//g' upgrade.txt | tr -cd '\11\12\40-\176' | grep -E '^(OLD_PAGE|SEEDED|Removed|PASS|FAIL|INSTALL_CHECK|\[USER\|iris-history-monitor\].*(FAIL|ERROR))' | cut -c1-200 > summary.txt
+          cat summary.txt
+          echo "::notice title=ipm upgrade check::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' summary.txt)"
+          grep -q '^OLD_PAGE=200' summary.txt && grep -q 'Removed class csp.historylicense' summary.txt && grep -q '^INSTALL_CHECK=OK' summary.txt
+
   web:
     runs-on: ubuntu-latest
     defaults:
@@ -189,7 +243,6 @@ jobs:
         working-directory: web
         env:
           HM_BASE_URL: http://localhost:52773/historymonitor/
-          HM_IRIS_CONTAINER: iris
         run: npx playwright test
 
       - name: Report
@@ -219,8 +272,10 @@ jobs:
           curl -sf -o /dev/null http://localhost:52773/historymonitor/index.html
           curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/settings | grep -q '"interfaceEnabled":true'
           curl -sf -u _SYSTEM:SYS http://localhost:52773/historymonitor/api/v1/overview | grep -q '"metrics"'
-          curl -sf -u _SYSTEM:SYS http://localhost:52773/csp/irismonitor/dashboard.csp | grep -q 'This page is obsolete'
-          echo "image serves the interface, the API and the old pages"
+          # The old address forwards to the new monitor (spec 003); no old page is served.
+          curl -s -o /dev/null -w '%{http_code} %{redirect_url}' http://localhost:52773/csp/irismonitor/historylicense.csp \
+            | grep -qx '302 http://localhost:52773/historymonitor/index.html#/history?metric=license'
+          echo "image serves the interface and the API, and forwards the old addresses"
 
       - name: Container log
         if: failure()

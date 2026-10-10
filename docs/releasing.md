@@ -5,13 +5,13 @@ package in the community IPM registry.
 
 1. **Version.** `module.xml` `<Version>` is the release version (SemVer). `CHANGELOG.md` has a section for
    it; replace "(unreleased)" with the date.
-2. **CI green on `master`.** All jobs: `unit-tests`, `ipm-install`, `web`, `e2e`, `docker`.
+2. **CI green on `master`.** All jobs: `unit-tests`, `ipm-install`, `ipm-upgrade`, `web`, `e2e`, `docker`.
 3. **Tag and GitHub release** (from `master`):
 
    ```shell
-   git tag -a v1.9.3 -m "IRIS History Monitor 1.9.3"
-   git push origin v1.9.3
-   gh release create v1.9.3 --title "1.9.3" --notes "<the CHANGELOG section>"
+   git tag -a v2.0.0 -m "IRIS History Monitor 2.0.0"
+   git push origin v2.0.0
+   gh release create v2.0.0 --title "2.0.0" --notes "<the CHANGELOG section>"
    ```
 
 4. **Community registry (IPM).** Packages reach `pm.community.intersystems.com` through the app's page on
@@ -22,7 +22,6 @@ package in the community IPM registry.
 
    ```objectscript
    zpm "install iris-history-monitor"
-   do ##class(diashenrique.historymonitor.util.Settings).SetInterfaceEnabled(1)
    ```
 
    Open `/historymonitor/index.html` and sign in.

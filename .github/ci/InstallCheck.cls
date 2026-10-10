@@ -24,11 +24,12 @@ ClassMethod Run()
 	Do ..Check($Get(u("AutheEnabled")) = 32, "interface authentication is password only (AutheEnabled="_$Get(u("AutheEnabled"))_")", .bad)
 	Do ..Check($Get(u("CookiePath")) = "/historymonitor/", "interface session cookie path is /historymonitor/", .bad)
 	Do ..Check(##class(%File).Exists(##class(%File).NormalizeFilename("index.html", $Get(u("Path")))), "interface files installed (index.html in "_$Get(u("Path"))_")", .bad)
+	// Spec 003: the old prefix only forwards to the new monitor (FR-002, research R1, R2).
 	Set sc2 = ##class(Security.Applications).Get("/csp/irismonitor", .q)
-	Do ..Check(sc2, "dashboard web application exists", .bad)
-	Do ..Check($Get(q("AutheEnabled")) = 32, "dashboard authentication unchanged (AutheEnabled="_$Get(q("AutheEnabled"))_")", .bad)
-	Do ..Check($Get(q("CookiePath")) [ "/csp/irismonitor", "old pages keep their own cookie path", .bad)
-	Do ..Check($Get(q("AutoCompile")) = 0, "old pages are not recompiled on request (AutoCompile=0)", .bad)
+	Do ..Check(sc2, "old prefix web application exists", .bad)
+	Do ..Check($Get(q("DispatchClass")) = "diashenrique.historymonitor.web.Forward", "old prefix is the forwarding class (got "_$Get(q("DispatchClass"))_")", .bad)
+	Do ..Check($Get(q("AutheEnabled")) = 64, "forwarding needs no sign-in (AutheEnabled="_$Get(q("AutheEnabled"))_")", .bad)
+	Do ..Check(##class(%File).DirectoryExists(##class(%File).NormalizeDirectory($SYSTEM.Util.InstallDirectory()_"csp/irismonitor")) = 0, "no old page folder", .bad)
 	Do ..Check(##class(Security.Resources).Exists("HistoryMonitorRead"), "resource created", .bad)
 	Do ..Check(##class(Security.Roles).Exists("HistoryMonitorViewer"), "role created", .bad)
 	Set sc3 = ##class(Security.Roles).Get("HistoryMonitorViewer", .r)
@@ -40,8 +41,13 @@ ClassMethod Run()
 	}
 	Do ..Check(n = 8, "role may SELECT the 8 history tables (got "_n_")", .bad)
 	Set $Namespace = "USER"
-	Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("csp.dashboard"), "old pages compiled at install (csp.dashboard)", .bad)
-	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Settings", "web.Login" {
+	// Spec 003 FR-001, FR-004, FR-005: nothing of the old pages or the switch is left.
+	For c = "diashenrique.historymonitor.dashboard.dashboard", "diashenrique.historymonitor.dashboard.license", "diashenrique.historymonitor.util.metrics", "diashenrique.historymonitor.util.Dispatcher", "diashenrique.historymonitor.util.Settings", "csp.dashboard", "csp.dashboardapi", "csp.historycspsessions", "csp.historydatabase", "csp.historylicense", "csp.systemprocesses" {
+		Do ..Check('##class(%Dictionary.CompiledClass).%ExistsId(c) && '##class(%Dictionary.ClassDefinition).%ExistsId(c), "no old class "_c, .bad)
+	}
+	Do ..Check('$Data(^IRISMonitor), "no old scratch data (^IRISMonitor)", .bad)
+	Do ..Check('$Data(^diashenrique.historymonitor.Settings), "no switch value", .bad)
+	For c = "api.Dispatch", "api.Problem", "service.History", "service.Overview", "service.Validate", "util.Security", "util.Retire", "web.Login", "web.Forward" {
 		Do ..Check(##class(%Dictionary.CompiledClass).%ExistsId("diashenrique.historymonitor."_c), "class "_c_" compiled", .bad)
 	}
 	Write $Select(bad = 0: "INSTALL_CHECK=OK", 1: "INSTALL_CHECK=FAILED "_bad), !

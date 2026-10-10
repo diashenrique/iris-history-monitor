@@ -2,10 +2,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../design/components';
 
-// Screens outside the routes (contracts/ui-routes.md): not enabled, no access, error, loading.
-
-/** Where the existing pages live; the not-enabled screen links there (FR-002). */
-export const OLD_PAGES = '/csp/irismonitor/dashboard.csp';
+// Screens outside the routes (contracts/ui-routes.md): no access, error, loading.
 
 /** The role an account needs (spec 001, util.Security). */
 export const ROLE = 'HistoryMonitorViewer';
@@ -16,20 +13,6 @@ function Message({ title, children }: { title: string; children: ReactNode }) {
       <h1 className="mb-3 text-2xl font-semibold tracking-tight text-balance">{title}</h1>
       <div className="grid gap-4 text-muted">{children}</div>
     </main>
-  );
-}
-
-export function NotEnabledScreen() {
-  const { t } = useTranslation();
-  return (
-    <Message title={t('notEnabled.title')}>
-      <p>{t('notEnabled.body')}</p>
-      <p>
-        <a className="font-medium text-accent underline underline-offset-2" href={OLD_PAGES}>
-          {t('notEnabled.link')}
-        </a>
-      </p>
-    </Message>
   );
 }
 

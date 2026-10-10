@@ -43,8 +43,8 @@ Method OnAfterAllTests() As %Status
 	Quit ..Cleanup()
 }
 
-/// The attributes of the API's <WebApplication> in module.xml (the one with a DispatchClass), with
-/// ${Namespace} resolved to this namespace.
+/// The attributes of the API's <WebApplication> in module.xml (Url /historymonitor/api/v1; the forwarding
+/// application of the old prefix has a DispatchClass too), with ${Namespace} resolved to this namespace.
 ClassMethod ReadWebApplication(Output props) As %Status
 {
 	Kill props
@@ -59,7 +59,7 @@ ClassMethod ReadWebApplication(Output props) As %Status
 			Do reader.MoveToAttributeIndex(i)
 			Set attrs(reader.LocalName) = $Replace(reader.Value, "${Namespace}", $Namespace)
 		}
-		If $Data(attrs("DispatchClass")) Merge props = attrs Quit
+		If $Get(attrs("Url")) = "/historymonitor/api/v1" Merge props = attrs Quit
 	}
 	Quit $Select($Data(props("DispatchClass")): $$$OK, 1: $$$ERROR($$$GeneralError, "no WebApplication in "_file))
 }

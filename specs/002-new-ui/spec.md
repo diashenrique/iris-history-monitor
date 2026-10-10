@@ -160,7 +160,7 @@ A user switches the interface between English, Brazilian Portuguese and Spanish,
 - **SC-005**: 100% of interface text exists in all three languages, checked automatically.
 - **SC-006**: A recorded session of normal use shows no data request to anything other than the monitor API.
 - **SC-007**: Every screen is fully usable at 360 pixels wide without page-level horizontal scrolling.
-- **SC-008**: In the same moderated test, at least four of five participants rate the new interface as clearer than the old pages for finding the instance's state.
+- **SC-008** *(withdrawn in 2.0.0, research R17)*: ~~In the same moderated test, at least four of five participants rate the new interface as clearer than the old pages for finding the instance's state.~~
 
 ## Assumptions
 

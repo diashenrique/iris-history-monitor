@@ -94,11 +94,6 @@
       "seriousAlerts": "Alertas graves"
     }
   },
-  "notEnabled": {
-    "title": "O novo monitor não está ativado",
-    "body": "Um administrador pode ativá-lo nesta instância. Até lá, use as páginas existentes.",
-    "link": "Abrir as páginas existentes"
-  },
   "noAccess": {
     "title": "Você não tem acesso ao monitor",
     "body": "Peça a um administrador para dar à sua conta o papel {{role}}."

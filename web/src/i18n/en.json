@@ -90,11 +90,6 @@
       "seriousAlerts": "Serious alerts"
     }
   },
-  "notEnabled": {
-    "title": "The new monitor is not turned on",
-    "body": "An administrator can turn it on for this instance. Until then, use the existing pages.",
-    "link": "Open the existing pages"
-  },
   "noAccess": {
     "title": "You do not have access to the monitor",
     "body": "Ask an administrator to give your account the {{role}} role."
