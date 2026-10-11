@@ -43,6 +43,15 @@ zpm "load /path/to/iris-history-monitor"
 
 ### With Docker
 
+The image is published to the GitHub Container Registry on every change to `master`:
+
+```shell
+docker run -d --name iris-history-monitor -p 52773:52773 ghcr.io/diashenrique/iris-history-monitor:latest
+```
+
+`latest` is the newest; each module version also has its own tag (for example `:2.1.1`). To build it
+yourself from a clone:
+
 ```shell
 git clone https://github.com/diashenrique/iris-history-monitor.git
 cd iris-history-monitor

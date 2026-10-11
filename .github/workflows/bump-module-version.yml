@@ -1,16 +1,19 @@
 name: versionbump
 
-# Same release flow as musketeers-br/sentai-task: every push to master bumps the patch of <Version> in
-# module.xml, and Open Exchange, which follows this repository, publishes that version to the community
-# IPM registry. A push that already changed <Version> (a minor or major bump made by hand in the PR,
-# CLAUDE.md SemVer rule) is published as it is. A commit pushed with GITHUB_TOKEN starts no other
-# workflow, so the bot's own commit does not bump again.
+# Release flow of musketeers-br/sentai-task. Every push to master:
+#   1. bumps the patch of <Version> in module.xml (unless the push already changed it, a minor or major
+#      set by hand in the PR), and Open Exchange publishes that version to the community IPM registry;
+#   2. builds the Docker image from the bumped commit and publishes it to ghcr.io as `latest` and as the
+#      module version.
+# A commit pushed with GITHUB_TOKEN starts no other workflow, so the bot's own commit does not bump again.
+# Run by hand (workflow_dispatch) on another branch, it only builds the image and publishes nothing.
 
 on:
   push:
     branches:
       - master
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -21,6 +24,7 @@ concurrency:
 
 jobs:
   bump:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,3 +53,57 @@ jobs:
           git commit -m "auto bump version to $NEXT"
           git push
           echo "Bumped $NOW -> $NEXT"
+
+  image:
+    # After the bump, so the image carries the version that was just published. A failed image build
+    # does not undo the bump (the job runs after it).
+    needs: bump
+    if: ${{ !cancelled() && (needs.bump.result == 'success' || needs.bump.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      PUBLISH: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    steps:
+      # The branch head, which includes the bot's commit when this run bumped.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Module version
+        id: version
+        run: echo "value=$(sed -n '0,/.*<Version>\(.*\)<\/Version>.*/s//\1/p' module.xml)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v4.4.1
+
+      - name: Log in to ghcr.io
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image tags and labels
+        id: meta
+        uses: docker/metadata-action@v6.2.0
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.version.outputs.value }}
+          labels: |
+            org.opencontainers.image.title=IRIS History Monitor
+            org.opencontainers.image.description=Monitor for InterSystems IRIS: overview, history and processes
+            org.opencontainers.image.version=${{ steps.version.outputs.value }}
+
+      - name: Build${{ env.PUBLISH == 'true' && ' and push' || '' }} the image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: .
+          push: ${{ env.PUBLISH == 'true' }}
+          load: ${{ env.PUBLISH != 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
