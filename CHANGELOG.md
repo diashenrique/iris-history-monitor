@@ -3,7 +3,7 @@
 Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`. Every push to `master`
 publishes a patch version automatically (`docs/releasing.md`); minor and major versions have a section here.
 
-## 2.2.0 (unreleased)
+## 2.2.0 (2026-10-13)
 
 Browser notifications (spec 005, issue #6).
 
