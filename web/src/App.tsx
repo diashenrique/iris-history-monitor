@@ -6,6 +6,7 @@ import { ApiError, takeReturnRoute, type ApiClient } from './api/client';
 import { ApiProvider, useApi } from './api/context';
 import { HistoryPage } from './features/history/HistoryPage';
 import { OverviewPage } from './features/overview/OverviewPage';
+import { useNotificationWatcher } from './features/notifications/useNotificationWatcher';
 import { ProcessesPage } from './features/processes/ProcessesPage';
 import { Header } from './shell/Header';
 import { SCREENS } from './shell/routes';
@@ -38,6 +39,7 @@ function useRouteFocus() {
 function Layout() {
   const { t } = useTranslation();
   useRouteFocus();
+  useNotificationWatcher();
   return (
     <>
       <a

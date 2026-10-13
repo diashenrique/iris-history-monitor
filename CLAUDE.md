@@ -21,7 +21,10 @@ its build in `src/web/historymonitor/`. The old CSP pages were removed in 2.0.0 
 - Principles live in `.specify/memory/constitution.md`; it overrides this file if they conflict.
 - A change starts as `specs/NNN-name/spec.md` (`/speckit-specify`), then `/speckit-clarify`, `/speckit-plan`,
   `/speckit-tasks`, `/speckit-analyze` and only then `/speckit-implement`.
-- Open specs: none awaiting code. `specs/004-history-collection-health` (2.1.0) is implemented:
+- Open specs: none awaiting code. `specs/005-browser-notifications` (2.2.0) is implemented, interface only:
+  `web/src/features/notifications/` (header control, a shell watcher on its own `['overview','notifications']`
+  query so a paused Overview stays still, worse-transition rule, per-browser de-duplication, 8 h idle stop).
+- `specs/004-history-collection-health` (2.1.0) is implemented:
   `GET /history-collection` (`service.Collection`, read only), History notice and retention labels, README
   "Turning on history collection". Option A: the module never changes collector or retention settings
   (InstallCheck compares them before/after `load`); only the Docker image turns collection on for itself.

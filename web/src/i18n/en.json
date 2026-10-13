@@ -216,5 +216,26 @@
       "parentPid": "Parent PID",
       "elapsedTime": "Elapsed time"
     }
+  },
+  "notifications": {
+    "label": "Notifications",
+    "buttonLabel": "Notifications: {{state}}",
+    "states": {
+      "on": "on",
+      "off": "off",
+      "paused": "paused",
+      "unavailable": "unavailable"
+    },
+    "intro": "Get a desktop notification when a metric gets worse, while the monitor stays open in a tab. Hidden tabs are checked about once a minute.",
+    "isOn": "Notifications are on in this browser.",
+    "paused": "Notifications paused after 8 hours without activity. They resume when you use the monitor.",
+    "denied": "Your browser blocks notifications for this site. Allow them in the browser's site settings, then turn them on here.",
+    "insecure": "Notifications need a secure address (HTTPS) or this computer (localhost). This monitor is open on an address that is neither.",
+    "unsupported": "This browser does not support notifications.",
+    "turnOn": "Turn on",
+    "turnOff": "Turn off",
+    "title": "IRIS History Monitor",
+    "several": "{{count}} metrics got worse: {{list}}",
+    "pausedBody": "Notifications paused after 8 hours without activity."
   }
 }

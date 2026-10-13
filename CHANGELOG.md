@@ -3,6 +3,26 @@
 Versions follow [SemVer](https://semver.org/); the version is the one in `module.xml`. Every push to `master`
 publishes a patch version automatically (`docs/releasing.md`); minor and major versions have a section here.
 
+## 2.2.0 (2026-10-13)
+
+Browser notifications (spec 005, issue #6).
+
+### New
+- A **Notifications** button in the header turns on desktop notifications in this browser. While the
+  monitor stays open in a tab, also hidden or on another screen, a metric that gets worse shows a
+  notification: OK to warning, OK to critical, or warning to critical. Several in one check become one
+  notification, and clicking it opens the Overview.
+- There is no notification for a metric that keeps its state, for *Unavailable*, for the first reading,
+  or while the Overview is on screen.
+- The dialog says when notifications cannot work: the address is not HTTPS or `localhost`, the browser
+  blocks them, or the browser does not support them.
+- After 8 hours without activity the checks stop, so a forgotten tab does not keep the IRIS session and
+  a license unit in use. They resume on the next interaction.
+- README "Notifications": the limits, and where to set up unattended alerting instead.
+
+### Unchanged on purpose
+- No server or API change.
+
 ## 2.1.0 (2026-10-10)
 
 The first release since 1.2.4. It includes everything listed under 2.0.0 and 1.9.3 below; those
