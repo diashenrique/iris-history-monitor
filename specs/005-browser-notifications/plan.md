@@ -6,7 +6,7 @@
 
 ## Summary
 
-Interface-only. A watcher mounted in the shell reads `GET /overview` (the same query the Overview uses) while
+Interface-only. A watcher mounted in the shell reads `GET /overview` (its own cache entry) while
 notifications are on, also with the tab hidden, every 30 s; the browser slows hidden tabs to about once a
 minute. A pure function compares each reading with the last known states and returns the worse transitions
 (OK→warning, OK→critical, warning→critical); the first reading and anything involving unavailable only set
@@ -33,8 +33,8 @@ try/catch, like the existing language and theme preferences.
 
 **Project Type**: static web interface served by IRIS.
 
-**Performance Goals**: one extra `/overview` request every 30 s only while notifications are on and the
-Overview is not already polling; first-screen JavaScript stays under the 200 KB budget.
+**Performance Goals**: one extra `/overview` request every 30 s only while notifications are on; first-screen
+JavaScript stays under the 200 KB budget.
 
 **Constraints**: no server or API change (FR-011); WCAG 2.2 AA and three languages (FR-012); the
 permission prompt only on the user's click (FR-002).

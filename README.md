@@ -16,6 +16,8 @@ what its processes are doing (Processes).
   of one process, and export to CSV.
 - English, Portuguese (Brazil) and Spanish; light, dark or system theme; keyboard and screen reader
   friendly (WCAG 2.2 AA).
+- Optional desktop notifications when a metric gets worse, while the monitor is open in a tab
+  ([Notifications](#notifications)).
 - A versioned REST API, `/historymonitor/api/v1`, which the interface uses as its only data source.
   Contract: [`specs/001-api-v1/contracts/openapi.yaml`](specs/001-api-v1/contracts/openapi.yaml).
 
@@ -119,6 +121,28 @@ To try the History page before real data builds up, load demo history in `%SYS`:
 zn "%SYS"
 do ##class(SYS.History.SysData).Demo(30)
 ```
+
+### Notifications
+
+The monitor can show a desktop notification when a metric gets worse (OK to warning, OK to critical,
+warning to critical), so you notice a problem without watching the Overview. Turn it on in the header,
+**Notifications** (the bell), then **Turn on**; the browser asks for permission once. The choice is kept per
+browser.
+
+Limits, set by browsers:
+
+- **A secure address.** Browsers allow notifications only on HTTPS or on `localhost`. On a plain
+  `http://server:52773` address the dialog says so and they cannot be turned on.
+- **An open tab.** They work while the monitor stays open in a tab, also in the background or on another
+  screen of the monitor. A hidden tab is checked about once a minute, so a notification can come up to a
+  minute late. With the browser closed, nothing notifies.
+- **8 hours without activity.** The checks keep your IRIS session (and a license unit) in use, so they stop
+  after 8 hours without keyboard or mouse activity in the monitor, with one notification saying so. Using
+  the monitor again resumes them.
+
+This is a convenience for someone with the monitor open, not unattended alerting. For alerts when nobody is
+watching, use the instance's own tools: System Monitor e-mail alerts (`^%SYSMONMGR`), or the SAM metrics
+(this module also publishes its own sensors) read by an alert manager.
 
 ### Upgrading from 1.x
 

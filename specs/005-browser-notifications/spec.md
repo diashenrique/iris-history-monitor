@@ -142,6 +142,8 @@ they are not unattended alerting, and where to set up unattended alerting instea
   Portuguese (Brazil), Spanish). Transitions found in the same check MUST be grouped into one
   notification. A browser with the monitor in several tabs MUST show one notification per transition.
 - **FR-007**: Clicking a notification MUST bring the monitor's tab to the front on the Overview.
+- **FR-007a**: No notification MUST be shown while the Overview is the visible screen of a visible tab: the
+  change is already on screen and announced there.
 - **FR-008**: While notifications are on, the background checks keep the user's session in use. After 8 hours
   without user interaction with the monitor (keyboard, pointer, or bringing its tab to the front), the
   background checks MUST stop, so a forgotten tab does not hold the session and a license unit

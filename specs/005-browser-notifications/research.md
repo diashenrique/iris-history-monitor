@@ -8,12 +8,14 @@
   Monitor alerting, pointed to in the README).
 
 ## R2. Polling while hidden
-- **Decision**: a shell-level query on the same key as the Overview (`['overview']`) with a 30 s interval
+- **Decision**: a shell-level query on its own key (`['overview', 'notifications']`) with a 30 s interval
   and refetching in the background, enabled only while notifications are on, granted and not idle.
 - **Rationale**: the Overview's own query stops when the tab is hidden (`refetchIntervalInBackground:
-  false`) and exists only on that screen. Sharing the key means one cache: when the Overview is open both
-  observers read the same data. Browsers throttle hidden-tab timers (Chrome: about once a minute after
-  5 minutes hidden), which is the delay the spec states (FR-009, SC-001: 90 s).
+  false`) and exists only on that screen. Sharing its key was considered and rejected during
+  implementation: the watcher's refreshes would keep changing the figures of an Overview the user paused.
+  The cost is one extra `/overview` request every 30 s while notifications are on. Browsers throttle
+  hidden-tab timers (Chrome: about once a minute after 5 minutes hidden), which is the delay the spec
+  states (FR-009, SC-001: 90 s).
 
 ## R3. Transition rule
 - **Decision**: `worse(prev, next)` is true only when `prev` is `ok` or `warning` and `next` ranks higher
@@ -47,3 +49,13 @@
 - **Decision**: one state from three facts, in this order: `insecure` (`!window.isSecureContext`),
   `unsupported` (no `Notification`), then `Notification.permission` (`denied`, `default`, `granted`).
   Permission is requested only inside the click handler of the control (FR-002).
+
+## R8. Delivery results (T011)
+- Interface: `npm test` 190 passed (31 new across `notifications-rules`, `-watcher` and `-control`).
+  Lint shows the one existing warning. The build matches, and the first screen is 135.3 KB gzipped
+  (132.8 KB before; budget 200 KB).
+- A test fails when the watcher shares the Overview's cache entry. It was run against that variant and
+  failed, then passed with the separate key (R2).
+- E2E `notifications.spec.ts`: Docker was not running on the development machine, so it was **not run
+  locally**. It runs in the CI `e2e` job of the pull request.
+- Server and API: no change (FR-011, SC-005); the ObjectScript suite and contract tests are unchanged.
