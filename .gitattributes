@@ -2,3 +2,7 @@
 src/web/historymonitor/** -text
 # Shell scripts run inside Linux containers and CI: always LF.
 *.sh text eol=lf
+
+# The built index.html copies the line endings of web/index.html; keep it LF on every OS so the committed
+# build matches the CI build (check:build).
+web/index.html text eol=lf
