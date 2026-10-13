@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 import { Select } from '../design/components';
 import { applyTheme, readAppearance, resolveTheme, saveAppearance, type Appearance } from '../design/theme';
+import { NotificationsControl } from '../features/notifications/NotificationsControl';
 import { LANGUAGES, setLanguage, type Language } from '../i18n';
 import { SCREENS } from './routes';
 
@@ -47,6 +48,7 @@ export function Header() {
           </ul>
         </nav>
         <div className="ml-auto flex items-center gap-2 max-sm:ml-0 max-sm:w-full max-sm:justify-between">
+          <NotificationsControl />
           <Select
             label={t('language.label')}
             hideLabel

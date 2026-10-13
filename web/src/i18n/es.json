@@ -221,5 +221,26 @@
       "parentPid": "PID padre",
       "elapsedTime": "Tiempo transcurrido"
     }
+  },
+  "notifications": {
+    "label": "Notificaciones",
+    "buttonLabel": "Notificaciones: {{state}}",
+    "states": {
+      "on": "activadas",
+      "off": "desactivadas",
+      "paused": "en pausa",
+      "unavailable": "no disponibles"
+    },
+    "intro": "Reciba una notificación de escritorio cuando una métrica empeore, mientras el monitor sigue abierto en una pestaña. Las pestañas ocultas se revisan aproximadamente una vez por minuto.",
+    "isOn": "Las notificaciones están activadas en este navegador.",
+    "paused": "Notificaciones en pausa después de 8 horas sin actividad. Se reanudan cuando usa el monitor.",
+    "denied": "El navegador bloquea las notificaciones de este sitio. Permítalas en la configuración del sitio del navegador y actívelas aquí.",
+    "insecure": "Las notificaciones necesitan una dirección segura (HTTPS) o este equipo (localhost). Este monitor está abierto en una dirección que no es ninguna de las dos.",
+    "unsupported": "Este navegador no admite notificaciones.",
+    "turnOn": "Activar",
+    "turnOff": "Desactivar",
+    "title": "IRIS History Monitor",
+    "several": "{{count}} métricas empeoraron: {{list}}",
+    "pausedBody": "Notificaciones en pausa después de 8 horas sin actividad."
   }
 }
