@@ -6,6 +6,15 @@
 
 **Status**: Draft
 
+## Clarifications
+
+### Session 2026-10-13
+- Q: Which transitions notify? → A: Every move to a worse state among OK, warning and critical: OK to warning,
+  OK to critical, warning to critical (owner, option A).
+- Q: May a tab with notifications on keep the session and a license unit alive? → A: No. Background checks
+  stop after 8 hours without user interaction, the monitor says so, and they resume when the user uses the
+  monitor again (owner, option B).
+
 **Input**: User description: "Spec 005, browser notifications (issue #6): an operator who keeps the monitor open in a browser tab, even in the background, gets a desktop notification when a metric gets worse, so they notice a problem without watching the Overview. Opt-in per browser, from a control in the header; the browser asks for permission on that click. Notify on transitions to worse states only (from OK to warning or critical, from warning to critical), once per transition, never on every refresh; Unavailable never notifies (it shows on every start). The notification names the metric and its new state, in the user's language (en, pt-BR, es); clicking it brings the Overview to front. Limits stated plainly in the interface: it needs HTTPS or localhost (browsers expose notifications only in a secure context) and an open tab; with the browser closed nothing notifies. Monitoring must continue while the tab is hidden, which today stops (the Overview only refreshes while it is visible and open). Side effect to decide: a tab with notifications on keeps the IRIS session (and a license unit) alive. The server and API do not change. README explains that this is a convenience for someone with the monitor open, not unattended alerting (for that, IRIS System Monitor email alerts or the SAM sensors with an alert manager)."
 
 ## Context
@@ -106,6 +115,8 @@ they are not unattended alerting, and where to set up unattended alerting instea
 - The instance does not answer for a while: no notification is made from missing data. When it answers
   again, transitions are judged against the last known states.
 - The user changes the interface language: later notifications use the new language.
+- The user is away for more than 8 hours: background checks stop (FR-008). A change during that time is not
+  notified; the Overview shows the current state when the user returns.
 - The browser shows notifications only in some conditions (do-not-disturb, focus modes): that is the
   operating system's choice; nothing in the monitor works around it.
 
@@ -124,18 +135,18 @@ they are not unattended alerting, and where to set up unattended alerting instea
 - **FR-004**: While notifications are on, the monitor MUST keep checking the metric states with the tab
   hidden and while another screen of the monitor is open, at least once a minute.
 - **FR-005**: A notification MUST be shown only for a transition to a worse state among OK, warning and
-  critical, as in [NEEDS CLARIFICATION: which transitions notify — every move to warning or critical (OK
-  to warning, OK to critical, warning to critical), or only moves to critical?]. A metric that keeps its
-  state MUST NOT notify again. Transitions to or from unavailable, and the first reading after the monitor
-  opens, MUST NOT notify.
+  critical: OK to warning, OK to critical, warning to critical. A metric that keeps its state MUST NOT
+  notify again. Transitions to or from unavailable, and the first reading after the monitor opens, MUST NOT
+  notify.
 - **FR-006**: A notification MUST name the metric(s) and the new state in the interface language (English,
   Portuguese (Brazil), Spanish). Transitions found in the same check MUST be grouped into one
   notification. A browser with the monitor in several tabs MUST show one notification per transition.
 - **FR-007**: Clicking a notification MUST bring the monitor's tab to the front on the Overview.
-- **FR-008**: While notifications are on, the checks keep the user's session in use. Session behavior: [NEEDS
-  CLARIFICATION: may a tab with notifications on keep the session (and a license unit) alive for as long as
-  it stays open, or must the monitor stop checking after a period without user interaction (for example
-  8 hours) and say so?]
+- **FR-008**: While notifications are on, the background checks keep the user's session in use. After 8 hours
+  without user interaction with the monitor (keyboard, pointer, or bringing its tab to the front), the
+  background checks MUST stop, so a forgotten tab does not hold the session and a license unit
+  indefinitely. When they stop, the monitor MUST show one notification saying so, and the control MUST
+  show notifications as paused. Using the monitor again MUST resume them.
 - **FR-009**: The interface MUST state, next to the control, that notifications need the monitor to stay
   open in a tab and may arrive up to about a minute late when the tab is hidden.
 - **FR-010**: The README MUST explain the feature, its limits (secure address, open tab, delay, session
@@ -164,6 +175,8 @@ they are not unattended alerting, and where to set up unattended alerting instea
   notifications on end with the control explaining why, and no notification is ever shown.
 - **SC-004**: Several metrics getting worse in the same check produce exactly one notification.
 - **SC-005**: The server and API are unchanged: every existing API test passes with no change.
+- **SC-006**: After 8 hours without interaction, no further check is made until the user interacts again,
+  in 100% of checks.
 
 ## Assumptions
 

@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,7 +31,7 @@
 
 ## Notes
 
-- Two open questions wait for the owner: FR-005 (which transitions notify) and FR-008 (whether a tab with
-  notifications on may keep the session and a license unit alive).
+- FR-005 and FR-008 were answered by the owner on 2026-10-13: every worse transition notifies (A); background
+  checks stop after 8 hours without interaction (B).
 - "Secure address" and "the browser asks for permission" describe browser rules the user meets, not an
   implementation choice.
